@@ -25,7 +25,7 @@ export function PageHeader({
   totalResults = 245,
 }: PageHeaderProps) {
   return (
-    <div className="border-b border-gray-200 py-6">
+    <div className="border-b border-gray-200 pb-6">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* Título da página */}
@@ -35,7 +35,7 @@ export function PageHeader({
               {showlResults && (
                 <Badge
                   variant="secondary"
-                  className="bg-[#182641]/10 text-[#182641] font-medium"
+                  className="bg-primary/10 text-primary font-medium"
                 >
                   {totalResults} artigos
                 </Badge>
@@ -55,12 +55,12 @@ export function PageHeader({
                 <Input
                   type="text"
                   placeholder="Buscar notícias, empresas, temas..."
-                  className="pl-12 pr-4 py-3 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-[#182641] focus:ring-2 focus:ring-[#182641]/20 transition-all duration-200 text-gray-900 placeholder:text-gray-500"
+                  className="pl-12 pr-4 py-3 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 text-gray-900 placeholder:text-gray-500"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center">
                   <Button
                     size="sm"
-                    className="bg-[#182641] hover:bg-[#1e2d4a] text-white px-4 py-1.5 text-sm font-medium"
+                    className="bg-primary hover:bg-[#1e2d4a] text-white px-4 py-1.5 text-sm font-medium"
                   >
                     Buscar
                   </Button>
@@ -84,7 +84,7 @@ export function PageHeader({
                   key={index}
                   variant="outline"
                   size="sm"
-                  className="cursor-pointer whitespace-nowrap text-xs px-3 py-1 h-7 border-gray-200 text-gray-600 hover:bg-[#182641] hover:text-white hover:border-[#182641] transition-all duration-200 bg-transparent"
+                  className="cursor-pointer whitespace-nowrap text-xs px-3 py-1 h-7 border-gray-200 text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 bg-transparent"
                 >
                   {tag}
                 </Button>

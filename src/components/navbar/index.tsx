@@ -4,6 +4,7 @@ import { Menu, Instagram, Twitter, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
+import Link from "next/link";
 
 const SocialIcons = () => (
   <>
@@ -62,7 +63,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#182641]">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
       <div className="container flex h-16 items-center justify-between px-4 mx-auto">
         {/* Seção esquerda - Ícone do menu + Logo */}
         <div className="flex items-center gap-4">
@@ -80,24 +81,42 @@ export function Navbar() {
 
         {/* Seção central - Menu de navegação */}
         <nav className="hidden md:flex items-center gap-8">
-          <a
+          <Link
+            href="#"
+            className="text-white hover:text-white/80 transition-colors font-medium"
+          >
+            Início
+          </Link>
+          <Link
             href="#"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Notícias
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Guia Industrial
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
-            Revista Online
-          </a>
+            Coluna Empresarial
+          </Link>
+          <Link
+            href="#"
+            className="text-white hover:text-white/80 transition-colors font-medium"
+          >
+            Coluna Social
+          </Link>
+          <Link
+            href="#"
+            className="text-white hover:text-white/80 transition-colors font-medium"
+          >
+            Edições
+          </Link>
         </nav>
 
         {/* Seção direita - Redes sociais + Avatar (se logado) */}

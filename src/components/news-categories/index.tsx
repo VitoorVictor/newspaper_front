@@ -29,7 +29,7 @@ export function NewsCategories() {
                   flex items-center gap-2 whitespace-nowrap min-w-fit px-4 py-2 h-10
                   ${
                     false
-                      ? "bg-[#182641] text-white hover:bg-[#1e2d4a]"
+                      ? "bg-primary text-white hover:bg-[#1e2d4a]"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }
                 `}
