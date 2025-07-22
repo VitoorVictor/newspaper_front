@@ -82,37 +82,37 @@ export function Navbar() {
         {/* Seção central - Menu de navegação */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="#"
+            href="/inicio"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Início
           </Link>
           <Link
-            href="#"
+            href="/noticias"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Notícias
           </Link>
           <Link
-            href="#"
+            href="/guia-industrial"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Guia Industrial
           </Link>
           <Link
-            href="#"
+            href="/coluna-empresarial"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Coluna Empresarial
           </Link>
           <Link
-            href="#"
+            href="/coluna-social"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Coluna Social
           </Link>
           <Link
-            href="#"
+            href="/edicoes"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Edições

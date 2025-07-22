@@ -27,7 +27,7 @@ export function BannerHorizontal() {
 export function BannerVertical() {
   return (
     <Card className="relative overflow-hidden bg-gradient-to-b from-orange-50 to-red-50 border-2 border-dashed border-gray-300">
-      <div className="flex items-center justify-center h-80">
+      <div className="flex items-center justify-center h-[600px]">
         <div className="text-center">
           <div className="text-gray-500 font-medium mb-2 text-sm">VERTICAL</div>
           <div className="text-xs text-gray-400 mb-1">120 x 240px</div>
@@ -41,20 +41,3 @@ export function BannerVertical() {
     </Card>
   );
 }
-
-// export function LegendaAnunciantes() {
-//   return (
-//     <div className="mt-6 text-center">
-//       <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border text-sm text-gray-600">
-//         <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-//         Disponível
-//         <span className="w-2 h-2 bg-yellow-500 rounded-full ml-2"></span>
-//         Premium
-//         <span className="w-2 h-2 bg-red-500 rounded-full ml-2"></span>
-//         Ocupado
-//         <span className="w-2 h-2 bg-purple-500 rounded-full ml-2"></span>
-//         Destaque
-//       </div>
-//     </div>
-//   );
-// }

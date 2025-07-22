@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 interface PageHeaderProps {
   title: string;
   subtitle: string;
+  placeholder?: string;
+  quickSearch?: string[];
   showlResults?: boolean;
   totalResults?: number;
 }
@@ -21,6 +23,8 @@ interface PageHeaderProps {
 export function PageHeader({
   title = "Últimas Notícias",
   subtitle = "Fique por dentro das principais informações do setor",
+  placeholder = "Busque pelo que desejar...",
+  quickSearch,
   showlResults = false,
   totalResults = 245,
 }: PageHeaderProps) {
@@ -54,7 +58,7 @@ export function PageHeader({
                 </div>
                 <Input
                   type="text"
-                  placeholder="Buscar notícias, empresas, temas..."
+                  placeholder={placeholder}
                   className="pl-12 pr-4 py-3 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 text-gray-900 placeholder:text-gray-500"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center">
@@ -69,27 +73,23 @@ export function PageHeader({
             </div>
 
             {/* Tags de busca rápida */}
-            <div className="flex items-center gap-2 mt-4 overflow-x-auto">
-              <span className="text-sm text-gray-500 whitespace-nowrap">
-                Busca rápida:
-              </span>
-              {[
-                "Tecnologia",
-                "Economia",
-                "Sustentabilidade",
-                "Inovação",
-                "Mercado",
-              ].map((tag, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="cursor-pointer whitespace-nowrap text-xs px-3 py-1 h-7 border-gray-200 text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 bg-transparent"
-                >
-                  {tag}
-                </Button>
-              ))}
-            </div>
+            {quickSearch && (
+              <div className="flex items-center gap-2 mt-4 overflow-x-auto">
+                <span className="text-sm text-gray-500 whitespace-nowrap">
+                  Busca rápida:
+                </span>
+                {quickSearch.map((tag, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer whitespace-nowrap text-xs px-3 py-1 h-7 border-gray-200 text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 bg-transparent"
+                  >
+                    {tag}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
