@@ -1,32 +1,33 @@
 import { BannerHorizontal, BannerVertical } from "@/components/ad-banners";
 import { CustomPagination } from "@/components/custom-pagination";
-import { IndustryCard } from "@/components/industry-card.tsx";
 import { PageHeader } from "@/components/page-header";
-import { industriesData } from "@/data";
+import { SocialEventCard } from "@/components/social-card";
+import { sampleEvent } from "@/data";
 
-export default function GuiaIndustrialPage() {
+export default function ColunaSocialPage() {
   return (
     <div className="container mx-auto my-8 px-4 space-y-6">
       <BannerHorizontal />
       <PageHeader
-        title="Guia Industrial"
-        subtitle="Vejas as industrias de Umuarama e região."
-        placeholder="Buscar industrias, ramos, cnpjs..."
+        title="Coluna Social"
+        subtitle="Vejas eventos importantes que participamos na região."
+        placeholder="Buscar eventos sociais, culturais, empresariais..."
         quickSearch={[
-          "Agroindústria",
-          "Automotivo",
-          "Papel e Celulose",
-          "Eletroeletrônicos",
-          "Alimentos e Bebidas",
+          "Feiras e Exposições",
+          "Lançamentos de Produtos",
+          "Eventos Corporativos",
+          "Eventos Culturais",
+          "Premiações e Homenagens",
         ]}
-      />
+      />{" "}
       <div className="grid lg:grid-cols-4 gap-6">
         {/* 3 colunas de cards */}
         <div className="lg:col-span-3">
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {industriesData.map((industry, index) => (
-              <IndustryCard key={index} {...industry} />
-            ))}
+            <SocialEventCard {...sampleEvent} />
+            <SocialEventCard {...sampleEvent} />
+            <SocialEventCard {...sampleEvent} />
+            <SocialEventCard {...sampleEvent} />
           </div>
         </div>
 
