@@ -336,3 +336,17 @@ export const editorialSections = [
       specialties: ["Infraestrutura", "Construção Industrial", "Projetos Especiais", "Engenharia"],
     },
   ]
+
+  
+export const sampleEvent = {
+    title: "Gala Beneficente Hospital São Lucas",
+    location: "Hotel Copacabana Palace, Rio de Janeiro",
+    date: "15 de Dezembro, 2024",
+    photoCount: 127,
+    eventLogo: "/placeholder.svg?height=192&width=384",
+    category: "Beneficência",
+    attendees: 250,
+    views: 1200,
+    featured: true,
+  }
+  

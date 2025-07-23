@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
+import ShareBtn from "../share-btn";
 
 interface NewsProps {
   title: string;
@@ -36,13 +37,7 @@ export function NewsMain({
           {category}
         </Badge>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm z-10"
-        >
-          <Share2 className="h-4 w-4" />
-        </Button>
+        <ShareBtn />
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white z-10">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 line-clamp-2">
