@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Title } from "./title";
 
 interface PageHeaderProps {
   title: string;
@@ -33,20 +34,12 @@ export function PageHeader({
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* Título da página */}
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-              {showlResults && (
-                <Badge
-                  variant="secondary"
-                  className="bg-primary/10 text-primary font-medium"
-                >
-                  {totalResults} artigos
-                </Badge>
-              )}
-            </div>
-            <p className="text-gray-600 text-lg">{subtitle}</p>
-          </div>
+          <Title
+            title={title}
+            subtitle={subtitle}
+            showlResults={showlResults}
+            totalResults={totalResults}
+          />
 
           {/* Barra de pesquisa */}
           <div className="flex-shrink-0 w-full lg:w-auto">
