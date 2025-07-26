@@ -1,4 +1,3 @@
-import AddBtn from "@/components/custom-btns/add-btn";
 import {
   Dialog,
   DialogContent,
@@ -6,14 +5,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Form,
@@ -31,59 +28,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RichTextEditor } from "@/components/rich-text-editor";
+import { useCreateNews } from "@/hooks/tanstackQuery/useNews";
 
-interface ModalProps {
-  open: boolean;
+interface ModalNoticiaProps {
   onOpenChange: (open: boolean) => void;
   title: string;
-  trigger?: React.ReactNode;
 }
 
 const noticiaSchema = z.object({
   title: z
     .string({ message: "Obrigatório" })
     .min(5, "O título deve ter pelo menos 5 caracteres")
-    .max(200, "O título deve ter no máximo 200 caracteres"),
+    .max(200, "O título deve ter no máximo 255 caracteres"),
   sub_title: z
     .string({ message: "Obrigatório" })
     .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
-    .max(300, "O subtítulo deve ter no máximo 300 caracteres"),
-  content: z
-    .string()
-    .min(50, "O conteúdo deve ter pelo menos 50 caracteres")
-    .optional(), // Opcional por enquanto até implementar rich text
-  image_url: z
-    .string()
-    .url("Digite uma URL válida")
-    .optional()
-    .or(z.literal("")),
+    .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
+  content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
+  image_url: z.string().url("Digite uma URL válida"),
   badge: z.string({ message: "Obrigatório" }).min(1, "Selecione um tópico"),
   top_position: z.boolean().default(false).optional(),
+  status: z.literal("published").or(z.literal("draft")),
 });
 
 type NoticiaFormData = z.infer<typeof noticiaSchema>;
 
-export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
+export const ModalNoticia = ({ onOpenChange, title }: ModalNoticiaProps) => {
   const form = useForm<NoticiaFormData>({
     resolver: zodResolver(noticiaSchema),
+    defaultValues: {
+      title: "",
+      sub_title: "",
+      content: "",
+      image_url: "",
+      badge: "",
+      top_position: false,
+      status: "published",
+    },
   });
 
   const { reset, handleSubmit, control } = form;
+  const createNews = useCreateNews();
 
-  const onSubmit = (data: NoticiaFormData) => {
-    console.log(data);
-    reset();
-    onOpenChange(false);
+  const onSubmit = async (data: NoticiaFormData) => {
+    const res = await createNews.mutateAsync(data);
+    if (res) {
+      reset();
+      onOpenChange(false);
+    }
   };
   return (
-    <Dialog open={open} onOpenChange={(open) => onOpenChange(open)}>
-      <DialogTrigger asChild>
-        {trigger ? (
-          trigger
-        ) : (
-          <AddBtn label="Nova Notícia" onClick={() => onOpenChange(true)} />
-        )}
-      </DialogTrigger>
+    <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
       <DialogContent className="md:max-w-4xl w-full">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
@@ -139,7 +135,7 @@ export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
                 )}
               />
 
-              {/* Conteúdo - Placeholder para Rich Text */}
+              {/* Conteúdo - Rich Text Editor */}
               <FormField
                 control={control}
                 name="content"
@@ -147,27 +143,14 @@ export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
                   <FormItem>
                     <FormLabel>Conteúdo *</FormLabel>
                     <FormControl>
-                      <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                        <div className="text-muted-foreground">
-                          <div className="text-lg font-medium mb-2">
-                            Rich Text Editor
-                          </div>
-                          <div className="text-sm">
-                            Este espaço será substituído pelo editor de texto
-                            rico
-                          </div>
-                        </div>
-                        {/* Textarea temporária para desenvolvimento */}
-                        <Textarea
-                          placeholder="Conteúdo temporário (será substituído pelo rich text)"
-                          className="mt-4"
-                          rows={4}
-                          {...field}
-                        />
-                      </div>
+                      <RichTextEditor
+                        content={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Digite o conteúdo da notícia..."
+                      />
                     </FormControl>
                     <FormDescription>
-                      O conteúdo completo da notícia será editado com rich text
+                      Use o editor para formatar o conteúdo da notícia
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -189,7 +172,7 @@ export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
                       />
                     </FormControl>
                     <FormDescription>
-                      URL da imagem principal da notícia (opcional)
+                      URL da imagem principal da notícia
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -209,7 +192,7 @@ export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="min-w-40">
                             <SelectValue placeholder="Selecione um tópico" />
                           </SelectTrigger>
                         </FormControl>
@@ -223,6 +206,38 @@ export const Modal = ({ open, onOpenChange, title, trigger }: ModalProps) => {
                           ].map((topico) => (
                             <SelectItem key={topico.id} value={topico.id}>
                               {topico.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Status */}
+                <FormField
+                  control={control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Situação *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="min-w-40">
+                            <SelectValue placeholder="Selecione uma situação" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {[
+                            { value: "published", label: "Publicar" },
+                            { value: "draft", label: "Rascunho" },
+                          ].map((topico) => (
+                            <SelectItem key={topico.value} value={topico.value}>
+                              {topico.label}
                             </SelectItem>
                           ))}
                         </SelectContent>

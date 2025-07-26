@@ -55,90 +55,29 @@ import { Title } from "@/components/page-header/title";
 import { Input } from "@/components/ui/input";
 import AddBtn from "@/components/custom-btns/add-btn";
 import { SearchBar } from "@/components/search-bar";
-import { Modal } from "./components/modal";
-
-// Tipos
-// interface Editoria {
-//   id: number;
-//   nome: string;
-//   descricao: string;
-// }
-
-// interface Noticia {
-//   id: number;
-//   titulo: string;
-//   assunto: string;
-//   editoria: string;
-//   dataPublicacao: string;
-//   status: "publicada" | "rascunho";
-// }
+import { ModalNoticia } from "./components/modal-noticia";
+import { ModalEditoria } from "./components/modal-editoria";
+import { useNews } from "@/hooks/tanstackQuery/useNews";
+import { useCategories } from "@/hooks/tanstackQuery/useCategory";
 
 export default function AdminNoticias() {
   // Estados para notícias
-  const [noticias, setNoticias] = useState<any[]>(noticiasMock);
-  const [noticiaEditando, setNoticiaEditando] = useState<any | null>(null);
-  const [dialogNoticiaAberto, setDialogNoticiaAberto] = useState(false);
-  const [pesquisaNoticias, setPesquisaNoticias] = useState("");
+  const { data: news, isLoading: loadingNews } = useNews();
+  const { data: categories, isLoading: loadingCategories } = useCategories();
   const [filtroEditoria, setFiltroEditoria] = useState("todas");
-
-  // Estados para editorias
-  const [editorias, setEditorias] = useState<any[]>(editoriasMock);
-  const [editoriaEditando, setEditoriaEditando] = useState<any | null>(null);
-  const [dialogEditoriaAberto, setDialogEditoriaAberto] = useState(false);
+  const [showModalNoticia, setShowModalNoticia] = useState(false);
+  const [showModalEditoria, setShowModalEditoria] = useState(false);
   const [pesquisaEditorias, setPesquisaEditorias] = useState("");
-
-  const salvarNoticia = (dados: {
-    titulo: string;
-    assunto: string;
-    editoria: string;
-  }) => {
-    // if (noticiaEditando) {
-    //   setNoticias((prev) =>
-    //     prev.map((n) => (n.id === noticiaEditando.id ? { ...n, ...dados } : n))
-    //   );
-    // } else {
-    //   const novaNoticia: Noticia = {
-    //     id: Date.now(),
-    //     ...dados,
-    //     dataPublicacao: new Date().toISOString().split("T")[0],
-    //     status: "rascunho",
-    //   };
-    //   setNoticias((prev) => [...prev, novaNoticia]);
-    // }
-    // setDialogNoticiaAberto(false);
-    // setNoticiaEditando(null);
-  };
+  const [pesquisaNoticias, setPesquisaNoticias] = useState("");
 
   const excluirNoticia = (id: number) => {
     // setNoticias((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // Funções para editorias
-  const editoriasFiltradas = editorias.filter(
-    (editoria) =>
-      editoria.nome.toLowerCase().includes(pesquisaEditorias.toLowerCase()) ||
-      editoria.descricao.toLowerCase().includes(pesquisaEditorias.toLowerCase())
-  );
-
-  const salvarEditoria = (dados: { nome: string; descricao: string }) => {
-    // if (editoriaEditando) {
-    //   setEditorias((prev) =>
-    //     prev.map((e) => (e.id === editoriaEditando.id ? { ...e, ...dados } : e))
-    //   );
-    // } else {
-    //   const novaEditoria: Editoria = {
-    //     id: Date.now(),
-    //     ...dados,
-    //   };
-    //   setEditorias((prev) => [...prev, novaEditoria]);
-    // }
-    // setDialogEditoriaAberto(false);
-    // setEditoriaEditando(null);
-  };
-
   const excluirEditoria = (id: number) => {
     // setEditorias((prev) => prev.filter((e) => e.id !== id));
   };
+
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -159,11 +98,16 @@ export default function AdminNoticias() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Exibindo Notícias</CardTitle>
-                <Modal
-                  open={dialogNoticiaAberto}
-                  onOpenChange={setDialogNoticiaAberto}
-                  title="Nova Notícia"
+                <AddBtn
+                  label="Nova Notícia"
+                  onClick={() => setShowModalNoticia(true)}
                 />
+                {showModalNoticia && (
+                  <ModalNoticia
+                    onOpenChange={setShowModalNoticia}
+                    title="Nova Notícia"
+                  />
+                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -187,11 +131,12 @@ export default function AdminNoticias() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="todas">Todas as editorias</SelectItem>
-                    {editorias.map((editoria) => (
-                      <SelectItem key={editoria.id} value={editoria.nome}>
-                        {editoria.nome}
-                      </SelectItem>
-                    ))}
+                    {categories &&
+                      categories.data.map((category) => (
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -208,78 +153,78 @@ export default function AdminNoticias() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {noticias.map((noticia) => (
-                    <TableRow key={noticia.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{noticia.titulo}</div>
-                          <div className="text-sm text-muted-foreground truncate max-w-xs">
-                            {noticia.assunto}
+                  {news &&
+                    news.data.map((nw) => (
+                      <TableRow key={nw.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{nw.title}</div>
+                            <div className="text-sm text-muted-foreground truncate max-w-xs">
+                              {/* {nw.sub} */}
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{noticia.editoria}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(noticia.dataPublicacao).toLocaleDateString(
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{nw.badge}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          {/* {nw Date(nw.dataPublicacao).toLocaleDateString(
                           "pt-BR"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            noticia.status === "publicada"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {noticia.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setNoticiaEditando(noticia);
-                              setDialogNoticiaAberto(true);
-                            }}
+                        )} */}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              nw.status === "published"
+                                ? "default"
+                                : "secondary"
+                            }
                           >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Confirmar exclusão
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza que deseja excluir a notícia "
-                                  {noticia.titulo}"? Esta ação não pode ser
-                                  desfeita.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => excluirNoticia(noticia.id)}
-                                >
-                                  Excluir
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            {nw.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {}}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Confirmar exclusão
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Tem certeza que deseja excluir a notícia "
+                                    {nw.title}"? Esta ação não pode ser
+                                    desfeita.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>
+                                    Cancelar
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => excluirNoticia(nw.id)}
+                                  >
+                                    Excluir
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -291,38 +236,17 @@ export default function AdminNoticias() {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Exibindo Editorias</CardTitle>
-                </div>
-                {/* <Dialog 
-                //   open={dialogEditoriaAberto}
-                //   onOpenChange={setDialogEditoriaAberto}
-                // >
-                //   <DialogTrigger asChild>*/}
-                <Button onClick={() => setEditoriaEditando(null)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nova Editoria
-                </Button>
-                {/* </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>
-                        {editoriaEditando ? "Editar Editoria" : "Nova Editoria"}
-                      </DialogTitle>
-                      <DialogDescription>
-                        Preencha os dados da editoria
-                      </DialogDescription>
-                    </DialogHeader>
-                    <EditoriaForm
-                      editoria={editoriaEditando}
-                      onSalvar={salvarEditoria}
-                      onCancelar={() => {
-                        setDialogEditoriaAberto(false);
-                        setEditoriaEditando(null);
-                      }}
-                    />
-                  </DialogContent>
-                </Dialog> */}
+                <CardTitle>Exibindo Editorias</CardTitle>
+                <AddBtn
+                  label="Nova Editoria"
+                  onClick={() => setShowModalEditoria(true)}
+                />
+                {showModalEditoria && (
+                  <ModalEditoria
+                    onOpenChange={setShowModalEditoria}
+                    title="Nova Editoria"
+                  />
+                )}
               </div>
             </CardHeader>
             <CardContent>
@@ -344,62 +268,58 @@ export default function AdminNoticias() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nome</TableHead>
-                    <TableHead>Descrição</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {editoriasFiltradas.map((editoria) => (
-                    <TableRow key={editoria.id}>
-                      <TableCell className="font-medium">
-                        {editoria.nome}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {editoria.descricao}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setEditoriaEditando(editoria);
-                              setDialogEditoriaAberto(true);
-                            }}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Confirmar exclusão
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza que deseja excluir a editoria "
-                                  {editoria.nome}"? Esta ação não pode ser
-                                  desfeita.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => excluirEditoria(editoria.id)}
-                                >
-                                  Excluir
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {categories &&
+                    categories.data.map((category) => (
+                      <TableRow key={category.id}>
+                        <TableCell className="font-medium">
+                          {category.name}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {}}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Confirmar exclusão
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Tem certeza que deseja excluir a editoria "
+                                    {category.name}"? Esta ação não pode ser
+                                    desfeita.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>
+                                    Cancelar
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => excluirEditoria(category.id)}
+                                  >
+                                    Excluir
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
