@@ -29,12 +29,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/rich-text-editor";
-import { useCreateNews } from "@/hooks/tanstackQuery/useNews";
-
-interface ModalNoticiaProps {
-  onOpenChange: (open: boolean) => void;
-  title: string;
-}
+import { useCreateNews, useNewsById } from "@/hooks/tanstackQuery/useNews";
+import { FileUpload } from "../file-upload";
+import { ICategory } from "@/interfaces/category";
+import { useEffect } from "react";
+import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 
 const noticiaSchema = z.object({
   title: z
@@ -46,30 +45,63 @@ const noticiaSchema = z.object({
     .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
     .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
   content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
-  image_url: z.string().url("Digite uma URL válida"),
-  badge: z.string({ message: "Obrigatório" }).min(1, "Selecione um tópico"),
+  image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
+    message: "Uma imagem válida é obrigatória",
+  }),
+  badge: z.string({ message: "Obrigatório" }).optional().nullable(),
   top_position: z.boolean().default(false).optional(),
   status: z.literal("published").or(z.literal("draft")),
+  category_ids: z.array(z.number(), {
+    message: "Selecione pelo menos um tópico",
+  }),
 });
 
 type NoticiaFormData = z.infer<typeof noticiaSchema>;
 
-export const ModalNoticia = ({ onOpenChange, title }: ModalNoticiaProps) => {
+interface ModalNoticiaProps {
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  categories: ICategory[];
+  id?: number;
+}
+
+export const ModalNoticia = ({
+  onOpenChange,
+  title,
+  categories,
+  id,
+}: ModalNoticiaProps) => {
   const form = useForm<NoticiaFormData>({
     resolver: zodResolver(noticiaSchema),
     defaultValues: {
       title: "",
       sub_title: "",
       content: "",
-      image_url: "",
-      badge: "",
+      image_url: undefined,
+      badge: "Tecnologia",
       top_position: false,
       status: "published",
+      category_ids: [],
     },
   });
 
-  const { reset, handleSubmit, control } = form;
+  const isUpdate = Boolean(id);
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = form;
+  console.log("Erros:", errors);
+
   const createNews = useCreateNews();
+  const { data: news, isLoading } = useNewsById(id);
+
+  useEffect(() => {
+    if (isUpdate && news) {
+      reset(news.data);
+    }
+  }, [news, isUpdate, reset]);
 
   const onSubmit = async (data: NoticiaFormData) => {
     const res = await createNews.mutateAsync(data);
@@ -163,16 +195,19 @@ export const ModalNoticia = ({ onOpenChange, title }: ModalNoticiaProps) => {
                 name="image_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>URL da Imagem</FormLabel>
+                    <FormLabel>Imagem *</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="https://exemplo.com/imagem.jpg"
-                        type="url"
-                        {...field}
+                      <FileUpload
+                        accept="image/*"
+                        onFileSelect={(file) => {
+                          field.onChange(file);
+                        }}
+                        placeholder="Arraste uma imagem ou clique para selecionar"
+                        maxSize={5}
                       />
                     </FormControl>
                     <FormDescription>
-                      URL da imagem principal da notícia
+                      Escolha uma imagem para a notícia
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -181,38 +216,11 @@ export const ModalNoticia = ({ onOpenChange, title }: ModalNoticiaProps) => {
 
               <div className="flex flex-col md:flex-row items-start justify-between gap-6">
                 {/* Tópico */}
-                <FormField
-                  control={control}
-                  name="badge"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Tópico *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="min-w-40">
-                            <SelectValue placeholder="Selecione um tópico" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {[
-                            { id: "1", nome: "Esports" },
-                            { id: "2", nome: "Tecnologia" },
-                            { id: "3", nome: "Games" },
-                            { id: "4", nome: "Hardware" },
-                            { id: "5", nome: "Software" },
-                          ].map((topico) => (
-                            <SelectItem key={topico.id} value={topico.id}>
-                              {topico.nome}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                <CustomMultiSelect
+                  name="category_ids"
+                  data={categories}
+                  fieldValue="id"
+                  fieldLabel="name"
                 />
 
                 {/* Status */}

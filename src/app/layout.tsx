@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/providers/tanstackQuery";
 import { ToastContainer } from "react-toastify";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TanstackProvider>
-          {children}
+          <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
           <ToastContainer
             position="top-right"
             autoClose={5000}

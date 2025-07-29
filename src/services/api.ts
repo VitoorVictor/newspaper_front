@@ -1,21 +1,30 @@
 import axios from "axios";
 
-export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-});
+export const createApi = (token?: string, onLogout?: () => void) => {
+  const instance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      // Trata erros 4xx/5xx
-      const message = error.response.data?.message || error.message;
-      return Promise.reject(new Error(message));
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        // if (typeof window !== "undefined") {
+        //   if (onLogout) onLogout();
+        //   else {
+        //     localStorage.removeItem("accessToken");
+        //     window.location.href = "/admin/entrar";
+        //   }
+        // }
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
+
+  return instance;
+};

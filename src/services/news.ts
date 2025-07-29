@@ -1,12 +1,27 @@
+import { getCookie } from "cookies-next";
+import { createApi } from "./api";
 import { INews } from "@/interfaces/news";
-import { api } from "./api";
 
-//criar CreateNewsData
+function getApiClient() {
+  const token = getCookie("access_token");
+  return createApi(String(token));
+}
 
 const newsService = {
-  getAll: () => api.get<INews[]>("/news"),
-  getById: (id: number) => api.get<INews>(`/news/${id}`),
+  getAll: () => {
+    const api = getApiClient();
+    return api.get<INews[]>("/news");
+  },
+  getAllAdmin: () => {
+    const api = getApiClient();
+    return api.get<INews[]>("/admin/news/");
+  },
+  getById: (id: number) => {
+    const api = getApiClient();
+    return api.get<INews>(`/news/${id}`);
+  },
   create: (data: any) => {
+    const api = getApiClient();
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "category_ids") {
@@ -18,6 +33,7 @@ const newsService = {
     return api.post<INews>("/news", formData);
   },
   update: (id: number, data: Partial<any>) => {
+    const api = getApiClient();
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined) {
@@ -26,7 +42,10 @@ const newsService = {
     });
     return api.put<INews>(`/news/${id}`, formData);
   },
-  delete: (id: number) => api.delete(`/news/${id}`),
+  delete: (id: number) => {
+    const api = getApiClient();
+    return api.delete(`/news/${id}`);
+  },
 };
 
 export default newsService;

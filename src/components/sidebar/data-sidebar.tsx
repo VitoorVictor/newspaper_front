@@ -2,6 +2,7 @@ export const data = [
   {
     title: "Painel de Admin",
     url: "#",
+    session: true,
     items: [
       {
         title: "Início",
@@ -32,6 +33,7 @@ export const data = [
   {
     title: "Todas as Editorias",
     url: "#",
+    session: false,
     items: [
       {
         title: "Routing",
@@ -87,6 +89,7 @@ export const data = [
   {
     title: "Navegação",
     url: "#",
+    session: false,
     items: [
       {
         title: "Início",

@@ -1,3 +1,3 @@
-export default function NoticiasPage() {
+export default function HomePage() {
   return <>Home</>;
 }

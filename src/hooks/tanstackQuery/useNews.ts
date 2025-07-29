@@ -13,6 +13,27 @@ export const useNews = () => {
   });
 };
 
+export const useAdminNews = () => {
+  return useQuery({
+    queryKey: ["news"],
+    queryFn: () =>
+      newsService.getAllAdmin().catch((error) => {
+        throw error;
+      }),
+  });
+};
+
+export const useNewsById = (id?: number) => {
+  return useQuery({
+    enabled: !!id,
+    queryKey: ["news", id],
+    queryFn: () => {
+      if (!id) return null;
+      return newsService.getById(id);
+    },
+  });
+};
+
 export const useCreateNews = () => {
   const queryClient = useQueryClient();
   return useMutation({

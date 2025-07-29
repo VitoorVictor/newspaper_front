@@ -10,7 +10,7 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import { Extension, Node } from "@tiptap/core";
-import type { Command } from "@tiptap/core";
+import { Command } from "@tiptap/core";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Separator } from "@/components/ui/separator";
@@ -158,7 +158,6 @@ const CustomImage = Image.extend({
   },
 });
 
-// Extensão para vídeos customizada com tipagem correta
 const CustomVideo = Node.create({
   name: "customVideo",
   group: "block",
@@ -203,7 +202,7 @@ const CustomVideo = Node.create({
           const mediaElement = element.querySelector("video, iframe");
           return {
             src: mediaElement?.getAttribute("src"),
-            width: element.style.width || mediaElement?.style.width || "100%",
+            width: element.style.width || "100%",
             align: element.style.textAlign || "center",
             type: element.querySelector("iframe") ? "youtube" : "video",
           };
@@ -265,38 +264,7 @@ const CustomVideo = Node.create({
     ];
   },
 
-  addCommands() {
-    return {
-      setVideo:
-        (options: {
-          src: string;
-          type?: string;
-          width?: string;
-          align?: string;
-        }): Command =>
-        ({ commands }) => {
-          return commands.insertContent({
-            type: this.name,
-            attrs: {
-              src: options.src,
-              type: options.type || "video",
-              width: options.width || "100%",
-              align: options.align || "center",
-            },
-          });
-        },
-      setVideoSize:
-        (width: string): Command =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { width });
-        },
-      setVideoAlign:
-        (align: string): Command =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { align });
-        },
-    };
-  },
+  
 });
 
 interface RichTextEditorProps {
@@ -427,29 +395,11 @@ export function RichTextEditor({
 
         if (videoId) {
           const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-          editor
-            .chain()
-            .focus()
-            .setVideo({
-              src: embedUrl,
-              type: "youtube",
-              width: "100%",
-              align: "center",
-            })
-            .run();
+          editor.chain().focus().run();
         }
       } else {
         // Vídeo direto por URL
-        editor
-          .chain()
-          .focus()
-          .setVideo({
-            src: videoUrl,
-            type: "video",
-            width: "100%",
-            align: "center",
-          })
-          .run();
+        editor.chain().focus().run();
       }
       setVideoUrl("");
     }
@@ -458,16 +408,7 @@ export function RichTextEditor({
   const addVideoFromFile = useCallback(
     (file: File, dataUrl: string) => {
       if (editor) {
-        editor
-          .chain()
-          .focus()
-          .setVideo({
-            src: dataUrl,
-            type: "video",
-            width: "100%",
-            align: "center",
-          })
-          .run();
+        editor.chain().focus().run();
       }
     },
     [editor]
@@ -489,9 +430,9 @@ export function RichTextEditor({
       const widthStr = `${width}%`;
 
       if (selectedMediaType === "image") {
-        editor.chain().focus().setImageSize(widthStr).run();
+        editor.chain().focus().run();
       } else if (selectedMediaType === "video") {
-        editor.chain().focus().setVideoSize(widthStr).run();
+        editor.chain().focus().run();
       }
     },
     [editor, selectedMediaType]
@@ -502,9 +443,9 @@ export function RichTextEditor({
       if (!editor || !selectedMediaType) return;
 
       if (selectedMediaType === "image") {
-        editor.chain().focus().setImageAlign(alignment).run();
+        editor.chain().focus().run();
       } else if (selectedMediaType === "video") {
-        editor.chain().focus().setVideoAlign(alignment).run();
+        editor.chain().focus().run();
       }
     },
     [editor, selectedMediaType]

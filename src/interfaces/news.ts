@@ -1,5 +1,5 @@
 export interface INews {
-  id: string;
+  id: number;
   title: string;
   sub_title: string;
   content: string;
@@ -8,5 +8,5 @@ export interface INews {
   user_id: string;
   top_position: boolean;
   status: "draft" | "published";
-  category_ids: string[];
+  category_ids: number[];
 }
