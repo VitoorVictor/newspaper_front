@@ -13,6 +13,17 @@ export const useCategories = () => {
   });
 };
 
+export const useCategoryById = (id?: number) => {
+  return useQuery({
+    enabled: !!id,
+    queryKey: ["category", id],
+    queryFn: () => {
+      if (!id) return null;
+      return categoryService.getById(id);
+    },
+  });
+};
+
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -38,6 +49,8 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = (id: number) => {
   const queryClient = useQueryClient();
+
+  if (!id) null;
 
   return useMutation({
     mutationFn: (data: Partial<ICategory>) => categoryService.update(id, data),

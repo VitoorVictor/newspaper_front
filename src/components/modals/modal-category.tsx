@@ -19,35 +19,57 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useCreateCategory } from "@/hooks/tanstackQuery/useCategory";
+import {
+  useCategoryById,
+  useCreateCategory,
+  useUpdateCategory,
+} from "@/hooks/tanstackQuery/useCategory";
+import { useEffect } from "react";
+import { CustomInput } from "../custom-inputs/input";
 
-interface ModalEditoriaProps {
-  onOpenChange: (open: boolean) => void;
-  title: string;
-}
-
-const editoriaSchema = z.object({
+const categorySchema = z.object({
   name: z
     .string({ message: "Obrigatório" })
     .min(5, "O nome deve ter pelo menos 3 caracteres")
     .max(200, "O nome deve ter no máximo 255 caracteres"),
 });
 
-type EditoriaFormData = z.infer<typeof editoriaSchema>;
+type CategoryFormData = z.infer<typeof categorySchema>;
 
-export const ModalEditoria = ({ onOpenChange, title }: ModalEditoriaProps) => {
-  const form = useForm<EditoriaFormData>({
-    resolver: zodResolver(editoriaSchema),
+interface ModalCategoryProps {
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  id?: number;
+}
+export const ModalCategory = ({
+  onOpenChange,
+  title,
+  id,
+}: ModalCategoryProps) => {
+  const isUpdate = Boolean(id);
+  const form = useForm<CategoryFormData>({
+    resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const { reset, handleSubmit, control } = form;
+  const { reset, handleSubmit } = form;
   const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory(id!);
+  const { data: categories, isLoading } = useCategoryById(id);
 
-  const onSubmit = async (data: EditoriaFormData) => {
-    const res = await createCategory.mutateAsync(data);
+  useEffect(() => {
+    if (isUpdate && categories) {
+      console.log(categories.data);
+      reset(categories.data);
+    }
+  }, [categories, isUpdate, reset]);
+
+  const onSubmit = async (data: CategoryFormData) => {
+    const res = isUpdate
+      ? await updateCategory.mutateAsync(data)
+      : await createCategory.mutateAsync(data);
     if (res) {
       reset();
       onOpenChange(false);
@@ -64,31 +86,18 @@ export const ModalEditoria = ({ onOpenChange, title }: ModalEditoriaProps) => {
         <Form {...form}>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="h-full flex flex-col"
+            className="h-full flex flex-col space-y-6"
           >
-            {/* Área scrollável do formulário */}
-            <div className="flex-1 max-h-[70vh] overflow-y-auto px-2 space-y-6">
-              {/* nome */}
-              <FormField
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Digite o nome da editoria"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {/* nome */}
+            <CustomInput
+              name="name"
+              label="Nome"
+              placeholder="Digite o nome da editoria"
+              required
+            />
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 mt-6 pt-4 border-t">
+            <DialogFooter className="flex-shrink-0 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"

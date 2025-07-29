@@ -16,18 +16,36 @@ import { Title } from "@/components/page-header/title";
 import { Input } from "@/components/ui/input";
 import AddBtn from "@/components/custom-btns/add-btn";
 import { SearchBar } from "@/components/search-bar";
-import { ModalNoticia } from "@/components/modals/modal-noticia";
-import { ModalEditoria } from "@/components/modals/modal-editoria";
-import { useAdminNews } from "@/hooks/tanstackQuery/useNews";
-import { useCategories } from "@/hooks/tanstackQuery/useCategory";
+import { ModalNews } from "@/components/modals/modal-news";
+import { ModalCategory } from "@/components/modals/modal-category";
+import { useAdminNews, useDeleteNews } from "@/hooks/tanstackQuery/useNews";
+import {
+  useCategories,
+  useDeleteCategory,
+} from "@/hooks/tanstackQuery/useCategory";
 import { getCategoriesColumns, getNewsColumns } from "./columns";
 import { GenericTable } from "@/components/generic-table";
 import { TableSkeleton } from "@/components/table-skeleton";
 import { INews } from "@/interfaces/news";
 import { ICategory } from "@/interfaces/category";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 export default function AdminNoticias() {
-  // Estados para notícias
+  // states
+  const [filtroEditoria, setFiltroEditoria] = useState("todas");
+  const [showModalNews, setShowModalNews] = useState(false);
+  const [showModalCategory, setShowModalCategory] = useState(false);
+  const [pesquisaEditorias, setPesquisaEditorias] = useState("");
+  const [pesquisaNoticias, setPesquisaNoticias] = useState("");
+  const [selectedNews, setSelectedNews] = useState<INews | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null
+  );
+  const [showConfirmDeleteNews, setShowConfirmDeleteNews] = useState(false);
+  const [showConfirmDeleteCategory, setShowConfirmDeleteCategory] =
+    useState(false);
+
+  //hooks
   const {
     data: news,
     isLoading: loadingNews,
@@ -38,31 +56,34 @@ export default function AdminNoticias() {
     isLoading: loadingCategories,
     isError: errorCategories,
   } = useCategories();
+  const deleteNewsMutation = useDeleteNews();
+  const deleteCategoryMutation = useDeleteCategory();
 
-  const [filtroEditoria, setFiltroEditoria] = useState("todas");
+  //edits
+  const handleEditNews = (item: INews) => {
+    setSelectedNews(item);
+    setShowModalNews(true);
+  };
+  const handleEditCategory = (item: ICategory) => {
+    setSelectedCategory(item);
+    setShowModalCategory(true);
+  };
 
-  const [showModalNoticia, setShowModalNoticia] = useState(false);
-  const [showModalEditoria, setShowModalEditoria] = useState(false);
+  //deletes
+  const handleDeleteNews = (item: INews) => {
+    setSelectedNews(item);
+    setShowConfirmDeleteNews(true);
+  };
+  const handleDeleteCategory = (item: ICategory) => {
+    setSelectedCategory(item);
+    setShowConfirmDeleteCategory(true);
+  };
 
-  const [pesquisaEditorias, setPesquisaEditorias] = useState("");
-  const [pesquisaNoticias, setPesquisaNoticias] = useState("");
-
-  const [selectedNews, setSelectedNews] = useState<INews | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
-    null
-  );
-
-  const handleEditNews = (item: INews) => setSelectedNews(item);
-  const handleDeleteNews = (item: INews) => setSelectedNews(item);
-
-  const handleEditCategory = (item: ICategory) => setSelectedCategory(item);
-  const handleDeleteCategory = (item: ICategory) => setSelectedCategory(item);
-
+  //columns
   const newsColumns = getNewsColumns({
     onEdit: handleEditNews,
     onDelete: handleDeleteNews,
   });
-
   const categoriesColumns = getCategoriesColumns({
     onEdit: handleEditCategory,
     onDelete: handleDeleteCategory,
@@ -89,11 +110,11 @@ export default function AdminNoticias() {
                 <CardTitle>Exibindo Notícias</CardTitle>
                 <AddBtn
                   label="Nova Notícia"
-                  onClick={() => setShowModalNoticia(true)}
+                  onClick={() => setShowModalNews(true)}
                 />
-                {showModalNoticia && categories && (
-                  <ModalNoticia
-                    onOpenChange={setShowModalNoticia}
+                {showModalNews && categories && (
+                  <ModalNews
+                    onOpenChange={setShowModalNews}
                     title="Nova Notícia"
                     categories={categories.data}
                     id={selectedNews?.id}
@@ -153,12 +174,13 @@ export default function AdminNoticias() {
                 <CardTitle>Exibindo Editorias</CardTitle>
                 <AddBtn
                   label="Nova Editoria"
-                  onClick={() => setShowModalEditoria(true)}
+                  onClick={() => setShowModalCategory(true)}
                 />
-                {showModalEditoria && (
-                  <ModalEditoria
-                    onOpenChange={setShowModalEditoria}
+                {showModalCategory && (
+                  <ModalCategory
+                    onOpenChange={setShowModalCategory}
                     title="Nova Editoria"
+                    id={selectedCategory?.id}
                   />
                 )}
               </div>
@@ -190,6 +212,31 @@ export default function AdminNoticias() {
           </Card>
         </TabsContent>
       </Tabs>
+      <ConfirmDialog
+        open={showConfirmDeleteNews}
+        onOpenChange={setShowConfirmDeleteNews}
+        title="Confirmar exclusão"
+        description={`Tem certeza que deseja excluir a notícia "${selectedNews?.title}"?`}
+        onConfirm={() => {
+          if (selectedNews) {
+            deleteNewsMutation.mutate(selectedNews.id);
+          }
+          setShowConfirmDeleteNews(false);
+        }}
+      />
+
+      <ConfirmDialog
+        open={showConfirmDeleteCategory}
+        onOpenChange={setShowConfirmDeleteCategory}
+        title="Confirmar exclusão"
+        description={`Tem certeza que deseja excluir a editoria "${selectedCategory?.name}"?`}
+        onConfirm={() => {
+          if (selectedCategory) {
+            deleteCategoryMutation.mutate(selectedCategory.id);
+          }
+          setShowConfirmDeleteCategory(false);
+        }}
+      />
     </div>
   );
 }

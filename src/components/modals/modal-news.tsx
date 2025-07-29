@@ -35,7 +35,7 @@ import { ICategory } from "@/interfaces/category";
 import { useEffect } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 
-const noticiaSchema = z.object({
+const newsSchema = z.object({
   title: z
     .string({ message: "Obrigatório" })
     .min(5, "O título deve ter pelo menos 5 caracteres")
@@ -56,23 +56,23 @@ const noticiaSchema = z.object({
   }),
 });
 
-type NoticiaFormData = z.infer<typeof noticiaSchema>;
+type NewsFormData = z.infer<typeof newsSchema>;
 
-interface ModalNoticiaProps {
+interface ModalNewsProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   categories: ICategory[];
   id?: number;
 }
 
-export const ModalNoticia = ({
+export const ModalNews = ({
   onOpenChange,
   title,
   categories,
   id,
-}: ModalNoticiaProps) => {
-  const form = useForm<NoticiaFormData>({
-    resolver: zodResolver(noticiaSchema),
+}: ModalNewsProps) => {
+  const form = useForm<NewsFormData>({
+    resolver: zodResolver(newsSchema),
     defaultValues: {
       title: "",
       sub_title: "",
@@ -103,7 +103,7 @@ export const ModalNoticia = ({
     }
   }, [news, isUpdate, reset]);
 
-  const onSubmit = async (data: NoticiaFormData) => {
+  const onSubmit = async (data: NewsFormData) => {
     const res = await createNews.mutateAsync(data);
     if (res) {
       reset();
