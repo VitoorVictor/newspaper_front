@@ -17,28 +17,40 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFormContext } from "react-hook-form";
 
-interface ICustomMultiSelect {
-  data: { id: number | string; name: string; [key: string]: any }[];
-  type?: number | string;
+type OptionType = {
+  id: number | string;
   name: string;
-  fieldValue: string;
-  fieldLabel: string;
+  [key: string]: any;
+};
+
+interface CustomMultiSelectProps<T extends OptionType> {
+  data: T[];
+  type?: "string" | "number";
+  name: string;
+  fieldValue: keyof T;
+  fieldLabel: keyof T;
+  label?: string;
+  placeholder?: string;
 }
-export const CustomMultiSelect = ({
+
+export function CustomMultiSelect<T extends OptionType>({
   data,
-  type,
+  type = "number",
   name,
   fieldValue,
   fieldLabel,
-}: ICustomMultiSelect) => {
+  label = "Selecione",
+  placeholder = "Selecione os tópicos",
+}: CustomMultiSelectProps<T>) {
   const { control } = useFormContext();
+
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
         <FormItem className="w-full">
-          <FormLabel>Tópicos *</FormLabel>
+          <FormLabel>{label} *</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -52,32 +64,45 @@ export const CustomMultiSelect = ({
                 {field.value?.length
                   ? data
                       .filter((d) =>
-                        field.value.includes(d[fieldValue as keyof typeof d])
+                        field.value.includes(
+                          type === "string"
+                            ? String(d[fieldValue])
+                            : Number(d[fieldValue])
+                        )
                       )
-                      .map((d) => d[fieldLabel as keyof typeof d])
+                      .map((d) => d[fieldLabel])
                       .join(", ")
-                  : "Selecione os tópicos"}
+                  : placeholder}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
               <Command>
                 <CommandGroup>
-                  {data.map((d) => {
-                    const isSelected = field.value?.includes(d[fieldValue]);
+                  {data.map((item) => {
+                    const itemValue =
+                      type === "string"
+                        ? String(item[fieldValue])
+                        : Number(item[fieldValue]);
+
+                    const isSelected = field.value?.includes(itemValue);
+
                     return (
                       <CommandItem
-                        key={d[fieldValue]}
+                        key={itemValue}
                         onSelect={() => {
-                          const newValue = isSelected
-                            ? field.value.filter(
-                                (id: number) => id !== d[fieldValue]
-                              )
-                            : [...(field.value || []), d[fieldValue]];
+                          let newValue;
+                          if (isSelected) {
+                            newValue = field.value.filter(
+                              (val: any) => val !== itemValue
+                            );
+                          } else {
+                            newValue = [...(field.value || []), itemValue];
+                          }
                           field.onChange(newValue);
                         }}
                         className="cursor-pointer flex items-center justify-between"
                       >
-                        {d[fieldLabel]}
+                        {item[fieldLabel]}
                         <Checkbox checked={isSelected} />
                       </CommandItem>
                     );
@@ -91,4 +116,4 @@ export const CustomMultiSelect = ({
       )}
     />
   );
-};
+}

@@ -13,11 +13,11 @@ export const useNews = () => {
   });
 };
 
-export const useAdminNews = () => {
+export const useAdminNews = (filters: { search: string; category: string }) => {
   return useQuery({
-    queryKey: ["news"],
+    queryKey: ["news", filters],
     queryFn: () =>
-      newsService.getAllAdmin().catch((error) => {
+      newsService.getAllAdmin(filters).catch((error) => {
         throw error;
       }),
   });

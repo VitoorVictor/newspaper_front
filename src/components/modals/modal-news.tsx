@@ -34,6 +34,7 @@ import { FileUpload } from "../file-upload";
 import { ICategory } from "@/interfaces/category";
 import { useEffect } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
+import { CustomInput } from "../custom-inputs/input";
 
 const newsSchema = z.object({
   title: z
@@ -48,8 +49,8 @@ const newsSchema = z.object({
   image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
     message: "Uma imagem válida é obrigatória",
   }),
-  badge: z.string({ message: "Obrigatório" }).optional().nullable(),
-  top_position: z.boolean().default(false).optional(),
+  badge: z.string().optional().nullable(),
+  top_position: z.string().optional().nullable(),
   status: z.literal("published").or(z.literal("draft")),
   category_ids: z.array(z.number(), {
     message: "Selecione pelo menos um tópico",
@@ -78,8 +79,8 @@ export const ModalNews = ({
       sub_title: "",
       content: "",
       image_url: undefined,
-      badge: "Tecnologia",
-      top_position: false,
+      badge: "",
+      top_position: "",
       status: "published",
       category_ids: [],
     },
@@ -104,7 +105,17 @@ export const ModalNews = ({
   }, [news, isUpdate, reset]);
 
   const onSubmit = async (data: NewsFormData) => {
-    const res = await createNews.mutateAsync(data);
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "image_url" && value instanceof File) {
+        formData.append("image_url", value); // envia como arquivo
+      } else if (key === "category_ids" && Array.isArray(value)) {
+        value.forEach((id) => formData.append("category_ids[]", String(id)));
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
+      }
+    });
+    const res = await createNews.mutateAsync(formData);
     if (res) {
       reset();
       onOpenChange(false);
@@ -112,7 +123,7 @@ export const ModalNews = ({
   };
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-      <DialogContent className="md:max-w-4xl w-full">
+      <DialogContent className="md:max-w-4xl w-full space-y-6">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>Preencha os dados da notícia</DialogDescription>
@@ -126,45 +137,21 @@ export const ModalNews = ({
             {/* Área scrollável do formulário */}
             <div className="flex-1 max-h-[70vh] overflow-y-auto px-2 space-y-6">
               {/* Título */}
-              <FormField
-                control={control}
+              <CustomInput
                 name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Título *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Digite o título da notícia"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      O título principal da notícia (5-200 caracteres)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Título"
+                placeholder="Digite o título da notícia"
+                description="O título principal da notícia (5-200 caracteres)"
+                required
               />
 
               {/* Subtítulo */}
-              <FormField
-                control={control}
+              <CustomInput
                 name="sub_title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subtítulo *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Digite o subtítulo da notícia"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Um resumo ou complemento do título (10-300 caracteres)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Subtítulo"
+                placeholder="Digite o subtítulo da notícia"
+                description=" Um resumo ou complemento do título (10-300 caracteres)"
+                required
               />
 
               {/* Conteúdo - Rich Text Editor */}
@@ -214,7 +201,7 @@ export const ModalNews = ({
                 )}
               />
 
-              <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Tópico */}
                 <CustomMultiSelect
                   name="category_ids"
@@ -228,7 +215,7 @@ export const ModalNews = ({
                   control={control}
                   name="status"
                   render={({ field }) => (
-                    <FormItem className="w-full">
+                    <FormItem>
                       <FormLabel>Situação *</FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -260,25 +247,39 @@ export const ModalNews = ({
                   control={control}
                   name="top_position"
                   render={({ field }) => (
-                    <FormItem className="w-full">
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                          <FormLabel className="text-base">
-                            Posição Superior
-                          </FormLabel>
-                          <FormDescription>
-                            Destacar esta notícia
-                          </FormDescription>
-                        </div>
+                    <FormItem>
+                      <FormLabel>Posição da Notícia *</FormLabel>
+                      <Select onValueChange={field.onChange}>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <SelectTrigger className="min-w-40">
+                            <SelectValue placeholder="Selecione uma posição" />
+                          </SelectTrigger>
                         </FormControl>
-                      </div>
+                        <SelectContent>
+                          {[
+                            { value: "main_top", label: "Principal do site" },
+                            { value: "top_1", label: "Topo em primeira" },
+                            { value: "top_2", label: "Topo em segunda" },
+                            { value: "top_3", label: "Topo em teceira" },
+                          ].map((topico) => (
+                            <SelectItem key={topico.value} value={topico.value}>
+                              {topico.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
+                />
+
+                {/* Título */}
+                <CustomInput
+                  name="badge"
+                  label="Crachá"
+                  placeholder="Digite o crachá da notícia"
+                  description="O crácha é opcional"
+                  required
                 />
               </div>
             </div>

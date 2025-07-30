@@ -12,25 +12,25 @@ const newsService = {
     const api = getApiClient();
     return api.get<INews[]>("/news");
   },
-  getAllAdmin: () => {
+  getAllAdmin: (filters: { search: string; category: string }) => {
+    const { search, category } = filters;
     const api = getApiClient();
-    return api.get<INews[]>("/admin/news/");
+    return api.get<PaginatedResponse<INews>>(`/admin/news/${
+      filters.search ? search : "null"
+    }/${filters.category ? category : "null"}
+`);
   },
   getById: (id: number) => {
     const api = getApiClient();
     return api.get<INews>(`/news/${id}`);
   },
-  create: (data: any) => {
+  create: (formData: FormData) => {
     const api = getApiClient();
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "category_ids") {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined) {
-        formData.append(key, String(value));
-      }
+    return api.post<INews>("/news", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
-    return api.post<INews>("/news", formData);
   },
   update: (id: number, data: Partial<any>) => {
     const api = getApiClient();

@@ -94,7 +94,7 @@ export function Navbar({ email }: { email: string }) {
         {/* Seção central - Menu de navegação */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="/inicio"
+            href="/"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Início

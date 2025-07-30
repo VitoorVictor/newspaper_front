@@ -32,11 +32,11 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 
 export default function AdminNoticias() {
   // states
-  const [filtroEditoria, setFiltroEditoria] = useState("todas");
+  const [filtroCategory, setFiltroCategory] = useState("");
   const [showModalNews, setShowModalNews] = useState(false);
   const [showModalCategory, setShowModalCategory] = useState(false);
-  const [pesquisaEditorias, setPesquisaEditorias] = useState("");
-  const [pesquisaNoticias, setPesquisaNoticias] = useState("");
+  const [pesquisaCategory, setPesquisaCategory] = useState("");
+  const [pesquisaNews, setPesquisaNews] = useState("");
   const [selectedNews, setSelectedNews] = useState<INews | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null
@@ -50,7 +50,7 @@ export default function AdminNoticias() {
     data: news,
     isLoading: loadingNews,
     isError: errorNews,
-  } = useAdminNews();
+  } = useAdminNews({ search: pesquisaNews, category: filtroCategory });
   const {
     data: categories,
     isLoading: loadingCategories,
@@ -128,21 +128,23 @@ export default function AdminNoticias() {
                 <div className="flex-1">
                   <SearchBar
                     placeholder="Pesquisar notícias por título ou assunto..."
-                    value={pesquisaNoticias}
-                    onSearch={setPesquisaNoticias}
-                    onClear={() => setPesquisaNoticias("")}
+                    value={pesquisaNews}
+                    onSearch={setPesquisaNews}
+                    onClear={() => setPesquisaNews("")}
                   />
                 </div>
                 <Select
-                  value={filtroEditoria}
-                  onValueChange={setFiltroEditoria}
+                  value={filtroCategory}
+                  onValueChange={(value) => {
+                    setFiltroCategory(value === "all" ? "" : value);
+                  }}
                 >
                   <SelectTrigger className="w-48">
                     <Filter className="w-4 h-4 mr-2" />
                     <SelectValue placeholder="Filtrar por editoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="todas">Todas as editorias</SelectItem>
+                    <SelectItem value="all">Todas as editorias</SelectItem>
                     {categories &&
                       categories.data.map((category) => (
                         <SelectItem key={category.id} value={category.name}>
@@ -153,15 +155,15 @@ export default function AdminNoticias() {
                 </Select>
               </div>
 
-              {/* {loadingNews || (!news && !errorNews) ? (
+              {loadingNews || (!news && !errorNews) ? (
                 <TableSkeleton rows={5} cols={4} />
               ) : (
                 <GenericTable
-                  data={news?.data ?? []}
+                  data={news?.data.data ?? []}
                   columns={newsColumns}
                   getRowKey={(item) => item.id}
                 />
-              )} */}
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -192,8 +194,8 @@ export default function AdminNoticias() {
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Pesquisar editorias..."
-                    value={pesquisaEditorias}
-                    onChange={(e) => setPesquisaEditorias(e.target.value)}
+                    value={pesquisaCategory}
+                    onChange={(e) => setPesquisaCategory(e.target.value)}
                     className="pl-10"
                   />
                 </div>

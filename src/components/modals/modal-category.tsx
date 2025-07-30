@@ -106,7 +106,7 @@ export const ModalCategory = ({
                 Cancelar
               </Button>
               <Button type="submit">
-                {false ? "Atualizar" : "Criar"} Editoria
+                {isUpdate ? "Atualizar" : "Criar"} Editoria
               </Button>
             </DialogFooter>
           </form>
