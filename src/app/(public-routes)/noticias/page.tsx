@@ -1,6 +1,4 @@
 import { BannerHorizontal, BannerVertical } from "@/components/ad-banners";
-import Footer from "@/components/footer";
-import { Navbar } from "@/components/navbar";
 import {
   NewsMain,
   NewsSecondary,

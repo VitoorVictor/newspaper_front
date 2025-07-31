@@ -1,10 +1,19 @@
 "use client";
 
-import { Menu, Instagram, Twitter, Facebook } from "lucide-react";
+import { Menu, Instagram, Twitter, Facebook, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogoutBtn } from "../custom-btns/logout-btn";
+import { useSidebar } from "../ui/sidebar";
 
 const SocialIcons = () => (
   <>
@@ -58,9 +67,9 @@ const SocialIcons = () => (
   </>
 );
 
-export function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Mude para false para testar
-  const [isOpen, setIsOpen] = useState(false);
+export function Navbar({ email }: { email: string }) {
+  const firstLetter = email.charAt(0).toUpperCase();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
@@ -68,13 +77,16 @@ export function Navbar() {
         {/* Seção esquerda - Ícone do menu + Logo */}
         <div className="flex items-center gap-4">
           <Button
+            data-sidebar="trigger"
+            data-slot="sidebar-trigger"
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-background"
-            onClick={() => setIsOpen(true)}
+            className="size-7 text-white hover:bg-background cursor-pointer"
+            onClick={toggleSidebar}
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
+            <span className="sr-only">Trocar Sidebar</span>
           </Button>
           <h1 className="text-white text-2xl font-bold">Newsletter</h1>
         </div>
@@ -82,7 +94,7 @@ export function Navbar() {
         {/* Seção central - Menu de navegação */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="/inicio"
+            href="/"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
             Início
@@ -125,19 +137,62 @@ export function Navbar() {
             <SocialIcons />
           </div>
 
-          {isLoggedIn && (
-            <>
-              <div className="hidden md:block h-6 w-px bg-white/20 mx-2"></div>
+          <div className="hidden md:block h-6 w-px bg-white/20 mx-2"></div>
+          {email ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
+                  <AvatarImage
+                    src={`https://placehold.co/32x32/ffffff/102741/?text=${firstLetter}`}
+                    alt="Avatar"
+                  />
+                  <AvatarFallback className="bg-white/20 text-white text-sm">
+                    {firstLetter}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <AvatarImage
+                        src={`https://placehold.co/32x32/102741/ffffff/?text=${firstLetter}`}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback className="rounded-lg">
+                        {firstLetter}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-medium">
+                        {email.split("@")[0]}
+                      </span>
+                      <span className="truncate text-xs">{email}</span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogoutBtn />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href="/admin/entrar">
               <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
                 <AvatarImage
-                  src="/placeholder.svg?height=32&width=32"
+                  src={`https://placehold.co/32x32/102741/`}
                   alt="Avatar"
                 />
                 <AvatarFallback className="bg-white/20 text-white text-sm">
-                  U
+                  <User className="h-4 w-4" />
                 </AvatarFallback>
               </Avatar>
-            </>
+            </Link>
           )}
         </div>
       </div>

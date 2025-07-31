@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
-import ShareBtn from "../share-btn";
+import ShareBtn from "@/components/custom-btns/share-btn";
 
 interface NewsProps {
   title: string;
