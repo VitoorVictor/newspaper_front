@@ -14,6 +14,7 @@ type CustomInputProps<T extends FieldValues> = {
   name: FieldPath<T>;
   label?: string;
   description?: string;
+  conteinerClassName?: string;
   required?: boolean;
 } & InputHTMLAttributes<HTMLInputElement>;
 
@@ -22,6 +23,7 @@ export function CustomInput<T extends FieldValues>({
   label,
   description,
   required,
+  conteinerClassName,
   ...inputProps
 }: CustomInputProps<T>) {
   const { control } = useFormContext();
@@ -30,7 +32,7 @@ export function CustomInput<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={conteinerClassName}>
           {label && (
             <FormLabel>
               {label}

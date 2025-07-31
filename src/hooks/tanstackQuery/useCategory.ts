@@ -13,6 +13,16 @@ export const useCategories = () => {
   });
 };
 
+export const useAdminCategories = () => {
+  return useQuery({
+    queryKey: ["category"],
+    queryFn: () =>
+      categoryService.getAllAdmin().catch((error) => {
+        throw error;
+      }),
+  });
+};
+
 export const useCategoryById = (id?: number) => {
   return useQuery({
     enabled: !!id,

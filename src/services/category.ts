@@ -12,6 +12,10 @@ const categoryService = {
     const api = getApiClient();
     return api.get<ICategory[]>("/categories");
   },
+  getAllAdmin: () => {
+    const api = getApiClient();
+    return api.get<PaginatedResponse<ICategory>>("/admin/categories");
+  },
   getById: (id: number) => {
     const api = getApiClient();
     return api.get<ICategory>(`/categories/${id}`);

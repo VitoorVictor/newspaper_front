@@ -263,21 +263,14 @@ const CustomVideo = Node.create({
       ],
     ];
   },
-
-  
 });
 
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
-  placeholder?: string;
 }
 
-export function RichTextEditor({
-  content,
-  onChange,
-  placeholder = "Digite o conteúdo...",
-}: RichTextEditorProps) {
+export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   const [linkUrl, setLinkUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -354,6 +347,12 @@ export function RichTextEditor({
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && editor.getHTML() !== content) {
+      editor.commands.setContent(content || "");
+    }
+  }, [content, editor]);
 
   const addLink = useCallback(() => {
     if (linkUrl && editor) {

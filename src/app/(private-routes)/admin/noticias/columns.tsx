@@ -16,26 +16,31 @@ export const getNewsColumns = ({
   {
     key: "title",
     title: "Título",
-    render: (item: INews) => (
-      <div>
-        <div className="font-medium">{item.title}</div>
-        <div className="text-sm text-muted-foreground truncate max-w-xs">
-          {/* Subtítulo, se houver */}
-        </div>
-      </div>
-    ),
+    render: (item: INews) => <span className="font-medium">{item.title}</span>,
   },
   {
-    key: "badge",
+    key: "category_ids",
     title: "Editoria",
-    render: (item: INews) => <Badge variant="outline">{item.badge}</Badge>,
+    render: (item: INews) => (
+      <div className="flex gap-1">
+        {item.categories.map((category, index) => (
+          <Badge
+            variant="outline"
+            className={index > 2 ? "hidden" : ""}
+            key={index}
+          >
+            {category.name}
+          </Badge>
+        ))}
+      </div>
+    ),
   },
   {
     key: "status",
     title: "Status",
     render: (item: INews) => (
       <Badge variant={item.status === "published" ? "default" : "secondary"}>
-        {item.status}
+        {item.status === "published" ? "publicada" : "rascunho"}
       </Badge>
     ),
   },
@@ -45,10 +50,20 @@ export const getNewsColumns = ({
     className: "text-right",
     render: (item: INews) => (
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onEdit(item)}
+        >
           <Edit className="w-4 h-4" />
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onDelete(item)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onDelete(item)}
+        >
           <Trash2 className="w-4 h-4" />
         </Button>
       </div>
@@ -77,10 +92,20 @@ export const getCategoriesColumns = ({
     className: "text-right",
     render: (item: ICategory) => (
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => onEdit(item)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onEdit(item)}
+        >
           <Edit className="w-4 h-4" />
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onDelete(item)}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onDelete(item)}
+        >
           <Trash2 className="w-4 h-4" />
         </Button>
       </div>

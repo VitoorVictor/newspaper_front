@@ -55,6 +55,17 @@ const newsSchema = z.object({
   category_ids: z.array(z.number(), {
     message: "Selecione pelo menos um tópico",
   }),
+  categories: z
+    .array(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+      })
+    )
+    .optional()
+    .nullable(),
+  created_at: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
 });
 
 type NewsFormData = z.infer<typeof newsSchema>;
@@ -83,12 +94,15 @@ export const ModalNews = ({
       top_position: "",
       status: "published",
       category_ids: [],
+      created_at: "",
+      updated_at: "",
     },
   });
 
   const isUpdate = Boolean(id);
   const {
     reset,
+    setValue,
     handleSubmit,
     control,
     formState: { errors },
@@ -100,7 +114,15 @@ export const ModalNews = ({
 
   useEffect(() => {
     if (isUpdate && news) {
-      reset(news.data);
+      setValue("title", news.data.title);
+      setValue("sub_title", news.data.sub_title);
+      setValue("badge", news.data.badge);
+      setValue("categories", news.data.categories);
+      setValue("content", news.data.content);
+      setValue("created_at", news.data.created_at);
+      setValue("updated_at", news.data.updated_at);
+      setValue("top_position", news.data.top_position);
+      setValue("image_url", news.data.image_url);
     }
   }, [news, isUpdate, reset]);
 
@@ -123,7 +145,7 @@ export const ModalNews = ({
   };
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-      <DialogContent className="md:max-w-4xl w-full space-y-6">
+      <DialogContent className="md:max-w-4xl w-full aspace-y-6">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>Preencha os dados da notícia</DialogDescription>
@@ -135,7 +157,26 @@ export const ModalNews = ({
             className="h-full flex flex-col"
           >
             {/* Área scrollável do formulário */}
-            <div className="flex-1 max-h-[70vh] overflow-y-auto px-2 space-y-6">
+            <div className="flex-1 max-h-[70vh] overflow-y-auto p-2 space-y-6">
+              {isUpdate && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Título */}
+                  <CustomInput
+                    name="created_at"
+                    label="Nóticia criada em:"
+                    type="datetime"
+                    disabled
+                  />
+                  {/* Título */}
+                  <CustomInput
+                    name="updated_at"
+                    label="Última alteração em:"
+                    type="datetime"
+                    disabled
+                  />
+                </div>
+              )}
+
               {/* Título */}
               <CustomInput
                 name="title"
@@ -165,7 +206,6 @@ export const ModalNews = ({
                       <RichTextEditor
                         content={field.value || ""}
                         onChange={field.onChange}
-                        placeholder="Digite o conteúdo da notícia..."
                       />
                     </FormControl>
                     <FormDescription>
@@ -208,6 +248,7 @@ export const ModalNews = ({
                   data={categories}
                   fieldValue="id"
                   fieldLabel="name"
+                  containerClassName="w-full"
                 />
 
                 {/* Status */}
@@ -215,14 +256,14 @@ export const ModalNews = ({
                   control={control}
                   name="status"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormLabel>Situação *</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="min-w-40">
+                          <SelectTrigger className="min-w-40 w-full">
                             <SelectValue placeholder="Selecione uma situação" />
                           </SelectTrigger>
                         </FormControl>
@@ -247,16 +288,24 @@ export const ModalNews = ({
                   control={control}
                   name="top_position"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormLabel>Posição da Notícia *</FormLabel>
-                      <Select onValueChange={field.onChange}>
+                      <Select
+                        defaultValue={field.value || "nothing"}
+                        onValueChange={(value) =>
+                          value === "nothing"
+                            ? field.onChange(null)
+                            : field.onChange(value)
+                        }
+                      >
                         <FormControl>
-                          <SelectTrigger className="min-w-40">
+                          <SelectTrigger className="min-w-40 w-full">
                             <SelectValue placeholder="Selecione uma posição" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {[
+                            { value: "nothing", label: "Nenhuma" },
                             { value: "main_top", label: "Principal do site" },
                             { value: "top_1", label: "Topo em primeira" },
                             { value: "top_2", label: "Topo em segunda" },
@@ -278,8 +327,6 @@ export const ModalNews = ({
                   name="badge"
                   label="Crachá"
                   placeholder="Digite o crachá da notícia"
-                  description="O crácha é opcional"
-                  required
                 />
               </div>
             </div>
@@ -294,7 +341,7 @@ export const ModalNews = ({
                 Cancelar
               </Button>
               <Button type="submit">
-                {false ? "Atualizar" : "Criar"} Notícia
+                {isUpdate ? "Atualizar" : "Criar"} Notícia
               </Button>
             </DialogFooter>
           </form>

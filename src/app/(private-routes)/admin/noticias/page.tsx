@@ -20,7 +20,7 @@ import { ModalNews } from "@/components/modals/modal-news";
 import { ModalCategory } from "@/components/modals/modal-category";
 import { useAdminNews, useDeleteNews } from "@/hooks/tanstackQuery/useNews";
 import {
-  useCategories,
+  useAdminCategories,
   useDeleteCategory,
 } from "@/hooks/tanstackQuery/useCategory";
 import { getCategoriesColumns, getNewsColumns } from "./columns";
@@ -55,7 +55,7 @@ export default function AdminNoticias() {
     data: categories,
     isLoading: loadingCategories,
     isError: errorCategories,
-  } = useCategories();
+  } = useAdminCategories();
   const deleteNewsMutation = useDeleteNews();
   const deleteCategoryMutation = useDeleteCategory();
 
@@ -114,9 +114,12 @@ export default function AdminNoticias() {
                 />
                 {showModalNews && categories && (
                   <ModalNews
-                    onOpenChange={setShowModalNews}
+                    onOpenChange={(open) => {
+                      setShowModalNews(open);
+                      setSelectedNews(null);
+                    }}
                     title="Nova Notícia"
-                    categories={categories.data}
+                    categories={categories.data.data}
                     id={selectedNews?.id}
                   />
                 )}
@@ -139,14 +142,14 @@ export default function AdminNoticias() {
                     setFiltroCategory(value === "all" ? "" : value);
                   }}
                 >
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-48 cursor-pointer">
                     <Filter className="w-4 h-4 mr-2" />
                     <SelectValue placeholder="Filtrar por editoria" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as editorias</SelectItem>
                     {categories &&
-                      categories.data.map((category) => (
+                      categories.data.data.map((category) => (
                         <SelectItem key={category.id} value={category.name}>
                           {category.name}
                         </SelectItem>
@@ -180,7 +183,10 @@ export default function AdminNoticias() {
                 />
                 {showModalCategory && (
                   <ModalCategory
-                    onOpenChange={setShowModalCategory}
+                    onOpenChange={(open) => {
+                      setShowModalCategory(open);
+                      setSelectedCategory(null);
+                    }}
                     title="Nova Editoria"
                     id={selectedCategory?.id}
                   />
@@ -188,24 +194,11 @@ export default function AdminNoticias() {
               </div>
             </CardHeader>
             <CardContent>
-              {/* Pesquisa */}
-              <div className="mb-6">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Pesquisar editorias..."
-                    value={pesquisaCategory}
-                    onChange={(e) => setPesquisaCategory(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
               {loadingCategories || (!categories && !errorCategories) ? (
                 <TableSkeleton rows={6} cols={5} />
               ) : (
                 <GenericTable
-                  data={categories?.data ?? []}
+                  data={categories?.data.data ?? []}
                   columns={categoriesColumns}
                   getRowKey={(item) => item.id}
                 />

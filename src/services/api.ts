@@ -14,13 +14,13 @@ export const createApi = (token?: string, onLogout?: () => void) => {
     (response) => response,
     (error) => {
       if (error.response?.status === 401) {
-        // if (typeof window !== "undefined") {
-        //   if (onLogout) onLogout();
-        //   else {
-        //     localStorage.removeItem("accessToken");
-        //     window.location.href = "/admin/entrar";
-        //   }
-        // }
+        if (typeof window !== "undefined") {
+          if (onLogout) onLogout();
+          else {
+            localStorage.removeItem("accessToken");
+            window.location.href = "/admin/entrar";
+          }
+        }
       }
       return Promise.reject(error);
     }

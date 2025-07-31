@@ -73,7 +73,7 @@ export function SearchBar({
             type="button"
             variant="ghost"
             size="sm"
-            className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0 hover:bg-muted"
+            className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0 hover:bg-muted cursor-pointer"
             onClick={handleClear}
           >
             <X className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function SearchBar({
       <Button
         type="submit"
         variant="outline"
-        className="shrink-0 bg-transparent"
+        className="shrink-0 bg-transparent cursor-pointer"
       >
         <Search className="h-4 w-4 mr-2" />
         Buscar

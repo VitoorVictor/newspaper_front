@@ -31,6 +31,7 @@ interface CustomMultiSelectProps<T extends OptionType> {
   fieldLabel: keyof T;
   label?: string;
   placeholder?: string;
+  containerClassName?: string;
 }
 
 export function CustomMultiSelect<T extends OptionType>({
@@ -41,6 +42,7 @@ export function CustomMultiSelect<T extends OptionType>({
   fieldLabel,
   label = "Selecione",
   placeholder = "Selecione os tópicos",
+  containerClassName,
 }: CustomMultiSelectProps<T>) {
   const { control } = useFormContext();
 
@@ -49,7 +51,7 @@ export function CustomMultiSelect<T extends OptionType>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="w-full">
+        <FormItem className={containerClassName}>
           <FormLabel>{label} *</FormLabel>
           <Popover>
             <PopoverTrigger asChild>

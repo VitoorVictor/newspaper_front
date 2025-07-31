@@ -15,10 +15,11 @@ const newsService = {
   getAllAdmin: (filters: { search: string; category: string }) => {
     const { search, category } = filters;
     const api = getApiClient();
-    return api.get<PaginatedResponse<INews>>(`/admin/news/${
-      filters.search ? search : "null"
-    }/${filters.category ? category : "null"}
-`);
+    return api.get<PaginatedResponse<INews>>(
+      `/admin/news/${filters.search ? search : "null"}/${
+        filters.category ? category : "null"
+      } `
+    );
   },
   getById: (id: number) => {
     const api = getApiClient();
