@@ -1,8 +1,8 @@
-export default function HomePage() {
+export default function ColunaEmpresarialPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <h1 className="text-4xl font-semibold text-gray-700 tracking-wide">
-        Página Home em criação... 🏗️
+        Coluna Empresarial em breve 🚀
       </h1>
     </div>
   );
