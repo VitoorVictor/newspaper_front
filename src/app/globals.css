@@ -123,4 +123,29 @@
   .prose {
     word-break: break-all;
   }
+
+  .scrollbar {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--scroll-thumb) transparent; /* Firefox */
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb, rgba(100, 100, 100, 0.4));
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  .scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }

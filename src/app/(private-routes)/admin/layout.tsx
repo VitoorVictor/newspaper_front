@@ -10,7 +10,6 @@ interface AdminLayoutProps {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   const session = await auth();
-  console.log(session);
   if (!session?.user || session === null) {
     notFound();
   }

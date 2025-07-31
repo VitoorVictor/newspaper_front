@@ -31,6 +31,37 @@ export const data = [
     ],
   },
   {
+    title: "Navegação",
+    url: "#",
+    session: false,
+    items: [
+      {
+        title: "Início",
+        url: "",
+      },
+      {
+        title: "Notícias",
+        url: "/noticias",
+      },
+      {
+        title: "Guia Industrial",
+        url: "/guia-industrial",
+      },
+      {
+        title: "Coluna Empresarial",
+        url: "/coluna-empresarial",
+      },
+      {
+        title: "Coluna Social",
+        url: "/coluna-social",
+      },
+      {
+        title: "Edições",
+        url: "/edicoes",
+      },
+    ],
+  },
+  {
     title: "Todas as Editorias",
     url: "#",
     session: false,
@@ -83,37 +114,6 @@ export const data = [
       {
         title: "Examples",
         url: "#",
-      },
-    ],
-  },
-  {
-    title: "Navegação",
-    url: "#",
-    session: false,
-    items: [
-      {
-        title: "Início",
-        url: "/",
-      },
-      {
-        title: "Notícias",
-        url: "/noticias",
-      },
-      {
-        title: "Guia Industrial",
-        url: "/guia-industrial",
-      },
-      {
-        title: "Coluna Empresarial",
-        url: "/coluna-empresarial",
-      },
-      {
-        title: "Coluna Social",
-        url: "/coluna-social",
-      },
-      {
-        title: "Edições",
-        url: "/edicoes",
       },
     ],
   },
