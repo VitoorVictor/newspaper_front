@@ -60,8 +60,10 @@ export const useCreateNews = () => {
 export const useUpdateNews = (id: number) => {
   const queryClient = useQueryClient();
 
+  if (!id) null;
+
   return useMutation({
-    mutationFn: (data: Partial<INews>) => newsService.update(id, data),
+    mutationFn: (data: FormData) => newsService.update(id, data),
     onSuccess: () => {
       toast.success("Notícia atualizada com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["news"] });

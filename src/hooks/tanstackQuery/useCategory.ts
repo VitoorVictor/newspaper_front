@@ -13,9 +13,9 @@ export const useCategories = () => {
   });
 };
 
-export const useAdminCategories = () => {
+export const useCategoriesAdmin = () => {
   return useQuery({
-    queryKey: ["category"],
+    queryKey: ["categoryAdmin"],
     queryFn: () =>
       categoryService.getAllAdmin().catch((error) => {
         throw error;

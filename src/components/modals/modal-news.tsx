@@ -29,7 +29,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/rich-text-editor";
-import { useCreateNews, useNewsById } from "@/hooks/tanstackQuery/useNews";
+import {
+  useCreateNews,
+  useNewsById,
+  useUpdateNews,
+} from "@/hooks/tanstackQuery/useNews";
 import { FileUpload } from "../file-upload";
 import { ICategory } from "@/interfaces/category";
 import { useEffect } from "react";
@@ -46,9 +50,11 @@ const newsSchema = z.object({
     .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
     .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
   content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
-  image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
-    message: "Uma imagem válida é obrigatória",
-  }),
+  image_url: z
+    .custom<File>((file) => file instanceof File && file.size > 0, {
+      message: "Uma imagem válida é obrigatória",
+    })
+    .or(z.string()),
   badge: z.string().optional().nullable(),
   top_position: z.string().optional().nullable(),
   status: z.literal("published").or(z.literal("draft")),
@@ -100,16 +106,9 @@ export const ModalNews = ({
   });
 
   const isUpdate = Boolean(id);
-  const {
-    reset,
-    setValue,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = form;
-  console.log("Erros:", errors);
-
+  const { reset, setValue, handleSubmit, control } = form;
   const createNews = useCreateNews();
+  const updateNews = useUpdateNews(id!);
   const { data: news, isLoading } = useNewsById(id);
 
   useEffect(() => {
@@ -117,7 +116,10 @@ export const ModalNews = ({
       setValue("title", news.data.title);
       setValue("sub_title", news.data.sub_title);
       setValue("badge", news.data.badge);
-      setValue("categories", news.data.categories);
+      setValue(
+        "category_ids",
+        news.data.categories.map((category) => category.id)
+      );
       setValue("content", news.data.content);
       setValue("created_at", news.data.created_at);
       setValue("updated_at", news.data.updated_at);
@@ -130,19 +132,27 @@ export const ModalNews = ({
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image_url" && value instanceof File) {
-        formData.append("image_url", value); // envia como arquivo
+        formData.append("image_url", value);
       } else if (key === "category_ids" && Array.isArray(value)) {
         value.forEach((id) => formData.append("category_ids[]", String(id)));
       } else if (value !== null && value !== undefined) {
         formData.append(key, String(value));
       }
     });
-    const res = await createNews.mutateAsync(formData);
+    if (isUpdate) {
+      formData.append("_method", "put");
+    }
+    const res = isUpdate
+      ? await updateNews.mutateAsync(formData)
+      : await createNews.mutateAsync(formData);
     if (res) {
       reset();
       onOpenChange(false);
     }
   };
+
+  if (isLoading) return null;
+
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
       <DialogContent className="md:max-w-4xl w-full aspace-y-6">
@@ -231,6 +241,11 @@ export const ModalNews = ({
                         }}
                         placeholder="Arraste uma imagem ou clique para selecionar"
                         maxSize={5}
+                        hasPreview={
+                          isUpdate
+                            ? `http://localhost:8000${news?.data.image_url}`
+                            : ""
+                        }
                       />
                     </FormControl>
                     <FormDescription>

@@ -22,7 +22,7 @@ import { Button } from "../ui/button";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { useAdminCategories } from "@/hooks/tanstackQuery/useCategory";
+import { useCategories } from "@/hooks/tanstackQuery/useCategory";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   session: Session | null;
@@ -33,7 +33,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
   const { setOpen } = useSidebar();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const { data: categories } = useAdminCategories();
+  const { data: categories } = useCategories();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -128,7 +128,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {categories.data.data.map((category) => (
+                {categories.data.map((category) => (
                   <SidebarMenuItem key={category.id}>
                     <SidebarMenuButton
                       asChild

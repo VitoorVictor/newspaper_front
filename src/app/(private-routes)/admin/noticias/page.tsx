@@ -20,7 +20,8 @@ import { ModalNews } from "@/components/modals/modal-news";
 import { ModalCategory } from "@/components/modals/modal-category";
 import { useAdminNews, useDeleteNews } from "@/hooks/tanstackQuery/useNews";
 import {
-  useAdminCategories,
+  useCategoriesAdmin,
+  useCategories,
   useDeleteCategory,
 } from "@/hooks/tanstackQuery/useCategory";
 import { getCategoriesColumns, getNewsColumns } from "./columns";
@@ -51,13 +52,17 @@ export default function AdminNoticias() {
     isLoading: loadingNews,
     isError: errorNews,
   } = useAdminNews({ search: pesquisaNews, category: filtroCategory });
+  const { data: categories, isLoading: loadingCategories } = useCategories();
   const {
-    data: categories,
-    isLoading: loadingCategories,
-    isError: errorCategories,
-  } = useAdminCategories();
+    data: categoriesAdmin,
+    isLoading: loadingCategoriesAdmin,
+    isError: errorCategoriesAdmin,
+  } = useCategoriesAdmin();
   const deleteNewsMutation = useDeleteNews();
   const deleteCategoryMutation = useDeleteCategory();
+
+  console.log(categories?.data);
+  console.log("show modal", showModalNews && categories);
 
   //edits
   const handleEditNews = (item: INews) => {
@@ -119,7 +124,7 @@ export default function AdminNoticias() {
                       setSelectedNews(null);
                     }}
                     title="Nova Notícia"
-                    categories={categories.data.data}
+                    categories={categories.data}
                     id={selectedNews?.id}
                   />
                 )}
@@ -149,7 +154,7 @@ export default function AdminNoticias() {
                   <SelectContent>
                     <SelectItem value="all">Todas as editorias</SelectItem>
                     {categories &&
-                      categories.data.data.map((category) => (
+                      categories.data.map((category) => (
                         <SelectItem key={category.id} value={category.name}>
                           {category.name}
                         </SelectItem>
@@ -194,11 +199,12 @@ export default function AdminNoticias() {
               </div>
             </CardHeader>
             <CardContent>
-              {loadingCategories || (!categories && !errorCategories) ? (
+              {loadingCategoriesAdmin ||
+              (!categoriesAdmin && !errorCategoriesAdmin) ? (
                 <TableSkeleton rows={6} cols={5} />
               ) : (
                 <GenericTable
-                  data={categories?.data.data ?? []}
+                  data={categoriesAdmin?.data.data ?? []}
                   columns={categoriesColumns}
                   getRowKey={(item) => item.id}
                 />

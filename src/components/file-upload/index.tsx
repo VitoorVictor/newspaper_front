@@ -11,6 +11,7 @@ interface FileUploadProps {
   accept: string;
   onFileSelect: (file: File, dataUrl: string) => void;
   placeholder: string;
+  hasPreview?: string;
   maxSize?: number; // em MB
 }
 
@@ -18,10 +19,11 @@ export function FileUpload({
   accept,
   onFileSelect,
   placeholder,
+  hasPreview,
   maxSize = 10,
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(hasPreview ?? null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {

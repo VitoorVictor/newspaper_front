@@ -33,15 +33,13 @@ const newsService = {
       },
     });
   },
-  update: (id: number, data: Partial<any>) => {
+  update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value);
-      }
+    return api.put<INews>(`/news/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
-    return api.put<INews>(`/news/${id}`, formData);
   },
   delete: (id: number) => {
     const api = getApiClient();

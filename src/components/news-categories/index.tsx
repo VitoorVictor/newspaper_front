@@ -1,26 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-
-const categories = [
-  { name: "Política" },
-  { name: "Economia" },
-  { name: "Internacional" },
-  { name: "Negócios" },
-  { name: "Tecnologia" },
-  { name: "Energia" },
-  { name: "Automotivo" },
-  { name: "Saúde" },
-  { name: "Entretenimento" },
-];
+import { useCategories } from "@/hooks/tanstackQuery/useCategory";
 
 export function NewsCategories() {
+  const { data: categories } = useCategories();
   return (
     <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
       <div className="container mx-auto px-4">
         <div className="flex justify-center items-center gap-2 py-4 overflow-x-auto scrollbar-hide">
-          {categories.map((category, index) => {
+          {categories?.data.map((category, index) => {
             return (
               <Button
                 key={index}
