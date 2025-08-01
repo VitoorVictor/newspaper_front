@@ -35,7 +35,7 @@ const newsService = {
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<INews>(`/news/${id}`, formData, {
+    return api.post<INews>(`/news/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
