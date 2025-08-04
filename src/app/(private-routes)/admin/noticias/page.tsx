@@ -123,7 +123,9 @@ export default function AdminNoticias() {
                       setShowModalNews(open);
                       setSelectedNews(null);
                     }}
-                    title="Nova Notícia"
+                    title={`${
+                      selectedNews?.id ? "Atualizar " : "Nova "
+                    } Notícia`}
                     categories={categories.data}
                     id={selectedNews?.id}
                   />
@@ -192,7 +194,9 @@ export default function AdminNoticias() {
                       setShowModalCategory(open);
                       setSelectedCategory(null);
                     }}
-                    title="Nova Editoria"
+                    title={`${
+                      selectedCategory?.id ? "Atualizar " : "Nova "
+                    } Editoria`}
                     id={selectedCategory?.id}
                   />
                 )}

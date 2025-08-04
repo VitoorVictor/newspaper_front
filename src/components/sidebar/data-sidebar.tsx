@@ -28,6 +28,10 @@ export const data = [
         title: "Edições",
         url: "/admin/edicoes",
       },
+      {
+        title: "Usuários",
+        url: "/admin/usuarios",
+      },
     ],
   },
   {

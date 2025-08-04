@@ -8,13 +8,12 @@ function getApiClient() {
 }
 
 const userService = {
-  getAll: () => {
+  getAll: (filters: { search: string }) => {
+    const { search } = filters;
     const api = getApiClient();
-    return api.get<IUser[]>("/users");
-  },
-  getAllAdmin: () => {
-    const api = getApiClient();
-    return api.get<PaginatedResponse<IUser>>("/admin/users");
+    return api.get<PaginatedResponse<IUser>>(
+      `/users/${filters.search ? search : "null"}`
+    );
   },
   getById: (id: number) => {
     const api = getApiClient();
