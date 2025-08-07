@@ -1,0 +1,38 @@
+import { IIndustrialGuide } from "./../interfaces/industrial-guide";
+import { getCookie } from "cookies-next";
+import { createApi } from "./api";
+
+function getApiClient() {
+  const token = getCookie("access_token");
+  return createApi(String(token));
+}
+
+const industrialGuideService = {
+  getAll: (filters: { search: string; category: string }) => {
+    const { search, category } = filters;
+    const api = getApiClient();
+    return api.get<PaginatedResponse<IIndustrialGuide>>(
+      `/industrial-guide/${filters.search ? search : "null"}/${
+        filters.category ? category : "null"
+      } `
+    );
+  },
+  getById: (id: number) => {
+    const api = getApiClient();
+    return api.get<IIndustrialGuide>(`/industrial-guide/${id}`);
+  },
+  create: (data: { name: string }) => {
+    const api = getApiClient();
+    return api.post<IIndustrialGuide>("/admin/industrial-guide", data);
+  },
+  update: (id: number, data: Partial<{ name: string }>) => {
+    const api = getApiClient();
+    return api.put<IIndustrialGuide>(`/admin/industrial-guide/${id}`, data);
+  },
+  delete: (id: number) => {
+    const api = getApiClient();
+    return api.delete(`/admin/industrial-guide/${id}`);
+  },
+};
+
+export default industrialGuideService;

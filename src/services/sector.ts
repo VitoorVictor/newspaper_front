@@ -1,4 +1,4 @@
-import { ICategory } from "./../interfaces/category";
+import { ISector } from "./../interfaces/sector";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 
@@ -7,31 +7,31 @@ function getApiClient() {
   return createApi(String(token));
 }
 
-const categoryService = {
+const sectorService = {
   getAll: () => {
     const api = getApiClient();
-    return api.get<ICategory[]>("/categories");
+    return api.get<ISector[]>("/sectors");
   },
   getById: (id: number) => {
     const api = getApiClient();
-    return api.get<ICategory>(`/categories/${id}`);
+    return api.get<ISector>(`/sectors/${id}`);
   },
   getAllPanel: () => {
     const api = getApiClient();
-    return api.get<PaginatedResponse<ICategory>>("/admin/categories");
+    return api.get<PaginatedResponse<ISector>>("/admin/sectors");
   },
   create: (data: { name: string }) => {
     const api = getApiClient();
-    return api.post<ICategory>("/admin/categories", data);
+    return api.post<ISector>("/admin/sectors", data);
   },
   update: (id: number, data: Partial<{ name: string }>) => {
     const api = getApiClient();
-    return api.put<ICategory>(`/admin/categories/${id}`, data);
+    return api.put<ISector>(`/admin/sectors/${id}`, data);
   },
   delete: (id: number) => {
     const api = getApiClient();
-    return api.delete(`/admin/categories/${id}`);
+    return api.delete(`/admin/sectors/${id}`);
   },
 };
 
-export default categoryService;
+export default sectorService;

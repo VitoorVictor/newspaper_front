@@ -17,7 +17,7 @@ export const useAdminNews = (filters: { search: string; category: string }) => {
   return useQuery({
     queryKey: ["news", filters],
     queryFn: () =>
-      newsService.getAllAdmin(filters).catch((error) => {
+      newsService.getAllPanel(filters).catch((error) => {
         throw error;
       }),
   });

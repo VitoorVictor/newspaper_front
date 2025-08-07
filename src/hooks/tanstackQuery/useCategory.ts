@@ -17,7 +17,7 @@ export const useCategoriesAdmin = () => {
   return useQuery({
     queryKey: ["categoryAdmin"],
     queryFn: () =>
-      categoryService.getAllAdmin().catch((error) => {
+      categoryService.getAllPanel().catch((error) => {
         throw error;
       }),
   });

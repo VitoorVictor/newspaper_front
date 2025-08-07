@@ -12,7 +12,11 @@ const newsService = {
     const api = getApiClient();
     return api.get<INews[]>("/news");
   },
-  getAllAdmin: (filters: { search: string; category: string }) => {
+  getById: (id: number) => {
+    const api = getApiClient();
+    return api.get<INews>(`/news/${id}`);
+  },
+  getAllPanel: (filters: { search: string; category: string }) => {
     const { search, category } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<INews>>(
@@ -21,13 +25,9 @@ const newsService = {
       } `
     );
   },
-  getById: (id: number) => {
-    const api = getApiClient();
-    return api.get<INews>(`/news/${id}`);
-  },
   create: (formData: FormData) => {
     const api = getApiClient();
-    return api.post<INews>("/news", formData, {
+    return api.post<INews>("/admin/news", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -35,7 +35,7 @@ const newsService = {
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.post<INews>(`/news/${id}`, formData, {
+    return api.post<INews>(`/admin/news/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -43,7 +43,7 @@ const newsService = {
   },
   delete: (id: number) => {
     const api = getApiClient();
-    return api.delete(`/news/${id}`);
+    return api.delete(`/admin/news/${id}`);
   },
 };
 

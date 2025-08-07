@@ -12,24 +12,24 @@ const userService = {
     const { search } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<IUser>>(
-      `/users/${filters.search ? search : "null"}`
+      `/admin/users/${filters.search ? search : "null"}`
     );
   },
   getById: (id: number) => {
     const api = getApiClient();
-    return api.get<IUser>(`/users/${id}`);
+    return api.get<IUser>(`/admin/users/${id}`);
   },
   create: (data: any) => {
     const api = getApiClient();
-    return api.post<IUser>("/users", data);
+    return api.post<IUser>("/admin/users", data);
   },
   update: (id: number, data: Partial<any>) => {
     const api = getApiClient();
-    return api.put<IUser>(`/users/${id}`, data);
+    return api.put<IUser>(`/admin/users/${id}`, data);
   },
   delete: (id: number) => {
     const api = getApiClient();
-    return api.delete(`/users/${id}`);
+    return api.delete(`/admin/users/${id}`);
   },
 };
 
