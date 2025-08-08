@@ -15,7 +15,7 @@ export const useSectors = () => {
 
 export const useSectorsPanel = () => {
   return useQuery({
-    queryKey: ["sector"],
+    queryKey: ["sector", "panel"],
     queryFn: () =>
       sectorService.getAllPanel().catch((error) => {
         throw error;

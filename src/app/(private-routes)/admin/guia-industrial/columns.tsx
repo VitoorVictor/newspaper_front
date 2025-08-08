@@ -6,7 +6,7 @@ import { IIndustrialGuide } from "@/interfaces/industrial-guide";
 import { ISector } from "@/interfaces/sector";
 
 // Colunas para Guia Industrial
-export const getInsdustrialGuideColumns = ({
+export const getIndustrialGuideColumns = ({
   onEdit,
   onDelete,
 }: {
@@ -21,6 +21,35 @@ export const getInsdustrialGuideColumns = ({
     ),
   },
   {
+    key: "sector_ids",
+    title: "Setor(s)",
+    render: (item: IIndustrialGuide) => (
+      <div className="flex gap-1">
+        {item.sectors.map((sector, index) => (
+          <Badge
+            variant="outline"
+            className={index > 2 ? "hidden" : ""}
+            key={index}
+          >
+            {sector.name}
+          </Badge>
+        ))}
+      </div>
+    ),
+  },
+  {
+    key: "address",
+    title: "Endereço",
+    render: (item: IIndustrialGuide) =>
+      item.address ? (
+        <span className="font-medium">
+          {item.address} - {item.number}
+        </span>
+      ) : (
+        <></>
+      ),
+  },
+  {
     key: "slug",
     title: "Referência",
     render: (item: IIndustrialGuide) => (
@@ -30,15 +59,6 @@ export const getInsdustrialGuideColumns = ({
       >
         <Badge variant="outline">{item.slug}</Badge>
       </button>
-    ),
-  },
-  {
-    key: "address",
-    title: "Endereço",
-    render: (item: IIndustrialGuide) => (
-      <span className="font-medium">
-        {item.address} - {item.number}
-      </span>
     ),
   },
   {

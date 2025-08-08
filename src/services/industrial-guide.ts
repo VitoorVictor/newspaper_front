@@ -8,22 +8,27 @@ function getApiClient() {
 }
 
 const industrialGuideService = {
-  getAll: (filters: { search: string; category: string }) => {
-    const { search, category } = filters;
+  getAll: (filters: { search: string; sector: string }) => {
+    const { search, sector } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<IIndustrialGuide>>(
-      `/industrial-guide/${filters.search ? search : "null"}/${
-        filters.category ? category : "null"
-      } `
+      `/industrial-guides-sector/${filters.sector ? sector : "null"}/${
+        filters.search ? search : "null"
+      }
+      `
     );
   },
   getById: (id: number) => {
     const api = getApiClient();
     return api.get<IIndustrialGuide>(`/industrial-guide/${id}`);
   },
-  create: (data: { name: string }) => {
+  create: (formData: FormData) => {
     const api = getApiClient();
-    return api.post<IIndustrialGuide>("/admin/industrial-guide", data);
+    return api.post<IIndustrialGuide>("/admin/industrial-guide", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();

@@ -15,7 +15,7 @@ export const useCategories = () => {
 
 export const useCategoriesPanel = () => {
   return useQuery({
-    queryKey: ["category"],
+    queryKey: ["category", "panel"],
     queryFn: () =>
       categoryService.getAllPanel().catch((error) => {
         throw error;

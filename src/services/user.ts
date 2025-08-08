@@ -17,7 +17,7 @@ const userService = {
   },
   getById: (id: number) => {
     const api = getApiClient();
-    return api.get<IUser>(`/admin/users/${id}`);
+    return api.get<IUser>(`/admin/user/${id}`);
   },
   create: (data: any) => {
     const api = getApiClient();

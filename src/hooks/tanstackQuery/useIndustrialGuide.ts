@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export const useIndustrialGuide = (filters: {
   search: string;
-  category: string;
+  sector: string;
 }) => {
   return useQuery({
     queryKey: ["industrial-guide", filters],

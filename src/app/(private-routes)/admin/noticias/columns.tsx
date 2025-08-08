@@ -20,7 +20,7 @@ export const getNewsColumns = ({
   },
   {
     key: "category_ids",
-    title: "Editoria",
+    title: "Editoria(s)",
     render: (item: INews) => (
       <div className="flex gap-1">
         {item.categories.map((category, index) => (

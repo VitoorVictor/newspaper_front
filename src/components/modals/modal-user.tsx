@@ -19,30 +19,36 @@ import {
   useUserById,
 } from "@/hooks/tanstackQuery/useUser";
 
-const userSchema = z
-  .object({
-    name: z
-      .string({ message: "Obrigatório" })
-      .min(5, "O nome deve ter pelo menos 3 caracteres")
-      .max(200, "O nome deve ter no máximo 255 caracteres"),
-    email: z
-      .string({ message: "Obrigatório" })
-      .email({ message: "Deve ser um email válido" }),
-    password: z
-      .string({ message: "Obrigatório" })
-      .min(6, "A senha deve ter pelo menos 6 caracteres")
-      .max(200, "A senha deve ter no máximo 255 caracteres"),
-    password_confirmation: z
-      .string({ message: "Obrigatório" })
-      .min(6, "A senha deve ter pelo menos 6 caracteres")
-      .max(200, "A senha deve ter no máximo 255 caracteres"),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "As senhas não coincidem",
-    path: ["password_confirmation"],
-  });
+const getUserSchema = (isUpdate: boolean) => {
+  return z
+    .object({
+      name: z
+        .string({ message: "Obrigatório" })
+        .min(5, "O nome deve ter pelo menos 5 caracteres")
+        .max(200, "O nome deve ter no máximo 200 caracteres"),
+      email: z
+        .string({ message: "Obrigatório" })
+        .email({ message: "Deve ser um email válido" }),
+      password: isUpdate
+        ? z.string().optional().or(z.literal(""))
+        : z
+            .string({ message: "Obrigatório" })
+            .min(6, "A senha deve ter pelo menos 6 caracteres")
+            .max(200, "A senha deve ter no máximo 200 caracteres"),
+      password_confirmation: isUpdate
+        ? z.string().optional().or(z.literal(""))
+        : z
+            .string({ message: "Obrigatório" })
+            .min(6, "A confirmação deve ter pelo menos 6 caracteres")
+            .max(200, "A confirmação deve ter no máximo 200 caracteres"),
+    })
+    .refine((data) => data.password === data.password_confirmation, {
+      message: "As senhas não coincidem",
+      path: ["password_confirmation"],
+    });
+};
 
-type UserFormData = z.infer<typeof userSchema>;
+type UserFormData = z.infer<ReturnType<typeof getUserSchema>>;
 
 interface ModalUserProps {
   onOpenChange: (open: boolean) => void;
@@ -52,12 +58,10 @@ interface ModalUserProps {
 export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
   const isUpdate = Boolean(id);
   const form = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(getUserSchema(isUpdate)),
     defaultValues: {
       name: "",
       email: "",
-      password: "",
-      password_confirmation: "",
     },
   });
 
@@ -68,7 +72,6 @@ export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
 
   useEffect(() => {
     if (isUpdate && user) {
-      console.log(user.data);
       reset(user.data);
     }
   }, [user, isUpdate, reset]);
@@ -113,22 +116,26 @@ export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
             />
 
             {/* nome */}
-            <CustomInput
-              name="password"
-              label="Senha"
-              description="A senha deve ter mais de 6 caractéres"
-              type="password"
-              required
-            />
+            {!isUpdate && (
+              <CustomInput
+                name="password"
+                label="Senha"
+                description="A senha deve ter mais de 6 caractéres"
+                type="password"
+                required
+              />
+            )}
 
             {/* nome */}
-            <CustomInput
-              name="password_confirmation"
-              label="Confirmação de senha"
-              description="A confirmação deve coincidir com a senha"
-              type="password"
-              required
-            />
+            {!isUpdate && (
+              <CustomInput
+                name="password_confirmation"
+                label="Confirmação de senha"
+                description="A confirmação deve coincidir com a senha"
+                type="password"
+                required
+              />
+            )}
 
             {/* Botões fixos na parte inferior */}
             <DialogFooter className="flex-shrink-0 pt-4 border-t">

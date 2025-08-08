@@ -12,56 +12,51 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
-  useCategoryById,
-  useCreateCategory,
-  useUpdateCategory,
-} from "@/hooks/tanstackQuery/useCategory";
+  useSectorById,
+  useCreateSector,
+  useUpdateSector,
+} from "@/hooks/tanstackQuery/useSector";
 import { useEffect } from "react";
 import { CustomInput } from "../custom-inputs/input";
 
-const categorySchema = z.object({
+const sectorSchema = z.object({
   name: z
     .string({ message: "Obrigatório" })
     .min(5, "O nome deve ter pelo menos 3 caracteres")
     .max(200, "O nome deve ter no máximo 255 caracteres"),
 });
 
-type CategoryFormData = z.infer<typeof categorySchema>;
+type SectorFormData = z.infer<typeof sectorSchema>;
 
-interface ModalCategoryProps {
+interface ModalSectorProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   id?: number;
 }
-export const ModalCategory = ({
-  onOpenChange,
-  title,
-  id,
-}: ModalCategoryProps) => {
+export const ModalSector = ({ onOpenChange, title, id }: ModalSectorProps) => {
   const isUpdate = Boolean(id);
-  const form = useForm<CategoryFormData>({
-    resolver: zodResolver(categorySchema),
+  const form = useForm<SectorFormData>({
+    resolver: zodResolver(sectorSchema),
     defaultValues: {
       name: "",
     },
   });
 
   const { reset, handleSubmit } = form;
-  const createCategory = useCreateCategory();
-  const updateCategory = useUpdateCategory(id!);
-  const { data: categories, isLoading } = useCategoryById(id);
+  const createSector = useCreateSector();
+  const updateSector = useUpdateSector(id!);
+  const { data: sectors } = useSectorById(id);
 
   useEffect(() => {
-    if (isUpdate && categories) {
-      console.log(categories.data);
-      reset(categories.data);
+    if (isUpdate && sectors) {
+      reset(sectors.data);
     }
-  }, [categories, isUpdate, reset]);
+  }, [sectors, isUpdate, reset]);
 
-  const onSubmit = async (data: CategoryFormData) => {
+  const onSubmit = async (data: SectorFormData) => {
     const res = isUpdate
-      ? await updateCategory.mutateAsync(data)
-      : await createCategory.mutateAsync(data);
+      ? await updateSector.mutateAsync(data)
+      : await createSector.mutateAsync(data);
     if (res) {
       reset();
       onOpenChange(false);
@@ -72,7 +67,7 @@ export const ModalCategory = ({
       <DialogContent>
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Preencha os dados da editoria</DialogDescription>
+          <DialogDescription>Preencha os dados do setor</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -84,7 +79,7 @@ export const ModalCategory = ({
             <CustomInput
               name="name"
               label="Nome"
-              placeholder="Digite o nome da editoria"
+              placeholder="Digite o nome do setor"
               required
             />
 
@@ -98,7 +93,7 @@ export const ModalCategory = ({
                 Cancelar
               </Button>
               <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Editoria
+                {isUpdate ? "Atualizar" : "Criar"} Setor
               </Button>
             </DialogFooter>
           </form>

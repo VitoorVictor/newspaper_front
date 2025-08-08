@@ -20,7 +20,7 @@ const newsService = {
     const { search, category } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<INews>>(
-      `/admin/news/${filters.search ? search : "null"}/${
+      `/admin/news/panel/${filters.search ? search : "null"}/${
         filters.category ? category : "null"
       } `
     );

@@ -99,8 +99,12 @@ export default function AdminNoticias() {
 
       <Tabs defaultValue="noticias" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="noticias">Notícias</TabsTrigger>
-          <TabsTrigger value="editorias">Editorias</TabsTrigger>
+          <TabsTrigger value="noticias" className="cursor-pointer">
+            Notícias
+          </TabsTrigger>
+          <TabsTrigger value="editorias" className="cursor-pointer">
+            Editorias
+          </TabsTrigger>
         </TabsList>
 
         {/* Tab de Notícias */}
