@@ -25,9 +25,17 @@ const industrialGuideService = {
     const api = getApiClient();
     return api.post<IIndustrialGuide>("/admin/industrial-guide", data);
   },
-  update: (id: number, data: Partial<{ name: string }>) => {
+  update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<IIndustrialGuide>(`/admin/industrial-guide/${id}`, data);
+    return api.put<IIndustrialGuide>(
+      `/admin/industrial-guide/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
   delete: (id: number) => {
     const api = getApiClient();

@@ -1,45 +1,46 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import newsService from "@/services/news";
+import sectorService from "@/services/sector";
 import { toast } from "react-toastify";
+import { ISector } from "@/interfaces/sector";
 
-export const useNews = () => {
+export const useSectors = () => {
   return useQuery({
-    queryKey: ["news"],
+    queryKey: ["sector"],
     queryFn: () =>
-      newsService.getAll().catch((error) => {
+      sectorService.getAll().catch((error) => {
         throw error;
       }),
   });
 };
 
-export const useNewsPanel = (filters: { search: string; category: string }) => {
+export const useSectorsPanel = () => {
   return useQuery({
-    queryKey: ["news", filters],
+    queryKey: ["sector"],
     queryFn: () =>
-      newsService.getAllPanel(filters).catch((error) => {
+      sectorService.getAllPanel().catch((error) => {
         throw error;
       }),
   });
 };
 
-export const useNewsById = (id?: number) => {
+export const useSectorById = (id?: number) => {
   return useQuery({
     enabled: !!id,
-    queryKey: ["news", id],
+    queryKey: ["sector", id],
     queryFn: () => {
       if (!id) return null;
-      return newsService.getById(id);
+      return sectorService.getById(id);
     },
   });
 };
 
-export const useCreateNews = () => {
+export const useCreateSector = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: newsService.create,
+    mutationFn: sectorService.create,
     onSuccess: () => {
-      toast.success("Notícia criada com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      toast.success("Setor criado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["sector"] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -56,17 +57,17 @@ export const useCreateNews = () => {
   });
 };
 
-export const useUpdateNews = (id: number) => {
+export const useUpdateSector = (id: number) => {
   const queryClient = useQueryClient();
 
   if (!id) null;
 
   return useMutation({
-    mutationFn: (data: FormData) => newsService.update(id, data),
+    mutationFn: (data: Partial<ISector>) => sectorService.update(id, data),
     onSuccess: () => {
-      toast.success("Notícia atualizada com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
-      queryClient.invalidateQueries({ queryKey: ["news", id] });
+      toast.success("Setor atualizado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["sector"] });
+      queryClient.invalidateQueries({ queryKey: ["sector", id] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -83,14 +84,14 @@ export const useUpdateNews = (id: number) => {
   });
 };
 
-export const useDeleteNews = () => {
+export const useDeleteSector = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: newsService.delete,
+    mutationFn: sectorService.delete,
     onSuccess: () => {
-      toast.success("Notícia removida com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      toast.success("Setor removido com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["sector"] });
     },
     onError: (error) => {
       if (error instanceof Error) {

@@ -18,9 +18,9 @@ import AddBtn from "@/components/custom-btns/add-btn";
 import { SearchBar } from "@/components/search-bar";
 import { ModalNews } from "@/components/modals/modal-news";
 import { ModalCategory } from "@/components/modals/modal-category";
-import { useAdminNews, useDeleteNews } from "@/hooks/tanstackQuery/useNews";
+import { useNewsPanel, useDeleteNews } from "@/hooks/tanstackQuery/useNews";
 import {
-  useCategoriesAdmin,
+  useCategoriesPanel,
   useCategories,
   useDeleteCategory,
 } from "@/hooks/tanstackQuery/useCategory";
@@ -36,7 +36,6 @@ export default function AdminNoticias() {
   const [filtroCategory, setFiltroCategory] = useState("");
   const [showModalNews, setShowModalNews] = useState(false);
   const [showModalCategory, setShowModalCategory] = useState(false);
-  const [pesquisaCategory, setPesquisaCategory] = useState("");
   const [pesquisaNews, setPesquisaNews] = useState("");
   const [selectedNews, setSelectedNews] = useState<INews | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
@@ -51,18 +50,15 @@ export default function AdminNoticias() {
     data: news,
     isLoading: loadingNews,
     isError: errorNews,
-  } = useAdminNews({ search: pesquisaNews, category: filtroCategory });
+  } = useNewsPanel({ search: pesquisaNews, category: filtroCategory });
   const { data: categories, isLoading: loadingCategories } = useCategories();
   const {
     data: categoriesAdmin,
     isLoading: loadingCategoriesAdmin,
     isError: errorCategoriesAdmin,
-  } = useCategoriesAdmin();
+  } = useCategoriesPanel();
   const deleteNewsMutation = useDeleteNews();
   const deleteCategoryMutation = useDeleteCategory();
-
-  console.log(categories?.data);
-  console.log("show modal", showModalNews && categories);
 
   //edits
   const handleEditNews = (item: INews) => {

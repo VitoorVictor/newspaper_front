@@ -1,45 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import newsService from "@/services/news";
+import industrialGuideService from "@/services/industrial-guide";
 import { toast } from "react-toastify";
 
-export const useNews = () => {
+export const useIndustrialGuide = (filters: {
+  search: string;
+  category: string;
+}) => {
   return useQuery({
-    queryKey: ["news"],
+    queryKey: ["industrial-guide", filters],
     queryFn: () =>
-      newsService.getAll().catch((error) => {
+      industrialGuideService.getAll(filters).catch((error) => {
         throw error;
       }),
   });
 };
 
-export const useNewsPanel = (filters: { search: string; category: string }) => {
-  return useQuery({
-    queryKey: ["news", filters],
-    queryFn: () =>
-      newsService.getAllPanel(filters).catch((error) => {
-        throw error;
-      }),
-  });
-};
-
-export const useNewsById = (id?: number) => {
+export const useIndustrialGuideById = (id?: number) => {
   return useQuery({
     enabled: !!id,
-    queryKey: ["news", id],
+    queryKey: ["industrial-guide", id],
     queryFn: () => {
       if (!id) return null;
-      return newsService.getById(id);
+      return industrialGuideService.getById(id);
     },
   });
 };
 
-export const useCreateNews = () => {
+export const useCreateIndustrialGuide = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: newsService.create,
+    mutationFn: industrialGuideService.create,
     onSuccess: () => {
-      toast.success("Notícia criada com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      toast.success("Guia industrial criado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["industrial-guide"] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -56,17 +49,17 @@ export const useCreateNews = () => {
   });
 };
 
-export const useUpdateNews = (id: number) => {
+export const useUpdateIndustrialGuide = (id: number) => {
   const queryClient = useQueryClient();
 
   if (!id) null;
 
   return useMutation({
-    mutationFn: (data: FormData) => newsService.update(id, data),
+    mutationFn: (data: FormData) => industrialGuideService.update(id, data),
     onSuccess: () => {
-      toast.success("Notícia atualizada com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
-      queryClient.invalidateQueries({ queryKey: ["news", id] });
+      toast.success("Guia industrial atualizado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["industrial-guide"] });
+      queryClient.invalidateQueries({ queryKey: ["industrial-guide", id] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -83,14 +76,14 @@ export const useUpdateNews = (id: number) => {
   });
 };
 
-export const useDeleteNews = () => {
+export const useDeleteIndustrialGuide = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: newsService.delete,
+    mutationFn: industrialGuideService.delete,
     onSuccess: () => {
-      toast.success("Notícia removida com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      toast.success("Guia industrial removido com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["industrial-guide"] });
     },
     onError: (error) => {
       if (error instanceof Error) {

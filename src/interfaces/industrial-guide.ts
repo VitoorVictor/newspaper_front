@@ -3,7 +3,7 @@ export interface IIndustrialGuide {
   user_id: number;
   name: string;
   slug: string;
-  image_url: string;
+  image_url: File;
   address: string;
   number: string;
   description: string;
