@@ -8,7 +8,7 @@ function getApiClient() {
 }
 
 const industrialGuideService = {
-  getAll: (filters: { search: string; sector: string }) => {
+  getAll: (filters: { search: string; sector: number }) => {
     const { search, sector } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<IIndustrialGuide>>(

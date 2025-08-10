@@ -12,7 +12,7 @@ export const useNews = () => {
   });
 };
 
-export const useNewsPanel = (filters: { search: string; category: string }) => {
+export const useNewsPanel = (filters: { search: string; category: number }) => {
   return useQuery({
     queryKey: ["news", filters],
     queryFn: () =>

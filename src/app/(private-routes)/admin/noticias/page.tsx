@@ -33,7 +33,7 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 
 export default function AdminNoticias() {
   // states
-  const [filtroCategory, setFiltroCategory] = useState("");
+  const [filtroCategory, setFiltroCategory] = useState(0);
   const [showModalNews, setShowModalNews] = useState(false);
   const [showModalCategory, setShowModalCategory] = useState(false);
   const [pesquisaNews, setPesquisaNews] = useState("");
@@ -144,9 +144,9 @@ export default function AdminNoticias() {
                   />
                 </div>
                 <Select
-                  value={filtroCategory}
+                  value={String(filtroCategory)}
                   onValueChange={(value) => {
-                    setFiltroCategory(value === "all" ? "" : value);
+                    setFiltroCategory(value === "0" ? 0 : Number(value));
                   }}
                 >
                   <SelectTrigger className="w-48 cursor-pointer">
@@ -154,10 +154,10 @@ export default function AdminNoticias() {
                     <SelectValue placeholder="Filtrar por editoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas as editorias</SelectItem>
+                    <SelectItem value="0">Todas as editorias</SelectItem>
                     {categories &&
                       categories.data.map((category) => (
-                        <SelectItem key={category.id} value={category.name}>
+                        <SelectItem key={category.id} value={String(category.id)}>
                           {category.name}
                         </SelectItem>
                       ))}

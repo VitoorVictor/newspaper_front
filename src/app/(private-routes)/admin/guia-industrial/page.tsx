@@ -35,7 +35,7 @@ import { ModalIndustrialGuide } from "@/components/modals/modal-industrial-guide
 
 export default function AdminGuiaIndustrialPage() {
   // states
-  const [filtroSector, setFiltroSector] = useState("");
+  const [filtroSector, setFiltroSector] = useState(0);
   const [pesquisaIndustrialGuide, setPesquisaIndustrialGuide] = useState("");
 
   const [showModalIndustrialGuide, setShowModalIndustrialGuide] =
@@ -155,9 +155,9 @@ export default function AdminGuiaIndustrialPage() {
                   />
                 </div>
                 <Select
-                  value={filtroSector}
+                  value={String(filtroSector)}
                   onValueChange={(value) => {
-                    setFiltroSector(value === "all" ? "" : value);
+                    setFiltroSector(value === "0" ? 0 : Number(value));
                   }}
                 >
                   <SelectTrigger className="w-48 cursor-pointer">
@@ -165,10 +165,13 @@ export default function AdminGuiaIndustrialPage() {
                     <SelectValue placeholder="Filtrar por setor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos os setores</SelectItem>
+                    <SelectItem value="0">Todos os setores</SelectItem>
                     {sectors &&
                       sectors.data.map((category) => (
-                        <SelectItem key={category.id} value={category.name}>
+                        <SelectItem
+                          key={category.id}
+                          value={String(category.id)}
+                        >
                           {category.name}
                         </SelectItem>
                       ))}
