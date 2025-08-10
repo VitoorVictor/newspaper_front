@@ -30,57 +30,77 @@ import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 import { CustomInput } from "../custom-inputs/input";
 import { ISector } from "@/interfaces/sector";
 
-const newsSchema = z.object({
-  name: z
-    .string({ message: "Obrigatório" })
-    .min(5, "O título deve ter pelo menos 5 caracteres")
-    .max(200, "O título deve ter no máximo 255 caracteres"),
-  description: z
-    .string()
-    .min(10, "A descrição deve ter pelo menos 10 caracteres")
-    .max(300, "A descrição deve ter no máximo 255 caracteres")
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? null : val))
-    .optional()
-    .nullable(),
-  address: z
-    .string()
-    .min(5, "O endereço deve ter pelo menos 5 caracteres")
-    .max(300, "O endereço deve ter no máximo 255 caracteres")
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? null : val))
-    .optional()
-    .nullable(),
-  number: z
-    .string({ message: "Obrigatório" })
-    .min(1, "O subtítulo deve ter pelo menos 11 caracteres")
-    .max(10, "O subtítulo deve ter no máximo 10 caracteres")
-    .or(z.literal(""))
-    .transform((val) => (val === "" ? null : val))
-    .optional()
-    .nullable(),
-  image_url: z
-    .custom<File>((file) => file instanceof File && file.size > 0, {
-      message: "Uma imagem válida é obrigatória",
-    })
-    .or(z.string()),
-  sector_ids: z.array(z.number(), {
-    message: "Selecione pelo menos um tópico",
-  }),
-  sectors: z
-    .array(
-      z.object({
-        id: z.number(),
-        name: z.string(),
-      })
-    )
-    .optional()
-    .nullable(),
-  created_at: z.string().optional().nullable(),
-  updated_at: z.string().optional().nullable(),
-});
+const getIndustrialGuideSchema = (isUpdate: boolean) =>
+  z.object({
+    name: z
+      .string({ message: "Obrigatório" })
+      .min(5, "O título deve ter pelo menos 5 caracteres")
+      .max(200, "O título deve ter no máximo 255 caracteres"),
 
-type IndustrialGuideFormData = z.infer<typeof newsSchema>;
+    description: z
+      .string()
+      .min(10, "A descrição deve ter pelo menos 10 caracteres")
+      .max(300, "A descrição deve ter no máximo 255 caracteres")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+
+    address: z
+      .string()
+      .min(5, "O endereço deve ter pelo menos 5 caracteres")
+      .max(300, "O endereço deve ter no máximo 255 caracteres")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+
+    number: z
+      .string({ message: "Obrigatório" })
+      .min(1, "O número deve ter pelo menos 1 caractere")
+      .max(10, "O número deve ter no máximo 10 caracteres")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+
+    image_url: isUpdate
+      ? z
+          .custom<File>(
+            (file) => {
+              if (file === undefined || file === null || file === "")
+                return true;
+              return file instanceof File && file.size > 0;
+            },
+            { message: "Imagem inválida" }
+          )
+          .optional()
+          .nullable()
+      : z.custom<File>((file) => file instanceof File && file.size > 0, {
+          message: "Uma imagem válida é obrigatória",
+        }),
+
+    sector_ids: z.array(z.number(), {
+      message: "Selecione pelo menos um tópico",
+    }),
+
+    sectors: z
+      .array(
+        z.object({
+          id: z.number(),
+          name: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
+
+    created_at: z.string().optional().nullable(),
+    updated_at: z.string().optional().nullable(),
+  });
+
+type IndustrialGuideFormData = z.infer<
+  ReturnType<typeof getIndustrialGuideSchema>
+>;
 
 interface ModalIndustrialGuideProps {
   onOpenChange: (open: boolean) => void;
@@ -95,14 +115,15 @@ export const ModalIndustrialGuide = ({
   sectors,
   id,
 }: ModalIndustrialGuideProps) => {
+  const isUpdate = Boolean(id);
+  const industrialGuideSchema = getIndustrialGuideSchema(isUpdate);
   const form = useForm<IndustrialGuideFormData>({
-    resolver: zodResolver(newsSchema),
+    resolver: zodResolver(industrialGuideSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const isUpdate = Boolean(id);
   const { reset, setValue, handleSubmit, control } = form;
   const createIndustrialGuide = useCreateIndustrialGuide();
   const updateIndustrialGuide = useUpdateIndustrialGuide(id!);

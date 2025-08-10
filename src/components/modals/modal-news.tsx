@@ -38,43 +38,57 @@ import { useEffect } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 import { CustomInput } from "../custom-inputs/input";
 
-const newsSchema = z.object({
-  title: z
-    .string({ message: "Obrigatório" })
-    .min(5, "O título deve ter pelo menos 5 caracteres")
-    .max(200, "O título deve ter no máximo 255 caracteres"),
-  sub_title: z
-    .string({ message: "Obrigatório" })
-    .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
-    .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
-  content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
-  image_url: z
-    .custom<File>((file) => file instanceof File && file.size > 0, {
-      message: "Uma imagem válida é obrigatória",
-    })
-    .or(z.string()),
-  badge: z.string().optional().nullable(),
-  top_position: z.string().optional().nullable(),
-  status: z.literal("published").or(z.literal("draft")),
-  category_ids: z
-    .array(z.number(), {
-      message: "Selecione pelo menos um tópico",
-    })
-    .min(1, "A notícia deve ter ao menos 1 categoria."),
-  categories: z
-    .array(
-      z.object({
-        id: z.number(),
-        name: z.string(),
-      })
-    )
-    .optional()
-    .nullable(),
-  created_at: z.string().optional().nullable(),
-  updated_at: z.string().optional().nullable(),
-});
+const getNewsSchema = (isUpdate: boolean) =>
+  z.object({
+    title: z
+      .string({ message: "Obrigatório" })
+      .min(5, "O título deve ter pelo menos 5 caracteres")
+      .max(200, "O título deve ter no máximo 255 caracteres"),
+    sub_title: z
+      .string({ message: "Obrigatório" })
+      .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
+      .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
+    content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
 
-type NewsFormData = z.infer<typeof newsSchema>;
+    image_url: isUpdate
+      ? z
+          .custom<File>(
+            (file) => {
+              // só valida se for um File, senão ignora
+              if (file === undefined || file === null || file === "")
+                return true;
+              return file instanceof File && file.size > 0;
+            },
+            { message: "Imagem inválida" }
+          )
+          .optional()
+          .nullable()
+      : z.custom<File>((file) => file instanceof File && file.size > 0, {
+          message: "Uma imagem válida é obrigatória",
+        }),
+
+    badge: z.string().optional().nullable(),
+    top_position: z.string().optional().nullable(),
+    status: z.literal("published").or(z.literal("draft")),
+    category_ids: z
+      .array(z.number(), {
+        message: "Selecione pelo menos um tópico",
+      })
+      .min(1, "A notícia deve ter ao menos 1 categoria."),
+    categories: z
+      .array(
+        z.object({
+          id: z.number(),
+          name: z.string(),
+        })
+      )
+      .optional()
+      .nullable(),
+    created_at: z.string().optional().nullable(),
+    updated_at: z.string().optional().nullable(),
+  });
+
+type NewsFormData = z.infer<ReturnType<typeof getNewsSchema>>;
 
 interface ModalNewsProps {
   onOpenChange: (open: boolean) => void;
@@ -89,6 +103,8 @@ export const ModalNews = ({
   categories,
   id,
 }: ModalNewsProps) => {
+  const isUpdate = Boolean(id);
+  const newsSchema = getNewsSchema(isUpdate);
   const form = useForm<NewsFormData>({
     resolver: zodResolver(newsSchema),
     defaultValues: {
@@ -105,7 +121,6 @@ export const ModalNews = ({
     },
   });
 
-  const isUpdate = Boolean(id);
   const { reset, setValue, handleSubmit, control } = form;
   const createNews = useCreateNews();
   const updateNews = useUpdateNews(id!);
@@ -124,7 +139,6 @@ export const ModalNews = ({
       setValue("created_at", news.data.created_at);
       setValue("updated_at", news.data.updated_at);
       setValue("top_position", news.data.top_position);
-      setValue("image_url", news.data.image_url);
     }
   }, [news, isUpdate, reset]);
 
