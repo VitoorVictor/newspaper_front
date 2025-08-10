@@ -219,7 +219,10 @@ export default function AdminNoticias() {
       </Tabs>
       <ConfirmDialog
         open={showConfirmDeleteNews}
-        onOpenChange={setShowConfirmDeleteNews}
+        onOpenChange={(open) => {
+          setShowConfirmDeleteNews(open);
+          setSelectedNews(null);
+        }}
         title="Confirmar exclusão"
         description={`Tem certeza que deseja excluir a notícia "${selectedNews?.title}"?`}
         onConfirm={() => {
@@ -227,12 +230,16 @@ export default function AdminNoticias() {
             deleteNewsMutation.mutate(selectedNews.id);
           }
           setShowConfirmDeleteNews(false);
+          setSelectedNews(null);
         }}
       />
 
       <ConfirmDialog
         open={showConfirmDeleteCategory}
-        onOpenChange={setShowConfirmDeleteCategory}
+        onOpenChange={(open) => {
+          setShowConfirmDeleteCategory(open);
+          setSelectedCategory(null);
+        }}
         title="Confirmar exclusão"
         description={`Tem certeza que deseja excluir a editoria "${selectedCategory?.name}"?`}
         onConfirm={() => {
@@ -240,6 +247,7 @@ export default function AdminNoticias() {
             deleteCategoryMutation.mutate(selectedCategory.id);
           }
           setShowConfirmDeleteCategory(false);
+          setSelectedCategory(null);
         }}
       />
     </div>

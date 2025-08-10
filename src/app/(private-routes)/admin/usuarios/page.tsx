@@ -100,7 +100,10 @@ export default function AdminUsu() {
 
       <ConfirmDialog
         open={showConfirmDeleteUser}
-        onOpenChange={setShowConfirmDeleteUser}
+        onOpenChange={(open) => {
+          setShowConfirmDeleteUser(open);
+          setSelectedUser(null);
+        }}
         title="Confirmar exclusão"
         description={`Tem certeza que deseja excluir a editoria "${selectedUser?.name}"?`}
         onConfirm={() => {
@@ -108,6 +111,7 @@ export default function AdminUsu() {
             deleteUserMutation.mutate(selectedUser.id);
           }
           setShowConfirmDeleteUser(false);
+          setSelectedUser(null);
         }}
       />
     </div>

@@ -230,7 +230,10 @@ export default function AdminGuiaIndustrialPage() {
       </Tabs>
       <ConfirmDialog
         open={showConfirmDeleteIndustrialGuide}
-        onOpenChange={setShowConfirmDeleteIndustrialGuide}
+        onOpenChange={(open) => {
+          setShowConfirmDeleteIndustrialGuide(open);
+          setSelectedIndustrialGuide(null);
+        }}
         title="Confirmar exclusão"
         description={`Tem certeza que deseja excluir a industria "${selectedIndustrialGuide?.name}"?`}
         onConfirm={() => {
@@ -238,12 +241,16 @@ export default function AdminGuiaIndustrialPage() {
             deleteIndustrialGuideMutation.mutate(selectedIndustrialGuide.id);
           }
           setShowConfirmDeleteIndustrialGuide(false);
+          setSelectedIndustrialGuide(null);
         }}
       />
 
       <ConfirmDialog
         open={showConfirmDeleteSector}
-        onOpenChange={setShowConfirmDeleteSector}
+        onOpenChange={(open) => {
+          setShowConfirmDeleteSector(open);
+          setSelectedSector(null);
+        }}
         title="Confirmar exclusão"
         description={`Tem certeza que deseja excluir o setor "${selectedSector?.name}"?`}
         onConfirm={() => {
@@ -251,6 +258,7 @@ export default function AdminGuiaIndustrialPage() {
             deleteSectorMutation.mutate(selectedSector.id);
           }
           setShowConfirmDeleteSector(false);
+          setSelectedSector(null);
         }}
       />
     </div>
