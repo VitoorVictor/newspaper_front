@@ -56,9 +56,11 @@ const newsSchema = z.object({
   badge: z.string().optional().nullable(),
   top_position: z.string().optional().nullable(),
   status: z.literal("published").or(z.literal("draft")),
-  category_ids: z.array(z.number(), {
-    message: "Selecione pelo menos um tópico",
-  }),
+  category_ids: z
+    .array(z.number(), {
+      message: "Selecione pelo menos um tópico",
+    })
+    .min(1, "A notícia deve ter ao menos 1 categoria."),
   categories: z
     .array(
       z.object({
@@ -184,7 +186,6 @@ export const ModalNews = ({
                   />
                 </div>
               )}
-
               {/* Título */}
               <CustomInput
                 name="title"
@@ -193,7 +194,6 @@ export const ModalNews = ({
                 description="O título principal da notícia (5-200 caracteres)"
                 required
               />
-
               {/* Subtítulo */}
               <CustomInput
                 name="sub_title"
@@ -202,7 +202,16 @@ export const ModalNews = ({
                 description=" Um resumo ou complemento do título (10-300 caracteres)"
                 required
               />
-
+              {/* Editoria */}
+              <CustomMultiSelect
+                label="Editoria"
+                placeholder="Selecione a editoria"
+                name="category_ids"
+                data={categories}
+                fieldValue="id"
+                fieldLabel="name"
+                containerClassName="w-full"
+              />
               {/* Conteúdo - Rich Text Editor */}
               <FormField
                 control={control}
@@ -223,7 +232,6 @@ export const ModalNews = ({
                   </FormItem>
                 )}
               />
-
               {/* URL da Imagem */}
               <FormField
                 control={control}
@@ -253,17 +261,7 @@ export const ModalNews = ({
                   </FormItem>
                 )}
               />
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Tópico */}
-                <CustomMultiSelect
-                  name="category_ids"
-                  data={categories}
-                  fieldValue="id"
-                  fieldLabel="name"
-                  containerClassName="w-full"
-                />
-
                 {/* Status */}
                 <FormField
                   control={control}
@@ -334,14 +332,13 @@ export const ModalNews = ({
                     </FormItem>
                   )}
                 />
-
-                {/* Título */}
-                <CustomInput
-                  name="badge"
-                  label="Crachá"
-                  placeholder="Digite o crachá da notícia"
-                />
               </div>
+              {/* Crácha */}
+              <CustomInput
+                name="badge"
+                label="Crachá"
+                placeholder="Digite o crachá da notícia"
+              />
             </div>
 
             {/* Botões fixos na parte inferior */}
