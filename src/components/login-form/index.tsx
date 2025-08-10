@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -20,6 +20,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { loginAction } from "@/app/actions/auth";
 import { toast } from "react-toastify";
+import { CustomInput } from "../custom-inputs/input";
 
 const loginSchema = z.object({
   email: z.string().email("Digite um e-mail válido"),
@@ -32,13 +33,15 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
-  });
+  } = form;
 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -64,46 +67,27 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-6">
-              {/* Campo Email */}
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
+          <FormProvider {...form}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-6">
+                {/* Campo Email */}
+                <CustomInput
+                  label="Email"
+                  name="email"
                   placeholder="m@example.com"
-                  {...register("email")}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-              </div>
 
-              {/* Campo Senha */}
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
+                {/* Campo Senha */}
+                <CustomInput label="Senha" name="password" type="password" />
+
+                <div className="flex flex-col gap-3">
+                  <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending ? "Entrando..." : "Login"}
+                  </Button>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
               </div>
-
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={isPending}>
-                  {isPending ? "Entrando..." : "Login"}
-                </Button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </FormProvider>
         </CardContent>
       </Card>
     </div>

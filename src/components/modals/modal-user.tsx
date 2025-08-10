@@ -34,13 +34,31 @@ const getUserSchema = (isUpdate: boolean) => {
         : z
             .string({ message: "Obrigatório" })
             .min(6, "A senha deve ter pelo menos 6 caracteres")
-            .max(200, "A senha deve ter no máximo 200 caracteres"),
+            .max(200, "A senha deve ter no máximo 200 caracteres")
+            .regex(
+              /[A-Z]/,
+              "A senha deve conter pelo menos uma letra maiúscula"
+            )
+            .regex(
+              /[a-z]/,
+              "A senha deve conter pelo menos uma letra minúscula"
+            )
+            .regex(/[0-9]/, "A senha deve conter pelo menos um número"),
       password_confirmation: isUpdate
         ? z.string().optional().or(z.literal(""))
         : z
             .string({ message: "Obrigatório" })
             .min(6, "A confirmação deve ter pelo menos 6 caracteres")
-            .max(200, "A confirmação deve ter no máximo 200 caracteres"),
+            .max(200, "A confirmação deve ter no máximo 200 caracteres")
+            .regex(
+              /[A-Z]/,
+              "A senha deve conter pelo menos uma letra maiúscula"
+            )
+            .regex(
+              /[a-z]/,
+              "A senha deve conter pelo menos uma letra minúscula"
+            )
+            .regex(/[0-9]/, "A senha deve conter pelo menos um número"),
     })
     .refine((data) => data.password === data.password_confirmation, {
       message: "As senhas não coincidem",
