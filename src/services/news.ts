@@ -2,12 +2,7 @@ import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 import { INews } from "@/interfaces/news";
 import axios from "axios";
-import { ICategory } from "@/interfaces/category";
-
-interface ICategoryWithNewsBanners extends ICategory {
-  news: INews[];
-  banners: string[];
-}
+import { ICategoryWithNewsBanners } from "@/interfaces/category";
 
 function getApiClient() {
   const token = getCookie("access_token");

@@ -1,4 +1,7 @@
-import { IIndustrialGuide } from "./../interfaces/industrial-guide";
+import {
+  IIndustrialGuide,
+  IIndustrialGuideWithUsersSectors,
+} from "./../interfaces/industrial-guide";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 
@@ -8,15 +11,15 @@ function getApiClient() {
 }
 
 const industrialGuideService = {
-  getAll: (filters: { search: string; sector: number }) => {
-    const { search, sector } = filters;
+  getAll: (filters: { search: string; sector: number; page: number }) => {
+    const { search, sector, page } = filters;
     const api = getApiClient();
-    return api.get<PaginatedResponse<IIndustrialGuide>>(
-      `/industrial-guides-sector/${filters.sector ? sector : "null"}/${
-        filters.search ? search : "null"
-      }
-      `
-    );
+
+    const url = `/industrial-guides-sector/${sector || "null"}/${
+      search || "null"
+    }${page ? `?page=${page}` : ""}`;
+
+    return api.get<PaginatedResponse<IIndustrialGuideWithUsersSectors>>(url);
   },
   getById: (id: number) => {
     const api = getApiClient();

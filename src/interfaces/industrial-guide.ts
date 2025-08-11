@@ -1,4 +1,5 @@
 import { ISector } from "./sector";
+import { IUser } from "./user";
 
 export interface IIndustrialGuide {
   id: number;
@@ -13,4 +14,9 @@ export interface IIndustrialGuide {
   sectors: ISector[];
   created_at: string | null;
   updated_at: string | null;
+}
+
+export interface IIndustrialGuideWithUsersSectors extends IIndustrialGuide {
+  user: IUser;
+  sectors: ISector[];
 }

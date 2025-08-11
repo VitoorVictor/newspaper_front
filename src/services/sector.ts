@@ -1,6 +1,7 @@
 import { ISector } from "./../interfaces/sector";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
+import axios from "axios";
 
 function getApiClient() {
   const token = getCookie("access_token");
@@ -9,8 +10,7 @@ function getApiClient() {
 
 const sectorService = {
   getAll: () => {
-    const api = getApiClient();
-    return api.get<ISector[]>("/sectors");
+    return axios.get<ISector[]>(`${process.env.API_URL}/sectors`);
   },
   getById: (id: number) => {
     const api = getApiClient();
