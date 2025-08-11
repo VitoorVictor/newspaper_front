@@ -62,7 +62,10 @@ export default async function GuiaIndustrialPage({
               <BannerVertical />
             </div>
           </div>
-          <CustomPagination />
+          <CustomPagination
+            totalPages={dataIndustrialGuide.last_page}
+            currentPage={dataIndustrialGuide.current_page}
+          />
         </>
       )}
     </div>
