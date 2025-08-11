@@ -263,7 +263,7 @@ export const ModalNews = ({
                         maxSize={5}
                         hasPreview={
                           isUpdate
-                            ? `http://localhost:8000${news?.data.image_url}`
+                            ? `${process.env.NEXT_PUBLIC_IMAGE_UR}${news?.data.image_url}`
                             : ""
                         }
                       />

@@ -13,7 +13,7 @@ export interface INews {
   status: "draft" | "published";
   category_ids: number[];
   categories: ICategory[];
-  created_at: string | null;
+  created_at: string;
   updated_at: string | null;
   deleted_at: string | null;
 }

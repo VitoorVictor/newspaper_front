@@ -4,11 +4,12 @@ import { Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
 import ShareBtn from "@/components/custom-btns/share-btn";
+import { formatTimeAgo } from "@/utils/formatTimeAgo";
 
 interface NewsProps {
   title: string;
   description?: string;
-  category: string;
+  badge?: string;
   time: string;
   image: string;
   className?: string;
@@ -17,7 +18,7 @@ interface NewsProps {
 export function NewsMain({
   title,
   description = "",
-  category,
+  badge,
   time,
   image,
   className,
@@ -33,9 +34,11 @@ export function NewsMain({
       }}
     >
       <div className="relative h-full lg:aspect-video overflow-hidden bg-gradient-to-t from-black/80 via-black/40 to-black/20">
-        <Badge className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-secondary text-white font-medium px-2 sm:px-3 py-0.5 sm:py-1 z-10">
-          {category}
-        </Badge>
+        {badge && (
+          <Badge className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-secondary text-white font-medium px-2 sm:px-3 py-0.5 sm:py-1 z-10">
+            {badge}
+          </Badge>
+        )}
 
         <ShareBtn />
 
@@ -49,7 +52,7 @@ export function NewsMain({
           <div className="flex justify-between items-center gap-3 text-xs sm:text-sm">
             <div className="flex items-center gap-1 text-white/80">
               <Clock className="h-4 w-4" />
-              {time}
+              Publicada {formatTimeAgo(time)}
             </div>
             <Button
               variant="outline"
@@ -67,7 +70,7 @@ export function NewsMain({
 
 export function NewsSecondary({
   title,
-  category,
+  badge,
   time,
   image,
   className,
@@ -91,9 +94,11 @@ export function NewsSecondary({
       {/* Conteúdo do lado direito */}
       <div className="flex flex-col justify-between p-3 flex-1 min-w-0">
         <div className="flex flex-col flex-1 min-h-0">
-          <Badge className="mb-2 text-xs px-2 py-0.5 bg-secondary">
-            {category}
-          </Badge>
+          {badge && (
+            <Badge className="mb-2 text-xs px-2 py-0.5 bg-secondary">
+              {badge}
+            </Badge>
+          )}
 
           <h3
             className="w-full overflow-hidden text-ellipsis line-clamp-2 font-bold text-gray-900 text-lg group-hover:text-[#182641] transition-colors duration-200"
@@ -103,9 +108,9 @@ export function NewsSecondary({
           </h3>
         </div>
 
-        <div className="flex justify-end gap-1 text-xs text-gray-500">
+        <div className="flex justify-end items-center gap-1 text-xs text-gray-500">
           <Clock className="h-3 w-3" />
-          <span>{time}</span>
+          <span>Publicada {formatTimeAgo(time)}</span>
         </div>
       </div>
     </Card>
@@ -115,7 +120,7 @@ export function NewsSecondary({
 export function NewsMainEditorial({
   title,
   description,
-  category,
+  badge,
   time,
   image,
 }: NewsProps) {
@@ -134,7 +139,7 @@ export function NewsMainEditorial({
 
         {/* Badge da categoria */}
         <Badge className="absolute top-3 left-3 bg-[#182641] text-white text-xs px-2 py-1 z-10">
-          {category}
+          {badge}
         </Badge>
 
         {/* Botão de compartilhar */}
@@ -178,7 +183,7 @@ export function NewsMainEditorial({
 
 export function NewsSecondaryEditorial({
   title,
-  category,
+  badge,
   time,
   image,
   className,
@@ -195,7 +200,7 @@ export function NewsSecondaryEditorial({
     >
       <div className="relative h-48 sm:h-56 lg:h-52 overflow-hidden bg-gradient-to-t from-black/70 via-black/30 to-transparent">
         <Badge className="absolute top-2 left-2 bg-secondary text-white font-medium px-2 py-0.5 z-10">
-          {category}
+          {badge}
         </Badge>
 
         <Button

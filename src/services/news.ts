@@ -1,6 +1,13 @@
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 import { INews } from "@/interfaces/news";
+import axios from "axios";
+import { ICategory } from "@/interfaces/category";
+
+interface ICategoryWithNewsBanners extends ICategory {
+  news: INews[];
+  banners: string[];
+}
 
 function getApiClient() {
   const token = getCookie("access_token");
@@ -9,8 +16,10 @@ function getApiClient() {
 
 const newsService = {
   getAll: () => {
-    const api = getApiClient();
-    return api.get<INews[]>("/news");
+    return axios.get<{
+      principais: INews[];
+      editorias: ICategoryWithNewsBanners[];
+    }>(`${process.env.API_URL}/news`);
   },
   getById: (id: number) => {
     const api = getApiClient();
