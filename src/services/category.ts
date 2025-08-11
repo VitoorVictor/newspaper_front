@@ -1,6 +1,7 @@
 import { ICategory } from "./../interfaces/category";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
+import axios from "axios";
 
 function getApiClient() {
   const token = getCookie("access_token");
@@ -9,8 +10,7 @@ function getApiClient() {
 
 const categoryService = {
   getAll: () => {
-    const api = getApiClient();
-    return api.get<ICategory[]>("/categories");
+    return axios.get<ICategory[]>(`${process.env.API_URL}/categories`);
   },
   getById: (id: number) => {
     const api = getApiClient();

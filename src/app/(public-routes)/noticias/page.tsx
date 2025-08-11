@@ -7,13 +7,14 @@ import {
 import { NewsCategories } from "@/components/news-categories";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { editorialSections } from "@/data";
+import categoryService from "@/services/category";
 import newsService from "@/services/news";
 import { ArrowRight } from "lucide-react";
 
 export default async function NoticiasPage() {
-  const { data } = await newsService.getAll();
-  const { principais, editorias } = data;
+  const { data: dataNews } = await newsService.getAll();
+  const { data: dataCategories } = await categoryService.getAll();
+  const { principais, editorias } = dataNews;
 
   const hasNewsByCategory = Boolean(
     editorias.find((editoria) => editoria.news.length > 0)
@@ -21,20 +22,16 @@ export default async function NoticiasPage() {
 
   return (
     <div>
-      <NewsCategories />
+      {dataCategories && <NewsCategories categories={dataCategories} />}
       <div className="container mx-auto my-8 px-4 space-y-6">
         <BannerHorizontal />
         <PageHeader
           title="Notícias"
           subtitle="Fique por dentro das últimas notícias"
           placeholder="Buscar notícias, empresas, temas..."
-          quickSearch={[
-            "Tecnologia",
-            "Economia",
-            "Sustentabilidade",
-            "Inovação",
-            "Mercado",
-          ]}
+          quickSearch={dataCategories
+            .slice(0, 5)
+            .map((category) => category.name)}
         />
 
         {/* Layout Principal com Secundárias ao lado */}

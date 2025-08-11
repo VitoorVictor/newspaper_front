@@ -1,20 +1,20 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { useCategories } from "@/hooks/tanstackQuery/useCategory";
+import { ICategory } from "@/interfaces/category";
 
-export function NewsCategories() {
-  const { data: categories } = useCategories();
+interface NewsCategoriesProps {
+  categories: ICategory[];
+}
+
+export function NewsCategories({ categories }: NewsCategoriesProps) {
   return (
     <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
       <div className="container mx-auto px-4">
         <div className="flex justify-center items-center gap-2 py-4 overflow-x-auto scrollbar-hide">
-          {categories?.data.map((category, index) => {
-            return (
-              <Button
-                key={index}
-                variant={false ? "default" : "ghost"}
-                className={`
+          {categories.map((category, index) => (
+            <Button
+              key={index}
+              variant={false ? "default" : "ghost"}
+              className={`
                   flex items-center gap-2 whitespace-nowrap min-w-fit px-4 py-2 h-10
                   ${
                     false
@@ -22,11 +22,10 @@ export function NewsCategories() {
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }
                 `}
-              >
-                <span className="font-medium">{category.name}</span>
-              </Button>
-            );
-          })}
+            >
+              <span className="font-medium">{category.name}</span>
+            </Button>
+          ))}
         </div>
       </div>
     </div>
