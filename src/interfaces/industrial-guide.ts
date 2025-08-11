@@ -12,8 +12,8 @@ export interface IIndustrialGuide {
   description: string;
   sector_ids: number[];
   sectors: ISector[];
-  created_at: string | null;
-  updated_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface IIndustrialGuideWithUsersSectors extends IIndustrialGuide {

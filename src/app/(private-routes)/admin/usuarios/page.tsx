@@ -15,7 +15,7 @@ import { ICategory } from "@/interfaces/category";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useDeleteUser, useUsers } from "@/hooks/tanstackQuery/useUser";
 
-export default function AdminUsu() {
+export default function AdminUser() {
   //states
   const [showModalUser, setShowModalUser] = useState(false);
   const [searchUsers, setSearchUsers] = useState("");

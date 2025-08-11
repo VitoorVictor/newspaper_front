@@ -9,11 +9,11 @@ export const data = [
         url: "/admin/",
       },
       {
-        title: "Notícias",
+        title: "Notícias e Editorias",
         url: "/admin/noticias",
       },
       {
-        title: "Guia Industrial",
+        title: "Guia Industrial e Setores",
         url: "/admin/guia-industrial",
       },
       {
@@ -27,6 +27,10 @@ export const data = [
       {
         title: "Edições",
         url: "/admin/edicoes",
+      },
+      {
+        title: "Ad-Banners",
+        url: "/admin/ad-banners",
       },
       {
         title: "Usuários",

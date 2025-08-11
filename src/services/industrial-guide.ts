@@ -4,6 +4,7 @@ import {
 } from "./../interfaces/industrial-guide";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
+import axios from "axios";
 
 function getApiClient() {
   const token = getCookie("access_token");
@@ -13,13 +14,12 @@ function getApiClient() {
 const industrialGuideService = {
   getAll: (filters: { search: string; sector: number; page: number }) => {
     const { search, sector, page } = filters;
-    const api = getApiClient();
 
-    const url = `/industrial-guides-sector/${sector || "null"}/${
+    const url = `${process.env.API_URL}/industrial-guides-sector/${sector || "null"}/${
       search || "null"
     }${page ? `?page=${page}` : ""}`;
 
-    return api.get<PaginatedResponse<IIndustrialGuideWithUsersSectors>>(url);
+    return axios.get<PaginatedResponse<IIndustrialGuideWithUsersSectors>>(url);
   },
   getById: (id: number) => {
     const api = getApiClient();
