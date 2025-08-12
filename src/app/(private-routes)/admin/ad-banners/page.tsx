@@ -5,14 +5,12 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Title } from "@/components/page-header/title";
 import AddBtn from "@/components/custom-btns/add-btn";
-import { SearchBar } from "@/components/search-bar";
 import { getBannersColumns } from "./columns";
 import { GenericTable } from "@/components/generic-table";
 import { TableSkeleton } from "@/components/table-skeleton";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { useDeleteBanner, useBanners } from "@/hooks/tanstackQuery/useBanner";
+import { useBanners } from "@/hooks/tanstackQuery/useBanner";
 import { IBanner } from "@/interfaces/banner";
-import { error } from "console";
+import { ModalBanner } from "@/components/modals/modal-banner";
 
 export default function AdminAdBanners() {
   //states
@@ -44,16 +42,23 @@ export default function AdminAdBanners() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Exibindo Banners Disponíveis</CardTitle>
-            {/* {showModalBanner && (
+            <AddBtn
+              label="Novo Banner (Imagem)"
+              onClick={() => setShowModalBanner(true)}
+            />
+            {showModalBanner && (
               <ModalBanner
                 onOpenChange={(open) => {
                   setShowModalBanner(open);
                   setSelectedBanner(null);
                 }}
-                title={`${selectedBanner?.id ? "Atualizar " : "Novo "} Usuário`}
+                title={`${
+                  selectedBanner?.id ? "Visualizar " : "Nova "
+                } Imagem(s) do Banner`}
                 id={selectedBanner?.id}
+                banners={data?.data ?? []}
               />
-            )} */}
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -64,6 +69,7 @@ export default function AdminAdBanners() {
               data={data?.data ?? []}
               columns={bannersColumns}
               getRowKey={(item) => item.id}
+              onRowClick={handleEditBanner}
             />
           )}
         </CardContent>

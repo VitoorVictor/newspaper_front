@@ -23,6 +23,24 @@ export const getBannersColumns = ({
     ),
   },
   {
+    key: "quantity",
+    title: "Qtd de Imagens",
+    render: (item: IBanner) => {
+      const count = item.banner_images.length;
+      return (
+        <span
+          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+            count === 0
+              ? "bg-red-100 text-red-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
+          {count} {count === 1 ? "imagem" : "imagens"}
+        </span>
+      );
+    },
+  },
+  {
     key: "updated_at",
     title: "Ultima alteração em",
     render: (item: IBanner) => (

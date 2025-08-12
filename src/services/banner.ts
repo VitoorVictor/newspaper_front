@@ -10,7 +10,9 @@ function getApiClient() {
 
 const bannerService = {
   getAllTopSide: () => {
-    return axios.get<IBanner>("/banners/top-e-side");
+    return axios.get<IBanner>(
+      `${process.env.NEXT_PUBLIC_API_URL}/banners/top-e-side`
+    );
   },
   getAll: () => {
     const api = getApiClient();
@@ -20,9 +22,13 @@ const bannerService = {
     const api = getApiClient();
     return api.get<IBanner>(`/admin/banners/${id}`);
   },
-  create: (data: { name: string }) => {
+  create: (formData: FormData) => {
     const api = getApiClient();
-    return api.post<IBanner>("/admin/banners", data);
+    return api.post<IBanner>("/admin/banners", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
   delete: (id: number) => {
     const api = getApiClient();
