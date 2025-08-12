@@ -15,9 +15,9 @@ const industrialGuideService = {
   getAll: (filters: { search: string; sector: number; page: number }) => {
     const { search, sector, page } = filters;
 
-    const url = `${process.env.API_URL}/industrial-guides-sector/${sector || "null"}/${
-      search || "null"
-    }${page ? `?page=${page}` : ""}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/industrial-guides-sector/${
+      sector || "null"
+    }/${search || "null"}${page ? `?page=${page}` : ""}`;
 
     return axios.get<PaginatedResponse<IIndustrialGuideWithUsersSectors>>(url);
   },

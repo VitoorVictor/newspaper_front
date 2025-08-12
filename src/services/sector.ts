@@ -10,7 +10,7 @@ function getApiClient() {
 
 const sectorService = {
   getAll: () => {
-    return axios.get<ISector[]>(`${process.env.API_URL}/sectors`);
+    return axios.get<ISector[]>(`${process.env.NEXT_PUBLIC_API_URL}/sectors`);
   },
   getById: (id: number) => {
     const api = getApiClient();

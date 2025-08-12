@@ -10,7 +10,9 @@ function getApiClient() {
 
 const categoryService = {
   getAll: () => {
-    return axios.get<ICategory[]>(`${process.env.API_URL}/categories`);
+    return axios.get<ICategory[]>(
+      `${process.env.NEXT_PUBLIC_API_URL}/categories`
+    );
   },
   getById: (id: number) => {
     const api = getApiClient();

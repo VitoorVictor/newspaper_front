@@ -14,7 +14,7 @@ const newsService = {
     return axios.get<{
       principais: INews[];
       editorias: ICategoryWithNewsBanners[];
-    }>(`${process.env.API_URL}/news`);
+    }>(`${process.env.NEXT_PUBLIC_API_URL}/news`);
   },
   getById: (id: number) => {
     const api = getApiClient();

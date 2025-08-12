@@ -238,7 +238,7 @@ export const ModalIndustrialGuide = ({
                         maxSize={5}
                         hasPreview={
                           isUpdate
-                            ? `http://localhost:8000${news?.data.image_url}`
+                            ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`
                             : ""
                         }
                       />

@@ -60,6 +60,7 @@ export default function AdminGuiaIndustrialPage() {
   } = useIndustrialGuide({
     search: pesquisaIndustrialGuide,
     sector: filtroSector,
+    page: 0,
   });
   const { data: sectors } = useSectors();
 
