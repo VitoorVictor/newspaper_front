@@ -36,7 +36,7 @@ export default function ColunaSocialPage() {
           <BannerVertical />
         </div>
       </div>
-      <CustomPagination />
+      <CustomPagination totalPages={0} currentPage={0} />
     </div>
   );
 }
