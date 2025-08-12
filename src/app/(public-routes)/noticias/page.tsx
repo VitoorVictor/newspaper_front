@@ -4,7 +4,7 @@ import {
   NewsSecondary,
   NewsSecondaryEditorial,
 } from "@/components/news";
-import { NewsCategories } from "@/components/news-categories";
+import { ItemsSearch } from "@/components/items-seach";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import categoryService from "@/services/category";
@@ -22,7 +22,7 @@ export default async function NoticiasPage() {
 
   return (
     <div>
-      {dataCategories && <NewsCategories categories={dataCategories} />}
+      {dataCategories && <ItemsSearch data={dataCategories} />}
       <div className="container mx-auto my-8 px-4 space-y-6">
         <BannerHorizontal />
         <PageHeader
