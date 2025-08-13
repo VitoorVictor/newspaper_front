@@ -20,13 +20,17 @@ const newsService = {
     const api = getApiClient();
     return api.get<INews>(`/news/${slug}`);
   },
-  getAllPanel: (filters: { search: string; category: number }) => {
-    const { search, category } = filters;
+  getAllPanel: (filters: {
+    search: string;
+    category: number;
+    page: number;
+  }) => {
+    const { search, category, page } = filters;
     const api = getApiClient();
     return api.get<PaginatedResponse<INews>>(
       `/admin/news/panel/${filters.category ? category : "null"}/${
         filters.search ? search : "null"
-      }`
+      }${page ? `?page=${page}` : ""}`
     );
   },
   create: (formData: FormData) => {

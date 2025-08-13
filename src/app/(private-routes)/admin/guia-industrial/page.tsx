@@ -16,7 +16,6 @@ import { Title } from "@/components/page-header/title";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AddBtn from "@/components/custom-btns/add-btn";
-import { ModalNews } from "@/components/modals/modal-news";
 import { SearchBar } from "@/components/search-bar";
 import {
   Select,
@@ -32,8 +31,15 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ModalSector } from "@/components/modals/modal-sector";
 import { useState } from "react";
 import { ModalIndustrialGuide } from "@/components/modals/modal-industrial-guide";
+import { CustomPagination } from "@/components/custom-pagination";
+import { useSearchParams } from "next/navigation";
 
 export default function AdminGuiaIndustrialPage() {
+  //page search params
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const page = pageParam ? Number(pageParam) : 1;
+
   // states
   const [filtroSector, setFiltroSector] = useState("");
   const [pesquisaIndustrialGuide, setPesquisaIndustrialGuide] = useState("");
@@ -60,7 +66,7 @@ export default function AdminGuiaIndustrialPage() {
   } = useIndustrialGuide({
     search: pesquisaIndustrialGuide,
     sector: filtroSector,
-    page: 0,
+    page,
   });
   const { data: sectors } = useSectors();
 
@@ -119,7 +125,7 @@ export default function AdminGuiaIndustrialPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Tab de Notícias */}
+        {/* Tab de Guia Industrial */}
         <TabsContent value="insdustrial-guide">
           <Card>
             <CardHeader>
@@ -190,6 +196,12 @@ export default function AdminGuiaIndustrialPage() {
               )}
             </CardContent>
           </Card>
+          {industrialGuide && industrialGuide.data && (
+            <CustomPagination
+              totalPages={industrialGuide?.data.last_page}
+              currentPage={industrialGuide?.data.current_page}
+            />
+          )}
         </TabsContent>
 
         {/* Tab de Setores */}
@@ -230,6 +242,7 @@ export default function AdminGuiaIndustrialPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
       <ConfirmDialog
         open={showConfirmDeleteIndustrialGuide}
         onOpenChange={(open) => {

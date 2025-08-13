@@ -30,8 +30,15 @@ import { TableSkeleton } from "@/components/table-skeleton";
 import { INews } from "@/interfaces/news";
 import { ICategory } from "@/interfaces/category";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { useSearchParams } from "next/navigation";
+import { CustomPagination } from "@/components/custom-pagination";
 
 export default function AdminNoticias() {
+  //page search params
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const page = pageParam ? Number(pageParam) : 1;
+
   // states
   const [filtroCategory, setFiltroCategory] = useState(0);
   const [showModalNews, setShowModalNews] = useState(false);
@@ -50,7 +57,7 @@ export default function AdminNoticias() {
     data: news,
     isLoading: loadingNews,
     isError: errorNews,
-  } = useNewsPanel({ search: pesquisaNews, category: filtroCategory });
+  } = useNewsPanel({ search: pesquisaNews, category: filtroCategory, page });
   const { data: categories, isLoading: loadingCategories } = useCategories();
   const {
     data: categoriesAdmin,
@@ -180,6 +187,12 @@ export default function AdminNoticias() {
               )}
             </CardContent>
           </Card>
+          {news && news.data && (
+            <CustomPagination
+              totalPages={news?.data.last_page}
+              currentPage={news?.data.current_page}
+            />
+          )}
         </TabsContent>
 
         {/* Tab de Editorias */}
