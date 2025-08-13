@@ -10,7 +10,7 @@ function getApiClient() {
 
 const bannerService = {
   getAllTopSide: () => {
-    return axios.get<IBanner>(
+    return axios.get<{ top: string[]; side: string[] }>(
       `${process.env.NEXT_PUBLIC_API_URL}/banners/top-e-side`
     );
   },

@@ -112,12 +112,6 @@ export function Navbar({ email }: { email: string }) {
             Guia Industrial
           </Link>
           <Link
-            href="/coluna-empresarial"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Coluna Empresarial
-          </Link>
-          <Link
             href="/coluna-social"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >

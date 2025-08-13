@@ -1,4 +1,3 @@
-import { BannerHorizontal, BannerVertical } from "@/components/ad-banners";
 import {
   NewsMain,
   NewsSecondary,
@@ -10,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import categoryService from "@/services/category";
 import newsService from "@/services/news";
 import { ArrowRight } from "lucide-react";
+import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import bannerService from "@/services/banner";
 
 export default async function NoticiasPage() {
   const { data: dataNews } = await newsService.getAll();
   const { data: dataCategories } = await categoryService.getAll();
+  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const { principais, editorias } = dataNews;
 
   const hasNewsByCategory = Boolean(
@@ -24,7 +26,13 @@ export default async function NoticiasPage() {
     <div>
       {dataCategories && <ItemsSearch data={dataCategories} />}
       <div className="container mx-auto my-8 px-4 space-y-6">
-        <BannerHorizontal />
+        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
+          <SimpleImageCarousel
+            images={dataAdBanners.top}
+            variant="horizontal"
+            autoPlay={true}
+          />
+        )}
         <PageHeader
           title="Notícias"
           subtitle="Fique por dentro das últimas notícias"
@@ -70,7 +78,13 @@ export default async function NoticiasPage() {
                 if (section.news.length === 0) return null;
                 return (
                   <div key={idx} className="space-y-4">
-                    <BannerHorizontal />
+                    {section.banners && section.banners.length > 0 && (
+                      <SimpleImageCarousel
+                        images={section.banners}
+                        variant="horizontal"
+                        autoPlay={true}
+                      />
+                    )}
                     {/* Header da seção */}
                     <div className="w-full flex justify-between items-center">
                       <h2 className="text-2xl font-bold text-gray-900">
@@ -106,7 +120,15 @@ export default async function NoticiasPage() {
 
             {/* Banner lateral fixo */}
             <div className="col-span-1 h-fit sticky top-40">
-              <BannerVertical />
+              {dataAdBanners &&
+                dataAdBanners.side &&
+                dataAdBanners.side.length > 0 && (
+                  <SimpleImageCarousel
+                    images={dataAdBanners.side}
+                    variant="vertical"
+                    autoPlay={true}
+                  />
+                )}
             </div>
           </div>
         )}
