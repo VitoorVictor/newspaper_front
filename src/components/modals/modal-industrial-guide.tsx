@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import {
   useCreateIndustrialGuide,
-  useIndustrialGuideById,
+  useIndustrialGuideBySlug,
   useUpdateIndustrialGuide,
 } from "@/hooks/tanstackQuery/useIndustrialGuide";
 import { FileUpload } from "../file-upload";
@@ -107,6 +107,7 @@ interface ModalIndustrialGuideProps {
   title: string;
   sectors: ISector[];
   id?: number;
+  slug?: string;
 }
 
 export const ModalIndustrialGuide = ({
@@ -114,6 +115,7 @@ export const ModalIndustrialGuide = ({
   title,
   sectors,
   id,
+  slug,
 }: ModalIndustrialGuideProps) => {
   const isUpdate = Boolean(id);
   const industrialGuideSchema = getIndustrialGuideSchema(isUpdate);
@@ -127,7 +129,7 @@ export const ModalIndustrialGuide = ({
   const { reset, setValue, handleSubmit, control } = form;
   const createIndustrialGuide = useCreateIndustrialGuide();
   const updateIndustrialGuide = useUpdateIndustrialGuide(id!);
-  const { data: news, isLoading } = useIndustrialGuideById(id);
+  const { data: news, isLoading } = useIndustrialGuideBySlug(slug);
 
   useEffect(() => {
     if (isUpdate && news) {

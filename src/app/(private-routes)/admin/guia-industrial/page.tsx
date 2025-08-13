@@ -35,7 +35,7 @@ import { ModalIndustrialGuide } from "@/components/modals/modal-industrial-guide
 
 export default function AdminGuiaIndustrialPage() {
   // states
-  const [filtroSector, setFiltroSector] = useState(0);
+  const [filtroSector, setFiltroSector] = useState("");
   const [pesquisaIndustrialGuide, setPesquisaIndustrialGuide] = useState("");
 
   const [showModalIndustrialGuide, setShowModalIndustrialGuide] =
@@ -140,6 +140,7 @@ export default function AdminGuiaIndustrialPage() {
                     } Industria`}
                     sectors={sectors.data}
                     id={selectedIndustrialGuide?.id}
+                    slug={selectedIndustrialGuide?.slug}
                   />
                 )}
               </div>
@@ -156,9 +157,9 @@ export default function AdminGuiaIndustrialPage() {
                   />
                 </div>
                 <Select
-                  value={String(filtroSector)}
+                  value={filtroSector}
                   onValueChange={(value) => {
-                    setFiltroSector(value === "0" ? 0 : Number(value));
+                    setFiltroSector(value === "all" ? "" : value);
                   }}
                 >
                   <SelectTrigger className="w-48 cursor-pointer">
@@ -166,13 +167,10 @@ export default function AdminGuiaIndustrialPage() {
                     <SelectValue placeholder="Filtrar por setor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Todos os setores</SelectItem>
+                    <SelectItem value="all">Todos os setores</SelectItem>
                     {sectors &&
                       sectors.data.map((category) => (
-                        <SelectItem
-                          key={category.id}
-                          value={String(category.id)}
-                        >
+                        <SelectItem key={category.id} value={category.name}>
                           {category.name}
                         </SelectItem>
                       ))}

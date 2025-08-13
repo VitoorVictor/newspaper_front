@@ -9,6 +9,7 @@ export interface INews {
   badge: string;
   user_id: string;
   user: any;
+  slug:string
   top_position: string;
   status: "draft" | "published";
   category_ids: number[];

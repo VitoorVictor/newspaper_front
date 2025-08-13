@@ -128,6 +128,7 @@ export default function AdminNoticias() {
                     } Notícia`}
                     categories={categories.data}
                     id={selectedNews?.id}
+                    slug={selectedNews?.slug}
                   />
                 )}
               </div>
@@ -157,7 +158,10 @@ export default function AdminNoticias() {
                     <SelectItem value="0">Todas as editorias</SelectItem>
                     {categories &&
                       categories.data.map((category) => (
-                        <SelectItem key={category.id} value={String(category.id)}>
+                        <SelectItem
+                          key={category.id}
+                          value={String(category.id)}
+                        >
                           {category.name}
                         </SelectItem>
                       ))}

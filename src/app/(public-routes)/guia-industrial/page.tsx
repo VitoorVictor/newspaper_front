@@ -18,7 +18,7 @@ export default async function GuiaIndustrialPage({
   const { data: dataSectors } = await sectorService.getAll();
   const { data: dataIndustrialGuide } = await industrialGuideService.getAll({
     search: pesquisa ?? "",
-    sector: Number(setor) ?? 0,
+    sector: setor ?? "",
     page: Number(pagina) ?? 0,
   });
 

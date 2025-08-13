@@ -16,9 +16,9 @@ const newsService = {
       editorias: ICategoryWithNewsBanners[];
     }>(`${process.env.NEXT_PUBLIC_API_URL}/news`);
   },
-  getById: (id: number) => {
+  getBySlug: (slug: string) => {
     const api = getApiClient();
-    return api.get<INews>(`/news/${id}`);
+    return api.get<INews>(`/news/${slug}`);
   },
   getAllPanel: (filters: { search: string; category: number }) => {
     const { search, category } = filters;

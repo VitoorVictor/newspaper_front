@@ -22,13 +22,13 @@ export const useNewsPanel = (filters: { search: string; category: number }) => {
   });
 };
 
-export const useNewsById = (id?: number) => {
+export const useNewsBySlug = (slug?: string) => {
   return useQuery({
-    enabled: !!id,
-    queryKey: ["news", id],
+    enabled: !!slug,
+    queryKey: ["news", slug],
     queryFn: () => {
-      if (!id) return null;
-      return newsService.getById(id);
+      if (!slug) return null;
+      return newsService.getBySlug(slug);
     },
   });
 };

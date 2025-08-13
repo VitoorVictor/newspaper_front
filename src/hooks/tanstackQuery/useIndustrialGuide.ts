@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 export const useIndustrialGuide = (filters: {
   search: string;
-  sector: number;
+  sector: string;
   page: number;
 }) => {
   return useQuery({
@@ -16,13 +16,13 @@ export const useIndustrialGuide = (filters: {
   });
 };
 
-export const useIndustrialGuideById = (id?: number) => {
+export const useIndustrialGuideBySlug = (slug?: string) => {
   return useQuery({
-    enabled: !!id,
-    queryKey: ["industrial-guide", id],
+    enabled: !!slug,
+    queryKey: ["industrial-gusluge", slug],
     queryFn: () => {
-      if (!id) return null;
-      return industrialGuideService.getById(id);
+      if (!slug) return null;
+      return industrialGuideService.getBySlug(slug);
     },
   });
 };

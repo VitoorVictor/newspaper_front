@@ -12,7 +12,7 @@ function getApiClient() {
 }
 
 const industrialGuideService = {
-  getAll: (filters: { search: string; sector: number; page: number }) => {
+  getAll: (filters: { search: string; sector: string; page: number }) => {
     const { search, sector, page } = filters;
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/industrial-guides-sector/${
@@ -21,9 +21,9 @@ const industrialGuideService = {
 
     return axios.get<PaginatedResponse<IIndustrialGuideWithUsersSectors>>(url);
   },
-  getById: (id: number) => {
+  getBySlug: (slug: string) => {
     const api = getApiClient();
-    return api.get<IIndustrialGuide>(`/industrial-guide/${id}`);
+    return api.get<IIndustrialGuide>(`/industrial-guide/${slug}`);
   },
   create: (formData: FormData) => {
     const api = getApiClient();

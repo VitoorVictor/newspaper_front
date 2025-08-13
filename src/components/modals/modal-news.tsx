@@ -29,7 +29,7 @@ import {
 import { RichTextEditor } from "@/components/rich-text-editor";
 import {
   useCreateNews,
-  useNewsById,
+  useNewsBySlug,
   useUpdateNews,
 } from "@/hooks/tanstackQuery/useNews";
 import { FileUpload } from "../file-upload";
@@ -95,6 +95,7 @@ interface ModalNewsProps {
   title: string;
   categories: ICategory[];
   id?: number;
+  slug?: string;
 }
 
 export const ModalNews = ({
@@ -102,6 +103,7 @@ export const ModalNews = ({
   title,
   categories,
   id,
+  slug,
 }: ModalNewsProps) => {
   const isUpdate = Boolean(id);
   const newsSchema = getNewsSchema(isUpdate);
@@ -124,7 +126,7 @@ export const ModalNews = ({
   const { reset, setValue, handleSubmit, control } = form;
   const createNews = useCreateNews();
   const updateNews = useUpdateNews(id!);
-  const { data: news, isLoading } = useNewsById(id);
+  const { data: news, isLoading } = useNewsBySlug(slug);
 
   useEffect(() => {
     if (isUpdate && news) {

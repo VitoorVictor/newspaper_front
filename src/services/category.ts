@@ -16,7 +16,7 @@ const categoryService = {
   },
   getById: (id: number) => {
     const api = getApiClient();
-    return api.get<ICategory>(`/categories/${id}`);
+    return api.get<ICategory>(`/admin/categories/${id}`);
   },
   getAllPanel: () => {
     const api = getApiClient();

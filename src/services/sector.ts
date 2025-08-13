@@ -14,7 +14,7 @@ const sectorService = {
   },
   getById: (id: number) => {
     const api = getApiClient();
-    return api.get<ISector>(`/sectors/${id}`);
+    return api.get<ISector>(`/admin/sectors/${id}`);
   },
   getAllPanel: () => {
     const api = getApiClient();
