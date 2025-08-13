@@ -24,13 +24,11 @@ import {
   useCreateBanner,
   useDeleteBanner,
 } from "@/hooks/tanstackQuery/useBanner";
-import { useEffect, useState } from "react";
-import { CustomInput } from "../custom-inputs/input";
+import { useState } from "react";
 import { CustomSelect } from "../custom-selects/custom-select";
 import { IBanner, IBannerImage } from "@/interfaces/banner";
 import { FileUpload } from "../file-upload";
 import { CustomCarousel } from "../custom-carousel";
-import { Carousel } from "../ui/carousel";
 import { Trash2 } from "lucide-react";
 import { ConfirmDialog } from "../confirm-dialog";
 
@@ -109,7 +107,7 @@ export const ModalBanner = ({
   return (
     <>
       <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-        <DialogContent className="min-w-2xl">
+        <DialogContent className="min-w-3xl">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
@@ -134,8 +132,10 @@ export const ModalBanner = ({
                   <div className="flex justify-center">
                     <CustomCarousel
                       bannerImages={banner.data.banner_images}
-                      direction="horizontal"
-                      className="max-w-lg"
+                      direction={
+                        banner.data.name === "side" ? "vertical" : "horizontal"
+                      }
+                      className="max-w-xl"
                       showControls={true}
                       renderCustomButton={renderImageButtons}
                     />
