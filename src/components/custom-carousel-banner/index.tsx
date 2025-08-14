@@ -18,7 +18,7 @@ export function SimpleImageCarousel({
   images,
   variant = "horizontal",
   autoPlay = false,
-  autoPlayInterval = 10000,
+  autoPlayInterval = 5000,
   className = "",
 }: SimpleImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,7 +65,9 @@ export function SimpleImageCarousel({
     <div className={`relative group ${className}`}>
       <Card className="relative overflow-hidden p-0">
         <div
-          className={`relative ${isHorizontal ? "h-32 md:h-48" : "aspect-[9/16]"}`}
+          className={`relative ${
+            isHorizontal ? "h-32 md:h-48" : "aspect-[9/16]"
+          }`}
         >
           {/* Current Image */}
           <div className="relative w-full h-full">
