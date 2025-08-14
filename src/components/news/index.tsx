@@ -1,4 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
+
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -166,7 +168,7 @@ export function NewsMainEditorial({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-xs text-gray-500">
             <Clock className="h-3 w-3" />
-            <span>{time}</span>
+            <span>Publicada {formatTimeAgo(time)}</span>
           </div>
           <Button
             variant="outline"
@@ -217,7 +219,7 @@ export function NewsSecondaryEditorial({
           </h3>
           <div className="flex items-center gap-1 text-xs mt-2 text-white/80">
             <Clock className="h-3.5 w-3.5" />
-            {time}
+            Publicada {formatTimeAgo(time)}
           </div>
         </div>
       </div>

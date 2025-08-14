@@ -43,7 +43,7 @@ export default async function NoticiasPage() {
         />
 
         {/* Layout Principal com Secundárias ao lado */}
-        <div className="grid grid-cols-10 grid-rows-3 gap-4 max-h-[500px]">
+        <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">
           {principais &&
             principais.map((news, index) => {
               if (index === 0)
@@ -55,7 +55,7 @@ export default async function NoticiasPage() {
                     badge={news.badge}
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                    className="col-span-6 row-span-3"
+                    className="col-span-7 row-span-3"
                   />
                 );
               return (
@@ -66,7 +66,7 @@ export default async function NoticiasPage() {
                   badge={news.badge}
                   time={news.created_at}
                   image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                  className="col-span-4"
+                  className="col-span-5"
                 />
               );
             })}
@@ -102,7 +102,7 @@ export default async function NoticiasPage() {
                     </div>
 
                     {/* Grid de cards */}
-                    <div className="w-full flex justify-between gap-4">
+                    <div className="w-full grid grid-cols-3 gap-4">
                       {section.news.map((news) => (
                         <NewsSecondaryEditorial
                           key={news.id}
@@ -110,7 +110,6 @@ export default async function NoticiasPage() {
                           badge={news.badge}
                           time={news.created_at}
                           image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                          className="w-full"
                         />
                       ))}
                     </div>
