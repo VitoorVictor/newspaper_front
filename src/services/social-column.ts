@@ -21,7 +21,7 @@ const socialColumnService = {
 
   getBySlug: (slug: string) => {
     return axios.get<ISocialColumns>(
-      `${process.env.NEXT_PUBLIC_API_URL}/social-column/${slug || "null"}`
+      `${process.env.NEXT_PUBLIC_API_URL}/social-column/${slug}`
     );
   },
 

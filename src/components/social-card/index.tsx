@@ -1,10 +1,15 @@
+"use client";
+
+// import { MapPin, Calendar, Camera, Users, Eye } from "lucide-react";
+// import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Camera, Users, Eye } from "lucide-react";
+import { Camera } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SocialEventCardProps {
   title: string;
+  slug: string;
   // location: string;
   // date: string;
   photoCount: number;
@@ -16,16 +21,21 @@ interface SocialEventCardProps {
 
 export function SocialEventCard({
   title,
+  slug,
   // location,
   // date,
   photoCount,
   eventLogo,
-  // category = "Evento Social",
-  // views,
-  // featured = false,
-}: SocialEventCardProps) {
+}: // category = "Evento Social",
+// views,
+// featured = false,
+SocialEventCardProps) {
+  const router = useRouter();
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden py-0">
+    <Card
+      className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden py-0"
+      onClick={() => router.push(`/coluna-social/${slug}`)}
+    >
       {/* Header com logo do evento - MANTÉM IGUAL */}
       <CardHeader className="p-0 relative">
         <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -86,7 +96,7 @@ export function SocialEventCard({
         )} */}
 
         {/* Botão único */}
-        <Button className="w-full bg-primary hover:bg-[#1e2d4a] text-white">
+        <Button className="w-full bg-primary hover:bg-[#1e2d4a] text-white cursor-pointer">
           Ver Galeria Completa
         </Button>
       </CardContent>

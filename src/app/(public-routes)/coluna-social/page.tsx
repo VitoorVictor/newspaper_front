@@ -1,9 +1,7 @@
-import { BannerHorizontal, BannerVertical } from "@/components/ad-banners";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { CustomPagination } from "@/components/custom-pagination";
 import { PageHeader } from "@/components/page-header";
 import { SocialEventCard } from "@/components/social-card";
-import { sampleEvent } from "@/data";
 import bannerService from "@/services/banner";
 import socialColumnService from "@/services/social-column";
 
@@ -14,7 +12,7 @@ interface ColunaSocialPageProps {
 export default async function ColunaSocialPage({
   searchParams,
 }: ColunaSocialPageProps) {
-  const { pesquisa, setor, pagina } = await searchParams;
+  const { pesquisa, pagina } = await searchParams;
 
   const { data } = await socialColumnService.getAll({
     search: pesquisa ?? "",
@@ -80,6 +78,7 @@ export default async function ColunaSocialPage({
                     <SocialEventCard
                       key={socialColumn.id}
                       title={socialColumn.title}
+                      slug={socialColumn.slug}
                       photoCount={socialColumn.images.length}
                       eventLogo={
                         socialColumn.images.find((sci) => sci.is_cover === 1)
