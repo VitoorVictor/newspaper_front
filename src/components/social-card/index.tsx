@@ -5,44 +5,47 @@ import { MapPin, Calendar, Camera, Users, Eye } from "lucide-react";
 
 interface SocialEventCardProps {
   title: string;
-  location: string;
-  date: string;
+  // location: string;
+  // date: string;
   photoCount: number;
   eventLogo: string;
-  category?: string;
-  views?: number;
-  featured?: boolean;
+  // category?: string;
+  // views?: number;
+  // featured?: boolean;
 }
 
 export function SocialEventCard({
   title,
-  location,
-  date,
+  // location,
+  // date,
   photoCount,
   eventLogo,
-  category = "Evento Social",
-  views,
-  featured = false,
+  // category = "Evento Social",
+  // views,
+  // featured = false,
 }: SocialEventCardProps) {
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden pt-0">
+    <Card className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden py-0">
       {/* Header com logo do evento - MANTÉM IGUAL */}
       <CardHeader className="p-0 relative">
         <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
           <img
-            src={eventLogo || "/placeholder.svg?height=192&width=384"}
+            src={
+              `${process.env.NEXT_PUBLIC_IMAGE_URL}${eventLogo}` ||
+              "/placeholder.svg?height=192&width=384"
+            }
             alt={`Logo ${title}`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
-          <Badge className="absolute top-3 left-3 bg-[#182641] text-white px-3 py-1 font-medium">
+          {/* <Badge className="absolute top-3 left-3 bg-[#182641] text-white px-3 py-1 font-medium">
             {category}
           </Badge>
           {featured && (
             <Badge className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 font-medium">
               ⭐ Destaque
             </Badge>
-          )}
+          )} */}
           <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full flex items-center gap-1 text-sm">
             <Camera className="h-4 w-4" />
             <span className="font-medium">{photoCount}</span>
@@ -58,7 +61,7 @@ export function SocialEventCard({
         </h3>
 
         {/* Informações em linha simples */}
-        <div className="space-y-3 mb-6">
+        {/* <div className="space-y-3 mb-6">
           <div className="flex items-center text-gray-600 text-sm">
             <Calendar className="h-4 w-4 mr-3 text-[#182641]" />
             <span>{date}</span>
@@ -68,7 +71,7 @@ export function SocialEventCard({
             <MapPin className="h-4 w-4 mr-3 text-[#182641]" />
             <span className="truncate">{location}</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Estatísticas em linha horizontal */}
         {/* {views && (
