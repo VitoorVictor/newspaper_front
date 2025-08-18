@@ -15,15 +15,22 @@ import { Carousel } from "@/components/ui/carousel";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-// corrigindo import para usar o caminho correto das interfaces
-import type { IBannerImage } from "@/interfaces/banner";
 
 interface CustomCarouselProps {
-  bannerImages: IBannerImage[];
+  bannerImages: {
+    id: number;
+    image_url: string;
+  }[];
   direction?: "horizontal" | "vertical";
   className?: string;
   showControls?: boolean;
-  renderCustomButton?: (id: number, image: IBannerImage) => React.ReactNode;
+  renderCustomButton?: (
+    id: number,
+    image: {
+      id: number;
+      image_url: string;
+    }
+  ) => React.ReactNode;
 }
 
 const CustomCarousel = React.forwardRef<HTMLDivElement, CustomCarouselProps>(

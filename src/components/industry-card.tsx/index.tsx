@@ -28,6 +28,28 @@ export function IndustryCard({
   return (
     <Card className="hover:shadow-lg transition-all duration-300 group cursor-pointer bg-white h-full flex flex-col justify-between">
       <CardHeader className="pb-4">
+        {/* <img
+          src={image || "/placeholder.svg?height=32&width=32"}
+          alt={`Logo ${title}`}
+          className="w-full h-full max-h-32 object-contain"
+        />
+        <div className="flex items-start gap-4 mb-3 max-w-full overflow-hidden">
+          <div className="flex-1 min-w-0 max-w-full">
+            <h3 className="font-bold text-lg text-gray-900 line-clamp-2 w-full group-hover:text-[#182641] transition-colors break-words">
+              {title}
+            </h3>
+
+            {sectors.map((sector) => (
+              <Badge
+                key={sector.id}
+                variant="secondary"
+                className="mt-1 mr-1 bg-[#182641]/10 text-[#182641] text-xs"
+              >
+                {sector.name}
+              </Badge>
+            ))}
+          </div>
+        </div> */}
         {/* Logo e Nome */}
         <div className="flex items-start gap-4 mb-3 max-w-full overflow-hidden">
           <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">

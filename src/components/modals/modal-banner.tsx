@@ -55,9 +55,10 @@ export const ModalBanner = ({
   title,
   id,
 }: ModalBannerProps) => {
-  const [selectedBanner, setSelectedBanner] = useState<IBannerImage | null>(
-    null
-  );
+  const [selectedBanner, setSelectedBanner] = useState<{
+    id: number;
+    image_url: string;
+  } | null>(null);
   const [showConfirmDeleteBanner, setShowConfirmDeleteBanner] = useState(false);
   const isUpdate = Boolean(id);
 
@@ -86,7 +87,13 @@ export const ModalBanner = ({
     }
   };
 
-  const renderImageButtons = (id: number, image: IBannerImage) => (
+  const renderImageButtons = (
+    id: number,
+    image: {
+      id: number;
+      image_url: string;
+    }
+  ) => (
     <div className="flex gap-1">
       <Button
         size="sm"

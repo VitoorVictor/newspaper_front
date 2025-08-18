@@ -5,14 +5,21 @@ import type React from "react";
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Plus } from "lucide-react";
+
+interface FileData {
+  file: File;
+  dataUrl: string;
+  id: string;
+}
 
 interface FileUploadProps {
   accept: string;
-  onFileSelect: (file: File, dataUrl: string) => void;
+  onFileSelect: (files: File[] | File) => void; // Updated to support both single file and array
   placeholder: string;
-  hasPreview?: string;
+  hasPreview?: string[];
   maxSize?: number; // em MB
+  multiple?: boolean;
 }
 
 export function FileUpload({
@@ -21,33 +28,59 @@ export function FileUpload({
   placeholder,
   hasPreview,
   maxSize = 10,
+  multiple = false,
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState<string | null>(hasPreview ?? null);
+  const [files, setFiles] = useState<FileData[]>(() => {
+    if (hasPreview && hasPreview.length > 0) {
+      return hasPreview.map((preview, index) => ({
+        file: new File([], `preview-${index}`),
+        dataUrl: preview,
+        id: `preview-${index}-${Date.now()}`,
+      }));
+    }
+    return [];
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (file: File) => {
-    if (file.size > maxSize * 1024 * 1024) {
-      alert(`Arquivo muito grande. Máximo ${maxSize}MB`);
-      return;
-    }
+  const notifyFileChange = (updatedFiles: FileData[]) => {
+    const fileArray = updatedFiles.map((f) => f.file);
+    onFileSelect(multiple ? fileArray : fileArray[0] || null);
+  };
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      setPreview(dataUrl);
-      onFileSelect(file, dataUrl);
-    };
-    reader.readAsDataURL(file);
+  const processFiles = (newFiles: File[]) => {
+    for (const file of newFiles) {
+      if (file.size > maxSize * 1024 * 1024) {
+        alert(`Arquivo "${file.name}" muito grande. Máximo ${maxSize}MB`);
+        continue;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        const fileData: FileData = {
+          file,
+          dataUrl,
+          id: `${file.name}-${Date.now()}-${Math.random()}`,
+        };
+
+        setFiles((prevFiles) => {
+          const updatedFiles = multiple ? [...prevFiles, fileData] : [fileData];
+          setTimeout(() => notifyFileChange(updatedFiles), 0);
+          return updatedFiles;
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      processFiles(droppedFiles);
     }
   };
 
@@ -60,11 +93,20 @@ export function FileUpload({
     setIsDragging(false);
   };
 
-  const clearPreview = () => {
-    setPreview(null);
+  const removeFile = (fileId: string) => {
+    setFiles((prevFiles) => {
+      const updatedFiles = prevFiles.filter((f) => f.id !== fileId);
+      setTimeout(() => notifyFileChange(updatedFiles), 0);
+      return updatedFiles;
+    });
+  };
+
+  const clearAllFiles = () => {
+    setFiles([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    setTimeout(() => notifyFileChange([]), 0);
   };
 
   return (
@@ -79,28 +121,63 @@ export function FileUpload({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        {preview ? (
-          <div className="relative">
-            {accept.includes("image") ? (
-              <img
-                src={preview || "/placeholder.svg"}
-                alt="Preview"
-                className="max-w-full max-h-32 mx-auto rounded"
-              />
-            ) : (
-              <div className="p-4 bg-muted rounded">
-                <div className="text-sm font-medium">Arquivo selecionado</div>
-              </div>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute -top-2 -right-2 bg-transparent"
-              onClick={clearPreview}
-              type="button"
+        {files.length > 0 ? (
+          <div className="space-y-4">
+            <div
+              className={`grid gap-4 ${
+                multiple ? "grid-cols-2 md:grid-cols-3" : "grid-cols-1"
+              }`}
             >
-              <X className="h-4 w-4" />
-            </Button>
+              {files.map((fileData) => (
+                <div key={fileData.id} className="relative">
+                  {accept.includes("image") ? (
+                    <img
+                      src={fileData.dataUrl || "/placeholder.svg"}
+                      alt="Preview"
+                      className="w-full h-24 object-cover rounded border"
+                    />
+                  ) : (
+                    <div className="p-4 bg-muted rounded border">
+                      <div className="text-xs font-medium truncate">
+                        {fileData.file.name || "Arquivo"}
+                      </div>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="absolute -top-2 -right-2 h-6 w-6 p-0 bg-background border"
+                    onClick={() => removeFile(fileData.id)}
+                    type="button"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 justify-center">
+              {multiple && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Mais
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFiles}
+                type="button"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Limpar {multiple && files.length > 1 ? "Todos" : ""}
+              </Button>
+            </div>
           </div>
         ) : (
           <div>
@@ -113,7 +190,7 @@ export function FileUpload({
               onClick={() => fileInputRef.current?.click()}
               type="button"
             >
-              Selecionar Arquivo
+              Selecionar {multiple ? "Arquivos" : "Arquivo"}
             </Button>
           </div>
         )}
@@ -123,10 +200,13 @@ export function FileUpload({
         ref={fileInputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         className="hidden"
         onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleFileSelect(file);
+          const selectedFiles = Array.from(e.target.files || []);
+          if (selectedFiles.length > 0) {
+            processFiles(selectedFiles);
+          }
         }}
       />
     </div>

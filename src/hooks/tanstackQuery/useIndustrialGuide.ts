@@ -19,7 +19,7 @@ export const useIndustrialGuide = (filters: {
 export const useIndustrialGuideBySlug = (slug?: string) => {
   return useQuery({
     enabled: !!slug,
-    queryKey: ["industrial-gusluge", slug],
+    queryKey: ["industrial-guide", slug],
     queryFn: () => {
       if (!slug) return null;
       return industrialGuideService.getBySlug(slug);
