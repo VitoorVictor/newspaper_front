@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { IIndustrialGuide } from "@/interfaces/industrial-guide";
 import { ISector } from "@/interfaces/sector";
+import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
+import { formatPhone } from "@/utils/formatPhone";
 
 // Colunas para Guia Industrial
 export const getIndustrialGuideColumns = ({
@@ -40,27 +42,29 @@ export const getIndustrialGuideColumns = ({
   {
     key: "address",
     title: "Endereço",
-    render: (item: IIndustrialGuide) =>
-      item.address ? (
-        <span className="font-medium">
-          {item.address} - {item.number}
-        </span>
-      ) : (
-        <></>
-      ),
-  },
-  {
-    key: "slug",
-    title: "Referência",
     render: (item: IIndustrialGuide) => (
-      <button
-        className="flex gap-1"
-        onClick={() => console.log("leva para o card da industria")}
-      >
-        <Badge variant="outline">{item.slug}</Badge>
-      </button>
+      <span className="font-medium">{item.address && item.address}</span>
     ),
   },
+  {
+    key: "number",
+    title: "Número",
+    render: (item: IIndustrialGuide) => {
+      // Função para formatar número para padrão brasileiro de telefone/celular
+      return (
+        <span className="font-medium">
+          {item.number ? formatPhone(item.number) : ""}
+        </span>
+      );
+    },
+  },
+  // {
+  //   key: "slug",
+  //   title: "Referência",
+  //   render: (item: IIndustrialGuide) => (
+  //     <SlugColumnBtn slug={item.slug} url={`/guia-industrial/${item.slug}`} />
+  //   ),
+  // },
   {
     key: "actions",
     title: "Ações",

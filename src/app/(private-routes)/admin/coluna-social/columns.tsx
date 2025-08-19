@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ISocialColumns } from "@/interfaces/social-column";
 import { Edit, Trash2 } from "lucide-react";
+import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 
 // Colunas para Coluna Social
 export const getSocialColumnsColumns = ({
@@ -44,12 +45,7 @@ export const getSocialColumnsColumns = ({
     key: "slug",
     title: "Referência",
     render: (item: ISocialColumns) => (
-      <button
-        className="flex gap-1"
-        onClick={() => console.log("leva para o card da industria")}
-      >
-        <Badge variant="outline">{item.slug}</Badge>
-      </button>
+      <SlugColumnBtn slug={item.slug} url={`/coluna-social/${item.slug}`} />
     ),
   },
   {

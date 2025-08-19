@@ -29,6 +29,7 @@ import { useEffect } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 import { CustomInput } from "../custom-inputs/input";
 import { ISector } from "@/interfaces/sector";
+import { PhoneInput } from "../custom-inputs/phone-input";
 
 const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
@@ -58,7 +59,7 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
     number: z
       .string({ message: "Obrigatório" })
       .min(1, "O número deve ter pelo menos 1 caractere")
-      .max(10, "O número deve ter no máximo 10 caracteres")
+      .max(15, "O número deve ter no máximo 15 caracteres")
       .or(z.literal(""))
       .transform((val) => (val === "" ? null : val))
       .optional()
@@ -265,11 +266,10 @@ export const ModalIndustrialGuide = ({
                 />
 
                 {/* número */}
-                <CustomInput
-                  type="number"
+                <PhoneInput
                   name="number"
-                  label="Número"
-                  placeholder="Número do endereço"
+                  label="Telefone"
+                  placeholder="(00) 00000-0000"
                   conteinerClassName="col-span-2"
                 />
               </div>

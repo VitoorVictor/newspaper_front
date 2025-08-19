@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { INews } from "@/interfaces/news";
 import { ICategory } from "@/interfaces/category";
+import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 
 // Colunas para News
 export const getNewsColumns = ({
@@ -42,6 +43,13 @@ export const getNewsColumns = ({
       <Badge variant={item.status === "published" ? "default" : "secondary"}>
         {item.status === "published" ? "publicada" : "rascunho"}
       </Badge>
+    ),
+  },
+  {
+    key: "slug",
+    title: "Referência",
+    render: (item: INews) => (
+      <SlugColumnBtn slug={item.slug} url={`/noticia/${item.slug}`} />
     ),
   },
   {
