@@ -35,7 +35,7 @@ export function ItemsSearch<T extends { name: string }>({
         router.push(`?${params.toString()}`);
       } else {
         router.push(
-          `${redirectBasePath}?${searchParamKeyQS}=${encodeURIComponent(term)}`
+          `${redirectBasePath}/${encodeURIComponent(term)}`
         );
       }
     }

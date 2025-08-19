@@ -11,6 +11,7 @@ import newsService from "@/services/news";
 import { ArrowRight } from "lucide-react";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import bannerService from "@/services/banner";
+import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
 
 export default async function NoticiasPage() {
   const { data: dataNews } = await newsService.getAll();
@@ -24,7 +25,13 @@ export default async function NoticiasPage() {
 
   return (
     <div>
-      {dataCategories && <ItemsSearch data={dataCategories} />}
+      {dataCategories && (
+        <ItemsSearch
+          data={dataCategories}
+          searchMode="redirect"
+          redirectBasePath="/noticias"
+        />
+      )}
       <div className="container mx-auto my-8 px-4 space-y-6">
         {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
           <SimpleImageCarousel
@@ -40,6 +47,8 @@ export default async function NoticiasPage() {
           quickSearch={dataCategories
             .slice(0, 5)
             .map((category) => category.name)}
+          searchMode="redirect"
+          redirectBasePath="/noticias"
         />
 
         {/* Layout Principal com Secundárias ao lado */}
@@ -56,6 +65,7 @@ export default async function NoticiasPage() {
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
                     className="col-span-7 row-span-3"
+                    slug={news.slug}
                   />
                 );
               return (
@@ -67,6 +77,7 @@ export default async function NoticiasPage() {
                   time={news.created_at}
                   image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
                   className="col-span-5"
+                  slug={news.slug}
                 />
               );
             })}
@@ -91,14 +102,7 @@ export default async function NoticiasPage() {
                       <h2 className="text-2xl font-bold text-gray-900">
                         {section.name}
                       </h2>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="border border-transparent hover:border-primary transition-colors duration-300 cursor-pointer"
-                      >
-                        <span className="mr-2">Veja mais</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
+                      <SeeMoreBtn path={`/noticias/${section.name}`} />
                     </div>
 
                     {/* Grid de cards */}
@@ -110,6 +114,7 @@ export default async function NoticiasPage() {
                           badge={news.badge}
                           time={news.created_at}
                           image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
+                          slug={news.slug}
                         />
                       ))}
                     </div>

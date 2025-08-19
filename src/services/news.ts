@@ -16,9 +16,21 @@ const newsService = {
       editorias: ICategoryWithNewsBanners[];
     }>(`${process.env.NEXT_PUBLIC_API_URL}/news`);
   },
+  getAllByCategory: (filters: {
+    category: string;
+    search: string;
+    page: number;
+  }) => {
+    const { search, category, page } = filters;
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/news-category/${category}/${
+      search || "null"
+    }${page ? `?page=${page}` : ""}`;
+
+    return axios.get<PaginatedResponse<INews>>(url);
+  },
   getBySlug: (slug: string) => {
-    const api = getApiClient();
-    return api.get<INews>(`/news/${slug}`);
+    return axios.get<INews>(`${process.env.NEXT_PUBLIC_API_URL}/news/${slug}`);
   },
   getAllPanel: (filters: {
     search: string;

@@ -15,6 +15,7 @@ interface NewsProps {
   time: string;
   image: string;
   className?: string;
+  slug: string;
 }
 
 export function NewsMain({
@@ -24,6 +25,7 @@ export function NewsMain({
   time,
   image,
   className,
+  slug,
 }: NewsProps) {
   return (
     <Card
@@ -42,7 +44,7 @@ export function NewsMain({
           </Badge>
         )}
 
-        <ShareBtn />
+        <ShareBtn url={`${process.env.NEXT_PUBLIC_APP_URL}/noticias/${slug}`} />
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white z-10">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 line-clamp-2">
@@ -76,6 +78,7 @@ export function NewsSecondary({
   time,
   image,
   className,
+  slug,
 }: NewsProps) {
   return (
     <Card
@@ -85,12 +88,14 @@ export function NewsSecondary({
       )}
     >
       {/* Imagem do lado esquerdo */}
-      <div className="w-32 sm:w-40 md:w-52 lg:w-60 h-full flex-shrink-0 overflow-hidden">
+      <div className="w-32 sm:w-40 md:w-52 lg:w-60 h-full flex-shrink-0 overflow-hidden relative">
         <img
           src={image || "/placeholder.svg"}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
+        {/* ShareBtn ajustado: botão flutuante no canto superior direito da imagem */}
+        <ShareBtn url={`${process.env.NEXT_PUBLIC_APP_URL}/noticias/${slug}`} />
       </div>
 
       {/* Conteúdo do lado direito */}
@@ -125,6 +130,7 @@ export function NewsMainEditorial({
   badge,
   time,
   image,
+  slug,
 }: NewsProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer bg-white">
@@ -145,13 +151,7 @@ export function NewsMainEditorial({
         </Badge>
 
         {/* Botão de compartilhar */}
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute bottom-3 left-3 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm w-8 h-8 z-10"
-        >
-          <Share2 className="h-3 w-3" />
-        </Button>
+        <ShareBtn url={`${process.env.NEXT_PUBLIC_APP_URL}/noticias/${slug}`} />
       </div>
 
       {/* Conteúdo fora da imagem */}

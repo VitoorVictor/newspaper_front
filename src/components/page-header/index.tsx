@@ -44,9 +44,7 @@ export function PageHeader({
       params.set(type === "search" ? searchParamKey : searchParamKeyQS!, term);
       router.push(`?${params.toString()}`);
     } else {
-      router.push(
-        `${redirectBasePath}?${searchParamKey}=${encodeURIComponent(term)}`
-      );
+      router.push(`${redirectBasePath}/${encodeURIComponent(term)}`);
     }
   };
 
