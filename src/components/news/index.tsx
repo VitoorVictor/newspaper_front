@@ -2,11 +2,12 @@
 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Clock } from "lucide-react";
 import { clsx } from "clsx";
 import ShareBtn from "@/components/custom-btns/share-btn";
 import { formatTimeAgo } from "@/utils/formatTimeAgo";
+import ReadMoreBtn from "../custom-btns/read-more-btn";
+import { useRouter } from "next/navigation";
 
 interface NewsProps {
   title: string;
@@ -27,8 +28,10 @@ export function NewsMain({
   className,
   slug,
 }: NewsProps) {
+  const router = useRouter();
   return (
     <Card
+      onClick={() => router.push(`/noticia/${slug}`)}
       className={clsx(
         "relative h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0 bg-white py-0 bg-cover bg-center",
         className
@@ -58,13 +61,7 @@ export function NewsMain({
               <Clock className="h-4 w-4" />
               Publicada {formatTimeAgo(time)}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2 text-primary hover:bg-white/80 backdrop-blur-sm"
-            >
-              Ler mais
-            </Button>
+            <ReadMoreBtn path={`/noticia/${slug}`} />
           </div>
         </div>
       </div>
@@ -80,8 +77,10 @@ export function NewsSecondary({
   className,
   slug,
 }: NewsProps) {
+  const router = useRouter();
   return (
     <Card
+      onClick={() => router.push(`/noticia/${slug}`)}
       className={clsx(
         "flex flex-row h-full w-full overflow-hidden bg-white p-0 gap-1 transition-all duration-300 hover:shadow-lg group cursor-pointer",
         className
@@ -132,8 +131,12 @@ export function NewsMainEditorial({
   image,
   slug,
 }: NewsProps) {
+  const router = useRouter();
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer bg-white">
+    <Card
+      onClick={() => router.push(`/noticia/${slug}`)}
+      className="overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer bg-white"
+    >
       {/* Imagem */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
@@ -170,13 +173,7 @@ export function NewsMainEditorial({
             <Clock className="h-3 w-3" />
             <span>Publicada {formatTimeAgo(time)}</span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-[#182641] hover:bg-[#182641] hover:text-white bg-transparent text-xs px-3 py-1 h-7"
-          >
-            Ler mais
-          </Button>
+          <ReadMoreBtn path={`/noticia/${slug}`} />
         </div>
       </div>
     </Card>
@@ -189,9 +186,12 @@ export function NewsSecondaryEditorial({
   time,
   image,
   className,
+  slug,
 }: NewsProps) {
+  const router = useRouter();
   return (
     <Card
+      onClick={() => router.push(`/noticia/${slug}`)}
       className={clsx(
         "relative h-full overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer border-0 bg-white py-0 bg-cover bg-center",
         className
@@ -205,13 +205,7 @@ export function NewsSecondaryEditorial({
           {badge}
         </Badge>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute top-2 right-2 bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm z-10"
-        >
-          <Share2 className="h-3.5 w-3.5" />
-        </Button>
+        <ShareBtn url={`${process.env.NEXT_PUBLIC_APP_URL}/noticias/${slug}`} />
 
         <div className="absolute bottom-0 left-0 right-0 p-3 text-white z-10">
           <h3 className="text-base sm:text-lg font-semibold line-clamp-2">
