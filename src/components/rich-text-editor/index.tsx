@@ -792,7 +792,27 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
                 <Label className="text-sm font-medium">Upload de Imagem</Label>
                 <FileUpload
                   accept="image/*"
-                  onFileSelect={addImageFromFile}
+                  onFileSelect={(files) => {
+                    if (Array.isArray(files)) {
+                      files.forEach((file: File) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                          if (e.target && typeof e.target.result === "string") {
+                            addImageFromFile(file, e.target.result);
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      });
+                    } else if (files instanceof File) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        if (e.target && typeof e.target.result === "string") {
+                          addImageFromFile(files, e.target.result);
+                        }
+                      };
+                      reader.readAsDataURL(files);
+                    }
+                  }}
                   placeholder="Arraste uma imagem ou clique para selecionar"
                   maxSize={5}
                 />
@@ -837,7 +857,19 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
                 <Label className="text-sm font-medium">Upload de Vídeo</Label>
                 <FileUpload
                   accept="video/*"
-                  onFileSelect={addVideoFromFile}
+                  onFileSelect={(files: File | File[]) => {
+                    // Garante que sempre trabalhamos com um array de arquivos
+                    const fileArray = Array.isArray(files) ? files : [files];
+                    fileArray.forEach((file) => {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        if (e.target && typeof e.target.result === "string") {
+                          addVideoFromFile(file, e.target.result);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    });
+                  }}
                   placeholder="Arraste um vídeo ou clique para selecionar"
                   maxSize={50}
                 />

@@ -129,23 +129,23 @@ export const ModalIndustrialGuide = ({
   const { reset, setValue, handleSubmit, control } = form;
   const createIndustrialGuide = useCreateIndustrialGuide();
   const updateIndustrialGuide = useUpdateIndustrialGuide(id!);
-  const { data: news, isLoading } = useIndustrialGuideBySlug(slug);
+  const { data: industrialGuide, isLoading } = useIndustrialGuideBySlug(slug);
 
   useEffect(() => {
-    if (isUpdate && news) {
-      setValue("name", news.data.name);
-      setValue("description", news.data.description);
-      setValue("address", news.data.address);
-      setValue("number", news.data.number);
+    if (isUpdate && industrialGuide) {
+      setValue("name", industrialGuide.data.name);
+      setValue("description", industrialGuide.data.description);
+      setValue("address", industrialGuide.data.address);
+      setValue("number", industrialGuide.data.number);
       setValue(
         "sector_ids",
-        news.data.sectors.map((sector) => sector.id)
+        industrialGuide.data.sectors.map((sector) => sector.id)
       );
-      setValue("created_at", news.data.created_at);
-      setValue("updated_at", news.data.updated_at);
-      setValue("image_url", news.data.image_url);
+      setValue("created_at", industrialGuide.data.created_at);
+      setValue("updated_at", industrialGuide.data.updated_at);
+      setValue("image_url", industrialGuide.data.image_url);
     }
-  }, [news, isUpdate, reset]);
+  }, [industrialGuide, isUpdate, reset]);
 
   const onSubmit = async (data: IndustrialGuideFormData) => {
     const formData = new FormData();
@@ -240,13 +240,15 @@ export const ModalIndustrialGuide = ({
                         maxSize={5}
                         hasPreview={
                           isUpdate
-                            ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`
-                            : ""
+                            ? [
+                                `${process.env.NEXT_PUBLIC_IMAGE_URL}${industrialGuide?.data.image_url}`,
+                              ]
+                            : []
                         }
                       />
                     </FormControl>
                     <FormDescription>
-                      Escolha uma imagem para a notícia
+                      Escolha uma imagem para a industria
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -292,7 +294,7 @@ export const ModalIndustrialGuide = ({
                 Cancelar
               </Button>
               <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Notícia
+                {isUpdate ? "Atualizar" : "Criar"} Industria
               </Button>
             </DialogFooter>
           </form>

@@ -265,8 +265,10 @@ export const ModalNews = ({
                         maxSize={5}
                         hasPreview={
                           isUpdate
-                            ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`
-                            : ""
+                            ? [
+                                `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`,
+                              ]
+                            : []
                         }
                       />
                     </FormControl>
