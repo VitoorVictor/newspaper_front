@@ -101,8 +101,8 @@ const CustomCarousel = React.forwardRef<HTMLDivElement, CustomCarouselProps>(
         {/* controles só aparecem no modo horizontal quando há múltiplas imagens */}
         {showControls && bannerImages.length > 1 && (
           <>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious type="button" />
+            <CarouselNext type="button" />
           </>
         )}
       </Carousel>

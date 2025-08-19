@@ -65,7 +65,7 @@ export const ImageViewerModal = ({
           {/* Imagem principal */}
           <div className="flex items-center justify-center w-full h-full min-h-[60vh]">
             <img
-              src={currentImage?.image_url}
+              src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${currentImage?.image_url}`}
               alt={`Imagem ${currentImageIndex + 1}`}
               className="max-w-full max-h-full object-contain"
               onKeyDown={handleKeyDown}
@@ -100,29 +100,6 @@ export const ImageViewerModal = ({
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
             {currentImageIndex + 1} de {images.length}
           </div>
-
-          {/* Miniaturas na parte inferior */}
-          {images.length > 1 && (
-            <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
-              {images.map((image, index) => (
-                <button
-                  key={image.id}
-                  onClick={() => onImageChange(index)}
-                  className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex
-                      ? "border-blue-500 scale-110"
-                      : "border-gray-600 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={image.image_url}
-                    alt={`Miniatura ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>

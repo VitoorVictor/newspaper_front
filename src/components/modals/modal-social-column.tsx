@@ -180,6 +180,7 @@ export const ModalSocialColumns = ({
         size="sm"
         variant="destructive"
         className="h-8 w-8 p-0 bg-red-500/90 hover:bg-red-600 cursor-pointer"
+        type="button"
         onClick={() => {
           setSelectedImage(image);
           setShowConfirmDeleteImage(true);

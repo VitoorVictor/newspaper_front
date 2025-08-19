@@ -1,39 +1,20 @@
-"use client";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { Title } from "@/components/page-header/title";
-import { SocialEventCard } from "@/components/social-card";
 import bannerService from "@/services/banner";
 import socialColumnService from "@/services/social-column";
 import { formatDateTime } from "@/utils/formatDateTime";
-import { ImageViewerModal } from "@/components/modals/modal-image-viewer";
-import { SocialColumnImagesSection } from "@/components/social-column-images-section";
-import { useState, useEffect } from "react";
+import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
 
-interface ColunaSocialPageProps {
+interface ColunaSocialBySlugPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default function ColunaSocialPage({ params }: ColunaSocialPageProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [data, setData] = useState<any>(null);
-  const [dataAdBanners, setDataAdBanners] = useState<any>(null);
-
-  // Carregar dados quando o componente montar
-  useEffect(() => {
-    const loadData = async () => {
-      const { slug } = await params;
-      const response = await socialColumnService.getBySlug(slug ?? "");
-      const bannersResponse = await bannerService.getAllTopSide();
-      setData(response.data);
-      setDataAdBanners(bannersResponse.data);
-    };
-    loadData();
-  }, [params]);
-
-  if (!data) {
-    return <div>Carregando...</div>;
-  }
+export default async function ColunaSocialBySlugPage({
+  params,
+}: ColunaSocialBySlugPageProps) {
+  const { slug } = await params;
+  const { data } = await socialColumnService.getBySlug(slug ?? "");
+  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   return (
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
@@ -117,13 +98,7 @@ export default function ColunaSocialPage({ params }: ColunaSocialPageProps) {
             {/* 3 colunas de cards */}
             <div className="lg:col-span-3">
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <SocialColumnImagesSection
-                  images={data.images || []}
-                  onImageClick={(index) => {
-                    setCurrentImageIndex(index);
-                    setIsModalOpen(true);
-                  }}
-                />
+                <SocialColumnImageGallery images={data.images || []} />
               </div>
             </div>
 
@@ -140,17 +115,6 @@ export default function ColunaSocialPage({ params }: ColunaSocialPageProps) {
                 )}
             </div>
           </div>
-        )}
-
-        {/* Modal de visualização de imagens */}
-        {data && data.images && data.images.length > 0 && (
-          <ImageViewerModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            images={data.images}
-            currentImageIndex={currentImageIndex}
-            onImageChange={setCurrentImageIndex}
-          />
         )}
       </div>
     </div>

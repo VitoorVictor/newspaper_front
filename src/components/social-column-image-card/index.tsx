@@ -20,7 +20,7 @@ export const SocialColumnImageCard = ({
     >
       <div className="relative overflow-hidden rounded-lg bg-gray-100">
         <img
-          src={image.image_url}
+          src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${image.image_url}`}
           alt={`Imagem ${index + 1}`}
           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
         />
