@@ -1,4 +1,4 @@
-export interface ISocialColumns {
+export interface ISocialColumn {
   id: number;
   title: string;
   slug: string;

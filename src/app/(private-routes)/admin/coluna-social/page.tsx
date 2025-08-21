@@ -4,7 +4,7 @@ import {
   useDeleteSocialColumns,
   useSocialColumns,
 } from "@/hooks/tanstackQuery/useSocialColumns";
-import { ISocialColumns } from "@/interfaces/social-column";
+import { ISocialColumn } from "@/interfaces/social-column";
 import { useState } from "react";
 import { getSocialColumnsColumns } from "./columns";
 import { Title } from "@/components/page-header/title";
@@ -28,7 +28,7 @@ export default function AdminColunaSocialPage() {
   const [showModalSocialColumns, setShowModalSocialColumns] = useState(false);
   const [searchSocialColumns, setSearchSocialColumns] = useState("");
   const [selectedSocialColumns, setSelectedSocialColumns] =
-    useState<ISocialColumns | null>(null);
+    useState<ISocialColumn | null>(null);
   const [showConfirmDeleteSocialColumns, setShowConfirmDeleteSocialColumns] =
     useState(false);
   const [details, setDetails] = useState(false);
@@ -42,20 +42,20 @@ export default function AdminColunaSocialPage() {
   const deleteSocialColumnsMutation = useDeleteSocialColumns();
 
   //views
-  const handleViewSocialColumns = (item: ISocialColumns) => {
+  const handleViewSocialColumns = (item: ISocialColumn) => {
     setSelectedSocialColumns(item);
     setShowModalSocialColumns(true);
     setDetails(true);
   };
 
   //edits
-  const handleEditSocialColumns = (item: ISocialColumns) => {
+  const handleEditSocialColumns = (item: ISocialColumn) => {
     setSelectedSocialColumns(item);
     setShowModalSocialColumns(true);
   };
 
   //deletes
-  const handleDeleteSocialColumns = (item: ISocialColumns) => {
+  const handleDeleteSocialColumns = (item: ISocialColumn) => {
     setSelectedSocialColumns(item);
     setShowConfirmDeleteSocialColumns(true);
   };

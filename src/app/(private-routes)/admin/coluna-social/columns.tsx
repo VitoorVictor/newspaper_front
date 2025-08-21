@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ISocialColumns } from "@/interfaces/social-column";
+import { ISocialColumn } from "@/interfaces/social-column";
 import { Edit, Trash2 } from "lucide-react";
 import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 
@@ -11,22 +11,22 @@ export const getSocialColumnsColumns = ({
   onDelete,
   onDeleteImg,
 }: {
-  onView: (item: ISocialColumns) => void;
-  onEdit: (item: ISocialColumns) => void;
-  onDelete: (item: ISocialColumns) => void;
-  onDeleteImg: (item: ISocialColumns) => void;
+  onView: (item: ISocialColumn) => void;
+  onEdit: (item: ISocialColumn) => void;
+  onDelete: (item: ISocialColumn) => void;
+  onDeleteImg: (item: ISocialColumn) => void;
 }) => [
   {
     key: "title",
     title: "Título",
-    render: (item: ISocialColumns) => (
+    render: (item: ISocialColumn) => (
       <span className="font-medium">{item.title}</span>
     ),
   },
   {
     key: "quantity",
     title: "Qtd de Imagens",
-    render: (item: ISocialColumns) => {
+    render: (item: ISocialColumn) => {
       const count = item.images.length;
       return (
         <span
@@ -44,7 +44,7 @@ export const getSocialColumnsColumns = ({
   {
     key: "slug",
     title: "Referência",
-    render: (item: ISocialColumns) => (
+    render: (item: ISocialColumn) => (
       <SlugColumnBtn slug={item.slug} url={`/coluna-social/${item.slug}`} />
     ),
   },
@@ -52,7 +52,7 @@ export const getSocialColumnsColumns = ({
     key: "actions",
     title: "Ações",
     className: "text-right",
-    render: (item: ISocialColumns) => (
+    render: (item: ISocialColumn) => (
       <div className="flex justify-end gap-2">
         <Button
           variant="outline"

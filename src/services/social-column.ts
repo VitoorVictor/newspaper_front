@@ -1,4 +1,4 @@
-import { ISocialColumns } from "../interfaces/social-column";
+import { ISocialColumn } from "../interfaces/social-column";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 import axios from "axios";
@@ -16,18 +16,18 @@ const socialColumnService = {
       search || "null"
     }${page ? `?page=${page}` : ""}`;
 
-    return axios.get<PaginatedResponse<ISocialColumns>>(url);
+    return axios.get<PaginatedResponse<ISocialColumn>>(url);
   },
 
   getBySlug: (slug: string) => {
-    return axios.get<ISocialColumns>(
+    return axios.get<ISocialColumn>(
       `${process.env.NEXT_PUBLIC_API_URL}/social-column/${slug}`
     );
   },
 
   create: (formData: FormData) => {
     const api = getApiClient();
-    return api.post<ISocialColumns>("/admin/social-columns", formData, {
+    return api.post<ISocialColumn>("/admin/social-columns", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -35,7 +35,7 @@ const socialColumnService = {
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<ISocialColumns>(`/admin/social-columns/${id}`, formData, {
+    return api.put<ISocialColumn>(`/admin/social-columns/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
