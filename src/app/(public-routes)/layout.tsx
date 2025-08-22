@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { BuildingScreen } from "@/components/buiding-screen";
 import Footer from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
@@ -14,7 +15,9 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
     <div className="min-h-screen w-full flex flex-col bg-gray-50">
       <AppSidebar session={session} />
       <Navbar email={session?.user.email || ""} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        {process.env.NODE_ENV === "production" ? <BuildingScreen /> : children}
+      </main>
       <Footer />
     </div>
   );
