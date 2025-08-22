@@ -31,6 +31,7 @@ import { FileUpload } from "../file-upload";
 import { CustomCarousel } from "../custom-carousel";
 import { Trash2 } from "lucide-react";
 import { ConfirmDialog } from "../confirm-dialog";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const bannerSchema = z.object({
   image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
@@ -61,6 +62,7 @@ export const ModalBanner = ({
   } | null>(null);
   const [showConfirmDeleteBanner, setShowConfirmDeleteBanner] = useState(false);
   const isUpdate = Boolean(id);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<BannerFormData>({
     resolver: zodResolver(bannerSchema),
@@ -72,6 +74,7 @@ export const ModalBanner = ({
   const { data: banner, isLoading } = useBannerById(id);
 
   const onSubmit = async (data: BannerFormData) => {
+    setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image_url" && value instanceof File) {
@@ -85,6 +88,7 @@ export const ModalBanner = ({
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
 
   const renderImageButtons = (
@@ -225,18 +229,12 @@ export const ModalBanner = ({
                 />
 
                 {/* Botões fixos na parte inferior */}
-                <DialogFooter className="flex-shrink-0 pt-4 border-t">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => onOpenChange(false)}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button type="submit">
-                    {isUpdate ? "Atualizar" : "Criar"} Banner
-                  </Button>
-                </DialogFooter>
+                <CustomFooterDialog
+                  onOpenChange={() => onOpenChange(false)}
+                  isSubmitting={isSubmitting}
+                  isUpdate={isUpdate}
+                  label="Banner"
+                />
               </form>
             </Form>
           )}

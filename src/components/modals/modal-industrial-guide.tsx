@@ -25,11 +25,12 @@ import {
   useUpdateIndustrialGuide,
 } from "@/hooks/tanstackQuery/useIndustrialGuide";
 import { FileUpload } from "../file-upload";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 import { CustomInput } from "../custom-inputs/input";
 import { ISector } from "@/interfaces/sector";
 import { PhoneInput } from "../custom-inputs/phone-input";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
@@ -120,6 +121,7 @@ export const ModalIndustrialGuide = ({
 }: ModalIndustrialGuideProps) => {
   const isUpdate = Boolean(id);
   const industrialGuideSchema = getIndustrialGuideSchema(isUpdate);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<IndustrialGuideFormData>({
     resolver: zodResolver(industrialGuideSchema),
     defaultValues: {
@@ -149,6 +151,7 @@ export const ModalIndustrialGuide = ({
   }, [industrialGuide, isUpdate, reset]);
 
   const onSubmit = async (data: IndustrialGuideFormData) => {
+    setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image_url" && value instanceof File) {
@@ -169,6 +172,7 @@ export const ModalIndustrialGuide = ({
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
@@ -285,18 +289,12 @@ export const ModalIndustrialGuide = ({
             </div>
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 mt-6 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Industria
-              </Button>
-            </DialogFooter>
+            <CustomFooterDialog
+                  onOpenChange={() => onOpenChange(false)}
+                  isSubmitting={isSubmitting}
+                  isUpdate={isUpdate}
+                  label="Industria"
+                />
           </form>
         </Form>
       </DialogContent>

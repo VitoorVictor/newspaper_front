@@ -34,9 +34,10 @@ import {
 } from "@/hooks/tanstackQuery/useNews";
 import { FileUpload } from "../file-upload";
 import { ICategory } from "@/interfaces/category";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
 import { CustomInput } from "../custom-inputs/input";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const getNewsSchema = (isUpdate: boolean) =>
   z.object({
@@ -107,6 +108,7 @@ export const ModalNews = ({
 }: ModalNewsProps) => {
   const isUpdate = Boolean(id);
   const newsSchema = getNewsSchema(isUpdate);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<NewsFormData>({
     resolver: zodResolver(newsSchema),
     defaultValues: {
@@ -145,6 +147,7 @@ export const ModalNews = ({
   }, [news, isUpdate, reset]);
 
   const onSubmit = async (data: NewsFormData) => {
+    setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image_url" && value instanceof File) {
@@ -165,6 +168,7 @@ export const ModalNews = ({
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
@@ -360,18 +364,12 @@ export const ModalNews = ({
             </div>
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 mt-6 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Notícia
-              </Button>
-            </DialogFooter>
+            <CustomFooterDialog
+              onOpenChange={() => onOpenChange(false)}
+              isSubmitting={isSubmitting}
+              isUpdate={isUpdate}
+              label="Notícia"
+            />
           </form>
         </Form>
       </DialogContent>

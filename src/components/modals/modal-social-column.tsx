@@ -31,6 +31,7 @@ import { CustomInput } from "../custom-inputs/input";
 import { CustomCarousel } from "../custom-carousel";
 import { Trash2 } from "lucide-react";
 import { ConfirmDialog } from "../confirm-dialog";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const getSocialColumnsSchema = (isUpdate: boolean) =>
   z.object({
@@ -116,6 +117,7 @@ export const ModalSocialColumns = ({
   const [showConfirmDeleteImage, setShowConfirmDeleteImage] = useState(false);
   const isUpdate = Boolean(id);
   const industrialGuideSchema = getSocialColumnsSchema(isUpdate);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<SocialColumnsFormData>({
     resolver: zodResolver(industrialGuideSchema),
     defaultValues: {
@@ -140,6 +142,7 @@ export const ModalSocialColumns = ({
   }, [socialColumns, isUpdate, reset]);
 
   const onSubmit = async (data: SocialColumnsFormData) => {
+    setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "main_image" && value instanceof File) {
@@ -164,6 +167,7 @@ export const ModalSocialColumns = ({
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
@@ -322,18 +326,12 @@ export const ModalSocialColumns = ({
               </div>
 
               {/* Botões fixos na parte inferior */}
-              <DialogFooter className="flex-shrink-0 mt-6 pt-4 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit">
-                  {isUpdate ? "Atualizar" : "Criar"} Evento
-                </Button>
-              </DialogFooter>
+              <CustomFooterDialog
+                onOpenChange={() => onOpenChange(false)}
+                isSubmitting={isSubmitting}
+                isUpdate={isUpdate}
+                label="Evento"
+              />
             </form>
           </Form>
         </DialogContent>

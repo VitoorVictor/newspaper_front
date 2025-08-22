@@ -11,13 +11,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CustomInput } from "../custom-inputs/input";
 import {
   useCreateUser,
   useUpdateUser,
   useUserById,
 } from "@/hooks/tanstackQuery/useUser";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const getUserSchema = (isUpdate: boolean) => {
   return z
@@ -75,6 +76,7 @@ interface ModalUserProps {
 }
 export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
   const isUpdate = Boolean(id);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<UserFormData>({
     resolver: zodResolver(getUserSchema(isUpdate)),
     defaultValues: {
@@ -95,6 +97,7 @@ export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
   }, [user, isUpdate, reset]);
 
   const onSubmit = async (data: UserFormData) => {
+    setIsSubmitting(true);
     const res = isUpdate
       ? await updateUser.mutateAsync(data)
       : await createUser.mutateAsync(data);
@@ -102,6 +105,7 @@ export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
@@ -156,18 +160,12 @@ export const ModalUser = ({ onOpenChange, title, id }: ModalUserProps) => {
             )}
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Usuário
-              </Button>
-            </DialogFooter>
+            <CustomFooterDialog
+              onOpenChange={() => onOpenChange(false)}
+              isSubmitting={isSubmitting}
+              isUpdate={isUpdate}
+              label="Usuário"
+            />
           </form>
         </Form>
       </DialogContent>

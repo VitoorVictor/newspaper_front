@@ -16,8 +16,9 @@ import {
   useCreateSector,
   useUpdateSector,
 } from "@/hooks/tanstackQuery/useSector";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CustomInput } from "../custom-inputs/input";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const sectorSchema = z.object({
   name: z
@@ -35,6 +36,7 @@ interface ModalSectorProps {
 }
 export const ModalSector = ({ onOpenChange, title, id }: ModalSectorProps) => {
   const isUpdate = Boolean(id);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<SectorFormData>({
     resolver: zodResolver(sectorSchema),
     defaultValues: {
@@ -54,6 +56,7 @@ export const ModalSector = ({ onOpenChange, title, id }: ModalSectorProps) => {
   }, [sectors, isUpdate, reset]);
 
   const onSubmit = async (data: SectorFormData) => {
+    setIsSubmitting(true);
     const res = isUpdate
       ? await updateSector.mutateAsync(data)
       : await createSector.mutateAsync(data);
@@ -61,6 +64,7 @@ export const ModalSector = ({ onOpenChange, title, id }: ModalSectorProps) => {
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
@@ -84,18 +88,12 @@ export const ModalSector = ({ onOpenChange, title, id }: ModalSectorProps) => {
             />
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Setor
-              </Button>
-            </DialogFooter>
+            <CustomFooterDialog
+              onOpenChange={() => onOpenChange(false)}
+              isSubmitting={isSubmitting}
+              isUpdate={isUpdate}
+              label="Setor"
+            />
           </form>
         </Form>
       </DialogContent>

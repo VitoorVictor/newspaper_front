@@ -16,8 +16,9 @@ import {
   useCreateCategory,
   useUpdateCategory,
 } from "@/hooks/tanstackQuery/useCategory";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CustomInput } from "../custom-inputs/input";
+import { CustomFooterDialog } from "../custom-footer-dialog";
 
 const categorySchema = z.object({
   name: z
@@ -39,6 +40,7 @@ export const ModalCategory = ({
   id,
 }: ModalCategoryProps) => {
   const isUpdate = Boolean(id);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -59,6 +61,7 @@ export const ModalCategory = ({
   }, [categories, isUpdate, reset]);
 
   const onSubmit = async (data: CategoryFormData) => {
+    setIsSubmitting(true);
     const res = isUpdate
       ? await updateCategory.mutateAsync(data)
       : await createCategory.mutateAsync(data);
@@ -66,6 +69,7 @@ export const ModalCategory = ({
       reset();
       onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
@@ -89,18 +93,12 @@ export const ModalCategory = ({
             />
 
             {/* Botões fixos na parte inferior */}
-            <DialogFooter className="flex-shrink-0 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isUpdate ? "Atualizar" : "Criar"} Editoria
-              </Button>
-            </DialogFooter>
+            <CustomFooterDialog
+                  onOpenChange={() => onOpenChange(false)}
+                  isSubmitting={isSubmitting}
+                  isUpdate={isUpdate}
+                  label="Editoria"
+                />
           </form>
         </Form>
       </DialogContent>
