@@ -5,10 +5,6 @@ export const data = [
     session: true,
     items: [
       {
-        title: "Início",
-        url: "/admin/",
-      },
-      {
         title: "Notícias e Editorias",
         url: "/admin/noticias",
       },

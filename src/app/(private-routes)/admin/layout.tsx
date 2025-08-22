@@ -10,9 +10,9 @@ interface AdminLayoutProps {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   const session = await auth();
-  // if (!session?.user || session === null) {
-  //   notFound();
-  // }
+  if (!session?.user || session === null) {
+    notFound();
+  }
   return (
     <div className="min-h-screen w-full flex flex-col bg-gray-50">
       <AppSidebar session={session} />
