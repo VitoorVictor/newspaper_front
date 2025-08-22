@@ -23,6 +23,7 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useCategories } from "@/hooks/tanstackQuery/useCategory";
+import { useSectors } from "@/hooks/tanstackQuery/useSector";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   session: Session | null;
@@ -34,6 +35,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const { data: categories } = useCategories();
+  const { data: sectors } = useSectors();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -121,7 +123,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
             </SidebarGroup>
           );
         })}
-        {categories && (
+        {categories && pathname === "/noticias" && (
           <SidebarGroup key="Todas as Editorias" className="mt-2">
             <SidebarGroupLabel className="text-muted-foreground font-bold text-xs uppercase tracking-wider px-3 py-2">
               Todas as Editorias
@@ -129,6 +131,33 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {categories.data.map((category) => (
+                  <SidebarMenuItem key={category.id}>
+                    <SidebarMenuButton
+                      asChild
+                      className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200"
+                    >
+                      <Link
+                        href="#"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center w-full px-3 py-5"
+                      >
+                        {category.name}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+        {sectors && pathname === "/guia-industrial" && (
+          <SidebarGroup key="Todas as Editorias" className="mt-2">
+            <SidebarGroupLabel className="text-muted-foreground font-bold text-xs uppercase tracking-wider px-3 py-2">
+              Todas os Setores
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {sectors.data.map((category) => (
                   <SidebarMenuItem key={category.id}>
                     <SidebarMenuButton
                       asChild
