@@ -78,7 +78,7 @@ export default async function HomePage() {
             <IndustryCard
               key={industry.id}
               id={industry.id}
-              sectors={[{ id: 1, name: "dadad" }]}
+              sectors={industry.sectors}
               title={industry.name}
               slug={industry.slug}
               image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${industry.image_url}`}

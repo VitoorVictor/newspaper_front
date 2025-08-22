@@ -136,8 +136,8 @@ export const ModalSocialColumns = ({
     if (isUpdate && socialColumns) {
       setValue("title", socialColumns.data.title);
       setValue("description", socialColumns.data.description);
-      setValue("created_at", socialColumns.data.created_at);
-      setValue("updated_at", socialColumns.data.updated_at);
+      setValue("created_at", new Date(socialColumns.data.created_at).toISOString().slice(0, 16));
+      setValue("updated_at", new Date(socialColumns.data.updated_at).toISOString().slice(0, 16));
     }
   }, [socialColumns, isUpdate, reset]);
 
@@ -219,14 +219,14 @@ export const ModalSocialColumns = ({
                     <CustomInput
                       name="created_at"
                       label="Industria criada em:"
-                      type="datetime"
+                      type="datetime-local"
                       disabled
                     />
                     {/* Update */}
                     <CustomInput
                       name="updated_at"
                       label="Última alteração em:"
-                      type="datetime"
+                      type="datetime-local"
                       disabled
                     />
                   </div>

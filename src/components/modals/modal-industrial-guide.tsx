@@ -110,6 +110,7 @@ interface ModalIndustrialGuideProps {
   sectors: ISector[];
   id?: number;
   slug?: string;
+  view?: boolean;
 }
 
 export const ModalIndustrialGuide = ({
@@ -118,6 +119,7 @@ export const ModalIndustrialGuide = ({
   sectors,
   id,
   slug,
+  view = false,
 }: ModalIndustrialGuideProps) => {
   const isUpdate = Boolean(id);
   const industrialGuideSchema = getIndustrialGuideSchema(isUpdate);
@@ -144,13 +146,15 @@ export const ModalIndustrialGuide = ({
         "sector_ids",
         industrialGuide.data.sectors.map((sector) => sector.id)
       );
-      setValue("created_at", industrialGuide.data.created_at);
-      setValue("updated_at", industrialGuide.data.updated_at);
+      setValue("created_at", new Date(industrialGuide.data.created_at).toISOString().slice(0, 16));
+      setValue("updated_at", new Date(industrialGuide.data.updated_at).toISOString().slice(0, 16));
       setValue("image_url", industrialGuide.data.image_url);
     }
   }, [industrialGuide, isUpdate, reset]);
 
   const onSubmit = async (data: IndustrialGuideFormData) => {
+    if (view) return; // Não permite submissão em modo visualização
+
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -182,7 +186,11 @@ export const ModalIndustrialGuide = ({
       <DialogContent className="md:max-w-4xl w-full aspace-y-6">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Preencha os dados da industria</DialogDescription>
+          <DialogDescription>
+            {view
+              ? "Visualizando dados da indústria"
+              : "Preencha os dados da indústria"}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -197,15 +205,15 @@ export const ModalIndustrialGuide = ({
                   {/* Create */}
                   <CustomInput
                     name="created_at"
-                    label="Industria criada em:"
-                    type="datetime"
+                    label="Indústria criada em:"
+                    type="datetime-local"
                     disabled
                   />
                   {/* Update */}
                   <CustomInput
                     name="updated_at"
                     label="Última alteração em:"
-                    type="datetime"
+                    type="datetime-local"
                     disabled
                   />
                 </div>
@@ -214,18 +222,20 @@ export const ModalIndustrialGuide = ({
               {/* Nome */}
               <CustomInput
                 name="name"
-                label="Nome da Industria"
-                placeholder="Digite o nome da industria"
-                description="O nome da industria (5-200 caracteres)"
+                label="Nome da Indústria"
+                placeholder="Digite o nome da indústria"
+                description="O nome da indústria (5-200 caracteres)"
                 required
+                disabled={view}
               />
 
-              {/* Subtítulo */}
+              {/* Descrição */}
               <CustomInput
                 name="description"
                 label="Descrição"
-                placeholder="Digite a descrição da industria"
-                description=" Um resumo ou complemento referente a industria (Opcional)"
+                placeholder="Digite a descrição da indústria"
+                description="Um resumo ou complemento referente à indústria (Opcional)"
+                disabled={view}
               />
 
               {/* URL da Imagem */}
@@ -236,24 +246,42 @@ export const ModalIndustrialGuide = ({
                   <FormItem>
                     <FormLabel>Imagem *</FormLabel>
                     <FormControl>
-                      <FileUpload
-                        accept="image/*"
-                        onFileSelect={(file) => {
-                          field.onChange(file);
-                        }}
-                        placeholder="Arraste uma imagem ou clique para selecionar"
-                        maxSize={5}
-                        hasPreview={
-                          isUpdate
-                            ? [
-                                `${process.env.NEXT_PUBLIC_IMAGE_URL}${industrialGuide?.data.image_url}`,
-                              ]
-                            : []
-                        }
-                      />
+                      {view ? (
+                        <div className="p-4 border rounded-md bg-gray-50 flex justify-center items-center">
+                          {industrialGuide?.data.image_url ? (
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${industrialGuide.data.image_url}`}
+                              alt="Imagem da indústria"
+                              className="max-w-full h-auto max-h-64 rounded-md"
+                            />
+                          ) : (
+                            <span className="text-gray-500">
+                              Nenhuma imagem selecionada
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <FileUpload
+                          accept="image/*"
+                          onFileSelect={(file) => {
+                            if (!view) field.onChange(file);
+                          }}
+                          placeholder="Arraste uma imagem ou clique para selecionar"
+                          maxSize={5}
+                          hasPreview={
+                            isUpdate
+                              ? [
+                                  `${process.env.NEXT_PUBLIC_IMAGE_URL}${industrialGuide?.data.image_url}`,
+                                ]
+                              : []
+                          }
+                        />
+                      )}
                     </FormControl>
                     <FormDescription>
-                      Escolha uma imagem para a industria
+                      {view
+                        ? "Imagem da indústria"
+                        : "Escolha uma imagem para a indústria"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -267,6 +295,7 @@ export const ModalIndustrialGuide = ({
                   label="Endereço"
                   placeholder="Dica de formato: Rua Exemplo - Bairro Centro, São Paulo - SP, 01000-000"
                   conteinerClassName="col-span-4"
+                  disabled={view}
                 />
 
                 {/* número */}
@@ -275,26 +304,77 @@ export const ModalIndustrialGuide = ({
                   label="Telefone"
                   placeholder="(00) 00000-0000"
                   conteinerClassName="col-span-2"
+                  disabled={view}
                 />
               </div>
 
-              {/* Tópico */}
-              <CustomMultiSelect
+              {/* Setores */}
+              <FormField
+                control={control}
                 name="sector_ids"
-                data={sectors}
-                fieldValue="id"
-                fieldLabel="name"
-                containerClassName="w-full"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Setores *</FormLabel>
+                    <FormControl>
+                      {view ? (
+                        <div className="p-3 border rounded-md bg-gray-50">
+                          {field.value?.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {field.value.map((id) => {
+                                const sector = sectors.find(
+                                  (sect) => sect.id === id
+                                );
+                                return (
+                                  <span
+                                    key={id}
+                                    className="px-2 py-1 bg-primary text-white text-sm rounded-md"
+                                  >
+                                    {sector?.name || `ID: ${id}`}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">
+                              Nenhum setor selecionado
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <CustomMultiSelect
+                          name="sector_ids"
+                          data={sectors}
+                          fieldValue="id"
+                          fieldLabel="name"
+                          containerClassName="w-full"
+                        />
+                      )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
 
             {/* Botões fixos na parte inferior */}
-            <CustomFooterDialog
-                  onOpenChange={() => onOpenChange(false)}
-                  isSubmitting={isSubmitting}
-                  isUpdate={isUpdate}
-                  label="Industria"
-                />
+            {!view ? (
+              <CustomFooterDialog
+                onOpenChange={() => onOpenChange(false)}
+                isSubmitting={isSubmitting}
+                isUpdate={isUpdate}
+                label="Indústria"
+              />
+            ) : (
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Fechar
+                </Button>
+              </div>
+            )}
           </form>
         </Form>
       </DialogContent>

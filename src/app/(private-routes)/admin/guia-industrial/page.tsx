@@ -47,7 +47,7 @@ export default function AdminGuiaIndustrialPage() {
   const [showModalIndustrialGuide, setShowModalIndustrialGuide] =
     useState(false);
   const [showModalSector, setShowModalSector] = useState(false);
-
+  const [viewIndustrialGuide, setViewIndustrialGuide] = useState(false);
   const [selectedIndustrialGuide, setSelectedIndustrialGuide] =
     useState<IIndustrialGuide | null>(null);
   const [selectedSector, setSelectedSector] = useState<ISector | null>(null);
@@ -80,6 +80,11 @@ export default function AdminGuiaIndustrialPage() {
   const deleteSectorMutation = useDeleteSector();
 
   //edits
+  const handleViewIndustrialGuide = (item: IIndustrialGuide) => {
+    setSelectedIndustrialGuide(item);
+    setShowModalIndustrialGuide(true);
+    setViewIndustrialGuide(true);
+  };
   const handleEditIndustrialGuide = (item: IIndustrialGuide) => {
     setSelectedIndustrialGuide(item);
     setShowModalIndustrialGuide(true);
@@ -101,6 +106,7 @@ export default function AdminGuiaIndustrialPage() {
 
   //columns
   const industrialGuideColumns = getIndustrialGuideColumns({
+    onView: handleViewIndustrialGuide,
     onEdit: handleEditIndustrialGuide,
     onDelete: handleDeleteIndustrialGuide,
   });
@@ -139,6 +145,7 @@ export default function AdminGuiaIndustrialPage() {
                   <ModalIndustrialGuide
                     onOpenChange={(open) => {
                       setShowModalIndustrialGuide(open);
+                      setViewIndustrialGuide(open);
                       setSelectedIndustrialGuide(null);
                     }}
                     title={`${
@@ -147,6 +154,7 @@ export default function AdminGuiaIndustrialPage() {
                     sectors={sectors.data}
                     id={selectedIndustrialGuide?.id}
                     slug={selectedIndustrialGuide?.slug}
+                    view={viewIndustrialGuide}
                   />
                 )}
               </div>
@@ -192,6 +200,7 @@ export default function AdminGuiaIndustrialPage() {
                   data={industrialGuide?.data.data ?? []}
                   columns={industrialGuideColumns}
                   getRowKey={(item) => item.id}
+                  onRowClick={handleViewIndustrialGuide}
                 />
               )}
             </CardContent>

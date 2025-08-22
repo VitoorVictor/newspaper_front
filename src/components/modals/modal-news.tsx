@@ -97,6 +97,7 @@ interface ModalNewsProps {
   categories: ICategory[];
   id?: number;
   slug?: string;
+  view: boolean;
 }
 
 export const ModalNews = ({
@@ -105,6 +106,7 @@ export const ModalNews = ({
   categories,
   id,
   slug,
+  view,
 }: ModalNewsProps) => {
   const isUpdate = Boolean(id);
   const newsSchema = getNewsSchema(isUpdate);
@@ -140,13 +142,15 @@ export const ModalNews = ({
         news.data.categories.map((category) => category.id)
       );
       setValue("content", news.data.content);
-      setValue("created_at", news.data.created_at);
-      setValue("updated_at", news.data.updated_at);
+      setValue("created_at", new Date(news.data.created_at).toISOString().slice(0, 16));
+      setValue("updated_at", new Date(news.data.updated_at).toISOString().slice(0, 16));
       setValue("top_position", news.data.top_position);
     }
   }, [news, isUpdate, reset]);
 
   const onSubmit = async (data: NewsFormData) => {
+    if (view) return; // Não permite submissão em modo visualização
+
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -178,7 +182,11 @@ export const ModalNews = ({
       <DialogContent className="md:max-w-4xl w-full aspace-y-6">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Preencha os dados da notícia</DialogDescription>
+          <DialogDescription>
+            {view
+              ? "Visualizando dados da notícia"
+              : "Preencha os dados da notícia"}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -190,18 +198,18 @@ export const ModalNews = ({
             <div className="flex-1 max-h-[70vh] overflow-y-auto p-2 space-y-6">
               {isUpdate && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Título */}
+                  {/* Data de criação */}
                   <CustomInput
                     name="created_at"
-                    label="Nóticia criada em:"
-                    type="datetime"
+                    label="Notícia criada em:"
+                    type="datetime-local"
                     disabled
                   />
-                  {/* Título */}
+                  {/* Data de atualização */}
                   <CustomInput
                     name="updated_at"
                     label="Última alteração em:"
-                    type="datetime"
+                    type="datetime-local"
                     disabled
                   />
                 </div>
@@ -213,6 +221,7 @@ export const ModalNews = ({
                 placeholder="Digite o título da notícia"
                 description="O título principal da notícia (5-200 caracteres)"
                 required
+                disabled={view}
               />
               {/* Subtítulo */}
               <CustomInput
@@ -221,16 +230,55 @@ export const ModalNews = ({
                 placeholder="Digite o subtítulo da notícia"
                 description=" Um resumo ou complemento do título (10-300 caracteres)"
                 required
+                disabled={view}
               />
               {/* Editoria */}
-              <CustomMultiSelect
-                label="Editoria"
-                placeholder="Selecione a editoria"
+              <FormField
+                control={control}
                 name="category_ids"
-                data={categories}
-                fieldValue="id"
-                fieldLabel="name"
-                containerClassName="w-full"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Editoria *</FormLabel>
+                    <FormControl>
+                      {view ? (
+                        <div className="p-3 border rounded-md bg-gray-50">
+                          {field.value?.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {field.value.map((id) => {
+                                const category = categories.find(
+                                  (cat) => cat.id === id
+                                );
+                                return (
+                                  <span
+                                    key={id}
+                                    className="px-2 py-1 bg-primary text-white text-sm rounded-md"
+                                  >
+                                    {category?.name || `ID: ${id}`}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">
+                              Nenhuma editoria selecionada
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <CustomMultiSelect
+                          label="Editoria"
+                          placeholder="Selecione a editoria"
+                          name="category_ids"
+                          data={categories}
+                          fieldValue="id"
+                          fieldLabel="name"
+                          containerClassName="w-full"
+                        />
+                      )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
               {/* Conteúdo - Rich Text Editor */}
               <FormField
@@ -240,13 +288,24 @@ export const ModalNews = ({
                   <FormItem>
                     <FormLabel>Conteúdo *</FormLabel>
                     <FormControl>
-                      <RichTextEditor
-                        content={field.value || ""}
-                        onChange={field.onChange}
-                      />
+                      {view ? (
+                        <div
+                          className="p-4 border rounded-md bg-gray-50 min-h-[200px] prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: field.value || "",
+                          }}
+                        />
+                      ) : (
+                        <RichTextEditor
+                          content={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      )}
                     </FormControl>
                     <FormDescription>
-                      Use o editor para formatar o conteúdo da notícia
+                      {view
+                        ? "Conteúdo da notícia"
+                        : "Use o editor para formatar o conteúdo da notícia"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -260,24 +319,42 @@ export const ModalNews = ({
                   <FormItem>
                     <FormLabel>Imagem *</FormLabel>
                     <FormControl>
-                      <FileUpload
-                        accept="image/*"
-                        onFileSelect={(file) => {
-                          field.onChange(file);
-                        }}
-                        placeholder="Arraste uma imagem ou clique para selecionar"
-                        maxSize={5}
-                        hasPreview={
-                          isUpdate
-                            ? [
-                                `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`,
-                              ]
-                            : []
-                        }
-                      />
+                      {view ? (
+                        <div className="p-4 border rounded-md bg-gray-50 flex justify-center items-center">
+                          {news?.data.image_url ? (
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.data.image_url}`}
+                              alt="Imagem da notícia"
+                              className="max-w-full h-auto max-h-64 rounded-md"
+                            />
+                          ) : (
+                            <span className="text-gray-500">
+                              Nenhuma imagem selecionada
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <FileUpload
+                          accept="image/*"
+                          onFileSelect={(file) => {
+                            if (!view) field.onChange(file);
+                          }}
+                          placeholder="Arraste uma imagem ou clique para selecionar"
+                          maxSize={5}
+                          hasPreview={
+                            isUpdate
+                              ? [
+                                  `${process.env.NEXT_PUBLIC_IMAGE_URL}${news?.data.image_url}`,
+                                ]
+                              : []
+                          }
+                        />
+                      )}
                     </FormControl>
                     <FormDescription>
-                      Escolha uma imagem para a notícia
+                      {view
+                        ? "Imagem da notícia"
+                        : "Escolha uma imagem para a notícia"}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -294,6 +371,7 @@ export const ModalNews = ({
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        disabled={view}
                       >
                         <FormControl>
                           <SelectTrigger className="min-w-40 w-full">
@@ -325,11 +403,14 @@ export const ModalNews = ({
                       <FormLabel>Posição da Notícia *</FormLabel>
                       <Select
                         defaultValue={field.value || "nothing"}
-                        onValueChange={(value) =>
-                          value === "nothing"
-                            ? field.onChange(null)
-                            : field.onChange(value)
-                        }
+                        onValueChange={(value) => {
+                          if (!view) {
+                            value === "nothing"
+                              ? field.onChange(null)
+                              : field.onChange(value);
+                          }
+                        }}
+                        disabled={view}
                       >
                         <FormControl>
                           <SelectTrigger className="min-w-40 w-full">
@@ -360,16 +441,29 @@ export const ModalNews = ({
                 name="badge"
                 label="Crachá"
                 placeholder="Digite o crachá da notícia"
+                disabled={view}
               />
             </div>
 
             {/* Botões fixos na parte inferior */}
-            <CustomFooterDialog
-              onOpenChange={() => onOpenChange(false)}
-              isSubmitting={isSubmitting}
-              isUpdate={isUpdate}
-              label="Notícia"
-            />
+            {!view ? (
+              <CustomFooterDialog
+                onOpenChange={() => onOpenChange(false)}
+                isSubmitting={isSubmitting}
+                isUpdate={isUpdate}
+                label="Notícia"
+              />
+            ) : (
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Fechar
+                </Button>
+              </div>
+            )}
           </form>
         </Form>
       </DialogContent>

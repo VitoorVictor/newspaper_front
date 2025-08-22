@@ -44,6 +44,7 @@ export default function AdminNoticias() {
   const [showModalNews, setShowModalNews] = useState(false);
   const [showModalCategory, setShowModalCategory] = useState(false);
   const [pesquisaNews, setPesquisaNews] = useState("");
+  const [viewNews, setViewNews] = useState(false);
   const [selectedNews, setSelectedNews] = useState<INews | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null
@@ -67,6 +68,13 @@ export default function AdminNoticias() {
   const deleteNewsMutation = useDeleteNews();
   const deleteCategoryMutation = useDeleteCategory();
 
+  //views
+  const handleViewNews = (item: INews) => {
+    setSelectedNews(item);
+    setShowModalNews(true);
+    setViewNews(true);
+  };
+
   //edits
   const handleEditNews = (item: INews) => {
     setSelectedNews(item);
@@ -89,6 +97,7 @@ export default function AdminNoticias() {
 
   //columns
   const newsColumns = getNewsColumns({
+    onView: handleViewNews,
     onEdit: handleEditNews,
     onDelete: handleDeleteNews,
   });
@@ -127,6 +136,7 @@ export default function AdminNoticias() {
                 {showModalNews && categories && (
                   <ModalNews
                     onOpenChange={(open) => {
+                      setViewNews(open);
                       setShowModalNews(open);
                       setSelectedNews(null);
                     }}
@@ -136,6 +146,7 @@ export default function AdminNoticias() {
                     categories={categories.data}
                     id={selectedNews?.id}
                     slug={selectedNews?.slug}
+                    view={viewNews}
                   />
                 )}
               </div>
@@ -183,6 +194,7 @@ export default function AdminNoticias() {
                   data={news?.data.data ?? []}
                   columns={newsColumns}
                   getRowKey={(item) => item.id}
+                  onRowClick={handleViewNews}
                 />
               )}
             </CardContent>
