@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Title } from "./title";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PageHeaderProps {
   title: string;
@@ -32,9 +32,18 @@ export function PageHeader({
   searchParamKeyQS,
   redirectBasePath = "/buscar",
 }: PageHeaderProps) {
-  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const initialSearchValue = searchParams.get(searchParamKey) || "";
+  const [searchTerm, setSearchTerm] = useState(initialSearchValue);
+
+  useEffect(() => {
+    const currentSearchValue = searchParams.get(searchParamKey);
+    if (currentSearchValue !== searchTerm) {
+      setSearchTerm(currentSearchValue || "");
+    }
+  }, [searchParams, searchParamKey]);
 
   const handleSearch = (term: string, type: "search" | "quickSearch") => {
     if (!term.trim()) return;
@@ -44,7 +53,13 @@ export function PageHeader({
       params.set(type === "search" ? searchParamKey : searchParamKeyQS!, term);
       router.push(`?${params.toString()}`);
     } else {
-      router.push(`${redirectBasePath}/${encodeURIComponent(term)}`);
+      type === "search"
+        ? router.push(
+            `${redirectBasePath}/${encodeURIComponent(
+              "Todas Editorias"
+            )}?${searchParamKey}=${term}`
+          )
+        : router.push(`${redirectBasePath}/${encodeURIComponent(term)}`);
     }
   };
 

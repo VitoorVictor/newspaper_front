@@ -23,7 +23,7 @@ export default async function NoticiasByCategoryPage({
   const { pesquisa, pagina } = await searchParams;
 
   const { data } = await newsService.getAllByCategory({
-    category,
+    category: category === "Todas%20Editorias" ? "" : category,
     search: pesquisa ?? "",
     page: Number(pagina) ?? 0,
   });
@@ -47,8 +47,18 @@ export default async function NoticiasByCategoryPage({
           />
         )}
         <PageHeader
-          title={`Editoria de ${decodeURIComponent(category)}`}
-          subtitle={`Fique por dentro das últimas notícias de ${decodeURIComponent(category)}`}
+          title={`${
+            decodeURIComponent(category) === "Todas Editorias"
+              ? "Últimas Notícias"
+              : `Editoria de ${decodeURIComponent(category)}`
+          }`}
+          subtitle={`${
+            decodeURIComponent(category) === "Todas Editorias"
+              ? "Fique por dentro das últimas notícias"
+              : `Fique por dentro das últimas notícias de ${decodeURIComponent(
+                  category
+                )}`
+          }`}
           placeholder="Buscar pelo título..."
         />
         <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">

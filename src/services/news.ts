@@ -23,9 +23,11 @@ const newsService = {
   }) => {
     const { search, category, page } = filters;
 
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/news-category/${category}/${
-      search || "null"
-    }${page ? `?page=${page}` : ""}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/news-category/${
+      category === "" ? "null" : category
+    }/${search || "null"}${page ? `?page=${page}` : ""}`;
+
+    console.log(url);
 
     return axios.get<PaginatedResponse<INews>>(url);
   },
