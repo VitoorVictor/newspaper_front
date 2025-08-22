@@ -97,7 +97,8 @@ type SocialColumnsFormData = z.infer<ReturnType<typeof getSocialColumnsSchema>>;
 
 interface ModalSocialColumnsProps {
   onOpenChange: (open: boolean) => void;
-  details: boolean;
+  view: boolean;
+  deleteImg: boolean;
   title: string;
   id?: number;
   slug?: string;
@@ -105,7 +106,8 @@ interface ModalSocialColumnsProps {
 
 export const ModalSocialColumns = ({
   onOpenChange,
-  details,
+  view,
+  deleteImg,
   title,
   id,
   slug,
@@ -136,12 +138,20 @@ export const ModalSocialColumns = ({
     if (isUpdate && socialColumns) {
       setValue("title", socialColumns.data.title);
       setValue("description", socialColumns.data.description);
-      setValue("created_at", new Date(socialColumns.data.created_at).toISOString().slice(0, 16));
-      setValue("updated_at", new Date(socialColumns.data.updated_at).toISOString().slice(0, 16));
+      setValue(
+        "created_at",
+        new Date(socialColumns.data.created_at).toISOString().slice(0, 16)
+      );
+      setValue(
+        "updated_at",
+        new Date(socialColumns.data.updated_at).toISOString().slice(0, 16)
+      );
     }
   }, [socialColumns, isUpdate, reset]);
 
   const onSubmit = async (data: SocialColumnsFormData) => {
+    if (view || deleteImg) return; // Não permite submissão em modo visualização ou exclusão
+
     setIsSubmitting(true);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -203,7 +213,13 @@ export const ModalSocialColumns = ({
         <DialogContent className="md:max-w-4xl w-full aspace-y-6">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>Preencha os dados do evento</DialogDescription>
+            <DialogDescription>
+              {view
+                ? "Visualizando dados do evento"
+                : deleteImg
+                ? "Gerenciar imagens do evento"
+                : "Preencha os dados do evento"}
+            </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
@@ -218,7 +234,7 @@ export const ModalSocialColumns = ({
                     {/* Create */}
                     <CustomInput
                       name="created_at"
-                      label="Industria criada em:"
+                      label="Evento criado em:"
                       type="datetime-local"
                       disabled
                     />
@@ -239,38 +255,44 @@ export const ModalSocialColumns = ({
                   placeholder="Digite o título do evento"
                   description="O título do evento (5-200 caracteres)"
                   required
-                  disabled={details}
+                  disabled={view || deleteImg}
                 />
 
                 {/* description */}
                 <CustomInput
                   name="description"
                   label="Descrição"
-                  placeholder="Digite a descrição da industria"
-                  description=" Um resumo ou complemento referente a industria (Opcional)"
-                  disabled={details}
+                  placeholder="Digite a descrição do evento"
+                  description="Um resumo ou complemento referente ao evento (Opcional)"
+                  disabled={view || deleteImg}
                 />
 
-                {isUpdate && socialColumns && (
-                  <div className="space-y-4">
-                    <div className="flex justify-center">
-                      <CustomCarousel
-                        bannerImages={socialColumns.data.images}
-                        direction="horizontal"
-                        className="max-w-xl"
-                        showControls={true}
-                        renderCustomButton={renderImageButtons}
-                      />
+                {/* Carrossel de imagens - sempre visível quando há imagens */}
+                {isUpdate &&
+                  socialColumns &&
+                  socialColumns.data.images.length > 0 && (
+                    <div className="space-y-4">
+                      <div className="flex justify-center">
+                        <CustomCarousel
+                          bannerImages={socialColumns.data.images}
+                          direction="horizontal"
+                          className="max-w-xl"
+                          showControls={true}
+                          renderCustomButton={
+                            deleteImg ? renderImageButtons : undefined
+                          }
+                        />
+                      </div>
+                      <p className="text-sm text-gray-600 text-center">
+                        {qdtImages} imagem
+                        {qdtImages !== 1 ? "s" : ""} encontrada
+                        {qdtImages !== 1 ? "s" : ""}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600 text-center">
-                      {qdtImages} imagem
-                      {qdtImages !== 1 ? "s" : ""} encontrada
-                      {qdtImages !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-                )}
+                  )}
 
-                {!isUpdate && (
+                {/* Campos de imagem - apenas para criação ou edição normal (não deleteImg) */}
+                {!isUpdate && !deleteImg && (
                   <>
                     {/* URL da Imagem */}
                     <FormField
@@ -323,15 +345,93 @@ export const ModalSocialColumns = ({
                     />
                   </>
                 )}
+
+                {/* Campos de imagem para edição normal (isUpdate + !deleteImg) */}
+                {isUpdate && !deleteImg && !view && (
+                  <>
+                    {/* URL da Imagem */}
+                    <FormField
+                      control={control}
+                      name="main_image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nova Imagem de Capa</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              accept="image/*"
+                              onFileSelect={(file) => {
+                                field.onChange(file);
+                              }}
+                              placeholder="Arraste uma nova imagem de capa ou clique para selecionar"
+                              maxSize={5}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Escolha uma nova imagem de capa para o evento
+                            (opcional)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={control}
+                      name="images"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Novas Imagens do Evento</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              accept="image/*"
+                              onFileSelect={(file) => {
+                                field.onChange(file);
+                              }}
+                              placeholder="Arraste novas imagens ou clique para selecionar"
+                              maxSize={5}
+                              multiple
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Adicione novas imagens ao evento (opcional)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
               </div>
 
               {/* Botões fixos na parte inferior */}
-              <CustomFooterDialog
-                onOpenChange={() => onOpenChange(false)}
-                isSubmitting={isSubmitting}
-                isUpdate={isUpdate}
-                label="Evento"
-              />
+              {view ? (
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              ) : deleteImg ? (
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              ) : (
+                <CustomFooterDialog
+                  onOpenChange={() => onOpenChange(false)}
+                  isSubmitting={isSubmitting}
+                  isUpdate={isUpdate}
+                  label="Evento"
+                />
+              )}
             </form>
           </Form>
         </DialogContent>

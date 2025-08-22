@@ -1,7 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ISocialColumn } from "@/interfaces/social-column";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Eye, ImageMinus, Trash2 } from "lucide-react";
 import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 
 // Colunas para Coluna Social
@@ -58,9 +57,25 @@ export const getSocialColumnsColumns = ({
           variant="outline"
           size="sm"
           className="cursor-pointer"
+          onClick={() => onView(item)}
+        >
+          <Eye className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
           onClick={() => onEdit(item)}
         >
           <Edit className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onDeleteImg(item)}
+        >
+          <ImageMinus className="w-4 h-4" />
         </Button>
         <Button
           variant="outline"

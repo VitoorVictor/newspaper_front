@@ -31,7 +31,8 @@ export default function AdminColunaSocialPage() {
     useState<ISocialColumn | null>(null);
   const [showConfirmDeleteSocialColumns, setShowConfirmDeleteSocialColumns] =
     useState(false);
-  const [details, setDetails] = useState(false);
+  const [viewSocialColumn, setViewSocialColumn] = useState(false);
+  const [deleteImg, setDeleteImg] = useState(false);
 
   //hooks
   const {
@@ -45,7 +46,7 @@ export default function AdminColunaSocialPage() {
   const handleViewSocialColumns = (item: ISocialColumn) => {
     setSelectedSocialColumns(item);
     setShowModalSocialColumns(true);
-    setDetails(true);
+    setViewSocialColumn(true);
   };
 
   //edits
@@ -59,13 +60,18 @@ export default function AdminColunaSocialPage() {
     setSelectedSocialColumns(item);
     setShowConfirmDeleteSocialColumns(true);
   };
+  const handleDeleteImgSocialColumns = (item: ISocialColumn) => {
+    setSelectedSocialColumns(item);
+    setShowModalSocialColumns(true);
+    setDeleteImg(true);
+  };
 
   //columns
   const newsColumns = getSocialColumnsColumns({
     onView: handleViewSocialColumns,
     onEdit: handleEditSocialColumns,
     onDelete: handleDeleteSocialColumns,
-    onDeleteImg: handleDeleteSocialColumns,
+    onDeleteImg: handleDeleteImgSocialColumns,
   });
 
   return (
@@ -87,10 +93,12 @@ export default function AdminColunaSocialPage() {
               <ModalSocialColumns
                 onOpenChange={(open) => {
                   setShowModalSocialColumns(open);
+                  setViewSocialColumn(open);
+                  setDeleteImg(open);
                   setSelectedSocialColumns(null);
-                  setDetails(open);
                 }}
-                details={details}
+                view={viewSocialColumn}
+                deleteImg={deleteImg}
                 title={`${
                   selectedSocialColumns?.id ? "Atualizar " : "Nova "
                 } Coluna Social`}
