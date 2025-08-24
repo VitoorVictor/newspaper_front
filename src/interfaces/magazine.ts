@@ -5,6 +5,7 @@ export interface IMagazine {
   slug: string;
   file: File;
   image_url: File;
-  createdAt: string;
-  updatedAt: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
 }
