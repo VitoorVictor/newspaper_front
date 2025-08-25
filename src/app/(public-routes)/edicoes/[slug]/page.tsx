@@ -3,7 +3,6 @@ import { Title } from "@/components/page-header/title";
 import bannerService from "@/services/banner";
 import maganizeService from "@/services/magazine";
 import { formatDateTime } from "@/utils/formatDateTime";
-import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
 
 interface EdicaoBySlugPageProps {
   params: Promise<{ slug: string }>;
@@ -93,10 +92,7 @@ export default async function EdicaoBySlugPage({
             </div>
           </div>
         </div>
-        {data && (
-          <>
-          </>
-        )}
+        {data && <>Em breve...</>}
       </div>
     </div>
   );

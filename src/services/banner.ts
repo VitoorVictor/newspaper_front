@@ -15,8 +15,9 @@ const bannerService = {
     );
   },
   getAll: () => {
-    const api = getApiClient();
-    return api.get<IBanner[]>("/admin/banners/");
+    // const api = getApiClient();
+    // return api.get<IBanner[]>("/admin/banners");
+    return axios.get<IBanner[]>(`${process.env.NEXT_PUBLIC_API_URL}/banners`);
   },
   getById: (id: number) => {
     const api = getApiClient();

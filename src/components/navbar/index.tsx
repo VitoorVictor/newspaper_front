@@ -4,6 +4,7 @@ import { Menu, Instagram, Twitter, Facebook, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,7 +89,14 @@ export function Navbar({ email }: { email: string }) {
             <Menu className="h-5 w-5" />
             <span className="sr-only">Trocar Sidebar</span>
           </Button>
-          <h1 className="text-white text-2xl font-bold">Newsletter</h1>
+          <Image
+            src="/orange_logo_border.png"
+            alt="Logo"
+            width={120}
+            height={32}
+            className="h-8 w-auto object-contain"
+            priority
+          />
         </div>
 
         {/* Seção central - Menu de navegação */}

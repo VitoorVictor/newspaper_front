@@ -16,7 +16,11 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
       <AppSidebar session={session} />
       <Navbar email={session?.user.email || ""} />
       <main className="flex-1">
-        {process.env.NODE_ENV === "production" ? <BuildingScreen /> : children}
+        {process.env.NODE_ENV === "production" && !session ? (
+          <BuildingScreen />
+        ) : (
+          children
+        )}
       </main>
       <Footer />
     </div>
