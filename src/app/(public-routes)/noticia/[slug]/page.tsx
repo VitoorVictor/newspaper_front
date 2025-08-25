@@ -3,6 +3,7 @@ import newsService from "@/services/news";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { ItemsSearch } from "@/components/items-seach";
 import categoryService from "@/services/category";
+import { formatDateTime } from "@/utils/formatDateTime";
 
 interface NoticiasByCategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -96,12 +97,7 @@ export default async function NoticiasByCategoryPage({
                       />
                     </svg>
                     <span>
-                      Publicado em:{" "}
-                      {new Date(data.created_at).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                      Publicado em: {formatDateTime(data.created_at, false)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -119,12 +115,7 @@ export default async function NoticiasByCategoryPage({
                       />
                     </svg>
                     <span>
-                      Atualizado em:{" "}
-                      {new Date(data.updated_at).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                      Atualizado em: {formatDateTime(data.updated_at, false)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -151,14 +142,10 @@ export default async function NoticiasByCategoryPage({
                 </div>
 
                 {/* Conteúdo da notícia */}
-                <div className="prose prose-lg max-w-none text-gray-800 mt-6">
-                  {data.content
-                    .split("\n")
-                    .filter((p: string) => p.trim() !== "")
-                    .map((p: string, idx: number) => (
-                      <p key={idx}>{p}</p>
-                    ))}
-                </div>
+                <div
+                  className="prose prose-lg max-w-none text-gray-800 mt-6"
+                  dangerouslySetInnerHTML={{ __html: data.content || "" }}
+                />
               </div>
             </article>
           </div>

@@ -142,8 +142,14 @@ export const ModalNews = ({
         news.data.categories.map((category) => category.id)
       );
       setValue("content", news.data.content);
-      setValue("created_at", new Date(news.data.created_at).toISOString().slice(0, 16));
-      setValue("updated_at", new Date(news.data.updated_at).toISOString().slice(0, 16));
+      setValue(
+        "created_at",
+        new Date(news.data.created_at).toISOString().slice(0, 16)
+      );
+      setValue(
+        "updated_at",
+        new Date(news.data.updated_at).toISOString().slice(0, 16)
+      );
       setValue("top_position", news.data.top_position);
     }
   }, [news, isUpdate, reset]);
@@ -233,14 +239,14 @@ export const ModalNews = ({
                 disabled={view}
               />
               {/* Editoria */}
-              <FormField
-                control={control}
-                name="category_ids"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Editoria *</FormLabel>
-                    <FormControl>
-                      {view ? (
+              {view ? (
+                <FormField
+                  control={control}
+                  name="category_ids"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Editoria *</FormLabel>
+                      <FormControl>
                         <div className="p-3 border rounded-md bg-gray-50">
                           {field.value?.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
@@ -264,22 +270,22 @@ export const ModalNews = ({
                             </span>
                           )}
                         </div>
-                      ) : (
-                        <CustomMultiSelect
-                          label="Editoria"
-                          placeholder="Selecione a editoria"
-                          name="category_ids"
-                          data={categories}
-                          fieldValue="id"
-                          fieldLabel="name"
-                          containerClassName="w-full"
-                        />
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <CustomMultiSelect
+                  label="Editoria"
+                  placeholder="Selecione a editoria"
+                  name="category_ids"
+                  data={categories}
+                  fieldValue="id"
+                  fieldLabel="name"
+                  containerClassName="w-full"
+                />
+              )}
               {/* Conteúdo - Rich Text Editor */}
               <FormField
                 control={control}
