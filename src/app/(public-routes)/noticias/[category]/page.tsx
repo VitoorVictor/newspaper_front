@@ -29,6 +29,7 @@ export default async function NoticiasByCategoryPage({
   });
   const { data: dataCategories } = await categoryService.getAll();
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
+
   return (
     <div>
       {dataCategories && (
@@ -38,14 +39,18 @@ export default async function NoticiasByCategoryPage({
           redirectBasePath="/noticias"
         />
       )}
-      <div className="container mx-auto my-8 px-4 space-y-6">
+      <div className="container mx-auto my-4 md:my-8 px-4 space-y-4 md:space-y-6">
+        {/* Banner superior - apenas em desktop */}
         {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
+          <div className="hidden lg:block">
+            <SimpleImageCarousel
+              images={dataAdBanners.top}
+              variant="horizontal"
+              autoPlay={true}
+            />
+          </div>
         )}
+
         <PageHeader
           title={`${
             decodeURIComponent(category) === "Todas Editorias"
@@ -61,7 +66,9 @@ export default async function NoticiasByCategoryPage({
           }`}
           placeholder="Buscar pelo título..."
         />
-        <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">
+
+        {/* Layout Principal das Notícias - Responsivo */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6">
           {data &&
             data.data.map((news, index) => {
               if (index === 0)
@@ -73,7 +80,7 @@ export default async function NoticiasByCategoryPage({
                     badge={news.badge}
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                    className="col-span-7 row-span-3"
+                    className="col-span-1 md:col-span-2 lg:col-span-7 lg:row-span-3"
                     slug={news.slug}
                   />
                 );
@@ -86,16 +93,18 @@ export default async function NoticiasByCategoryPage({
                     badge={news.badge}
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                    className="col-span-5"
+                    className="col-span-1 md:col-span-2 lg:col-span-5"
                     slug={news.slug}
                   />
                 );
             })}
         </div>
+
         {data.data.length > 4 && (
-          <div className="grid grid-cols-4 gap-8">
-            <div className="col-span-3 space-y-8">
-              <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
+            <div className="lg:col-span-3 space-y-6 md:space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {data.data.slice(4).map((news) => (
                   <NewsSecondaryEditorial
                     key={news.id}
@@ -108,16 +117,19 @@ export default async function NoticiasByCategoryPage({
                 ))}
               </div>
             </div>
-            {/* Banner lateral fixo */}
-            <div className="col-span-1 sticky top-40">
+
+            {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
+            <div className="lg:col-span-1 order-first lg:order-last">
               {dataAdBanners &&
                 dataAdBanners.side &&
                 dataAdBanners.side.length > 0 && (
-                  <SimpleImageCarousel
-                    images={dataAdBanners.side}
-                    variant="vertical"
-                    autoPlay={true}
-                  />
+                  <div className="lg:sticky lg:top-40">
+                    <SimpleImageCarousel
+                      images={dataAdBanners.side}
+                      variant="vertical"
+                      autoPlay={true}
+                    />
+                  </div>
                 )}
             </div>
           </div>

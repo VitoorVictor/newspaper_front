@@ -176,9 +176,12 @@ export default function AdminGuiaIndustrialPage() {
                     setFiltroSector(value === "all" ? "" : value);
                   }}
                 >
-                  <SelectTrigger className="w-48 cursor-pointer">
+                  <SelectTrigger className="w-20 md:w-48 cursor-pointer">
                     <Filter className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Filtrar por setor" />
+                    <SelectValue
+                      placeholder="Filtrar por setor"
+                      className="hidden md:block"
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos os setores</SelectItem>

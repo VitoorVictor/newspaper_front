@@ -32,7 +32,8 @@ export default async function NoticiasPage() {
           redirectBasePath="/noticias"
         />
       )}
-      <div className="container mx-auto my-8 px-4 space-y-6">
+      <div className="container mx-auto my-4 md:my-8 px-4 space-y-4 md:space-y-6">
+        {/* Banner superior - apenas em desktop */}
         {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
           <SimpleImageCarousel
             images={dataAdBanners.top}
@@ -40,6 +41,7 @@ export default async function NoticiasPage() {
             autoPlay={true}
           />
         )}
+
         <PageHeader
           title="Notícias"
           subtitle="Fique por dentro das últimas notícias"
@@ -51,8 +53,8 @@ export default async function NoticiasPage() {
           redirectBasePath="/noticias"
         />
 
-        {/* Layout Principal com Secundárias ao lado */}
-        <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">
+        {/* Layout Principal com Secundárias ao lado - Responsivo */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6">
           {principais &&
             principais.map((news, index) => {
               if (index === 0)
@@ -64,7 +66,7 @@ export default async function NoticiasPage() {
                     badge={news.badge}
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                    className="col-span-7 row-span-3"
+                    className="col-span-1 md:col-span-2 lg:col-span-7 lg:row-span-3"
                     slug={news.slug}
                   />
                 );
@@ -76,7 +78,7 @@ export default async function NoticiasPage() {
                   badge={news.badge}
                   time={news.created_at}
                   image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                  className="col-span-5"
+                  className="col-span-1 md:col-span-2 lg:col-span-5"
                   slug={news.slug}
                 />
               );
@@ -84,12 +86,14 @@ export default async function NoticiasPage() {
         </div>
 
         {hasNewsByCategory && (
-          <div className="grid grid-cols-4 gap-8">
-            <div className="col-span-3 space-y-10">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
+            <div className="lg:col-span-3 space-y-8 md:space-y-10">
               {editorias.map((section, idx) => {
                 if (section.news.length === 0) return null;
                 return (
-                  <div key={idx} className="space-y-4">
+                  <div key={idx} className="space-y-4 md:space-y-6">
+                    {/* Banner da seção - apenas em desktop */}
                     {section.banners && section.banners.length > 0 && (
                       <SimpleImageCarousel
                         images={section.banners}
@@ -97,16 +101,17 @@ export default async function NoticiasPage() {
                         autoPlay={true}
                       />
                     )}
+
                     {/* Header da seção */}
-                    <div className="w-full flex justify-between items-center">
-                      <h2 className="text-2xl font-bold text-gray-900">
+                    <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+                      <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                         {section.name}
                       </h2>
                       <SeeMoreBtn path={`/noticias/${section.name}`} />
                     </div>
 
-                    {/* Grid de cards */}
-                    <div className="w-full grid grid-cols-3 gap-4">
+                    {/* Grid de cards - Responsivo */}
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                       {section.news.map((news) => (
                         <NewsSecondaryEditorial
                           key={news.id}
@@ -123,16 +128,18 @@ export default async function NoticiasPage() {
               })}
             </div>
 
-            {/* Banner lateral fixo */}
-            <div className="col-span-1 h-fit sticky top-40">
+            {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
+            <div className="lg:col-span-1 order-first lg:order-last">
               {dataAdBanners &&
                 dataAdBanners.side &&
                 dataAdBanners.side.length > 0 && (
-                  <SimpleImageCarousel
-                    images={dataAdBanners.side}
-                    variant="vertical"
-                    autoPlay={true}
-                  />
+                  <div className="lg:sticky lg:top-40">
+                    <SimpleImageCarousel
+                      images={dataAdBanners.side}
+                      variant="vertical"
+                      autoPlay={true}
+                    />
+                  </div>
                 )}
             </div>
           </div>

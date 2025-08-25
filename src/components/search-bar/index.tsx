@@ -84,7 +84,7 @@ export function SearchBar({
       <Button
         type="submit"
         variant="outline"
-        className="shrink-0 bg-transparent cursor-pointer"
+        className="shrink-0 bg-transparent cursor-pointer md:flex hidden"
       >
         <Search className="h-4 w-4 mr-2" />
         Buscar

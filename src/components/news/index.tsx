@@ -33,7 +33,7 @@ export function NewsMain({
     <Card
       onClick={() => router.push(`/noticia/${slug}`)}
       className={clsx(
-        "relative h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0 bg-white py-0 bg-cover bg-center",
+        "relative h-64 sm:h-80 md:h-96 lg:h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-0 bg-white py-0 bg-cover bg-center",
         className
       )}
       style={{

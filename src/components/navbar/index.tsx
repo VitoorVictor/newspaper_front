@@ -92,15 +92,15 @@ export function Navbar({ email }: { email: string }) {
           <Image
             src="/orange_logo_border.png"
             alt="Logo"
-            width={120}
-            height={32}
+            width={2237}
+            height={366}
             className="h-8 w-auto object-contain"
             priority
           />
         </div>
 
         {/* Seção central - Menu de navegação */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           <Link
             href="/"
             className="text-white hover:text-white/80 transition-colors font-medium"
@@ -135,11 +135,11 @@ export function Navbar({ email }: { email: string }) {
 
         {/* Seção direita - Redes sociais + Avatar (se logado) */}
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             <SocialIcons />
           </div>
 
-          <div className="hidden md:block h-6 w-px bg-white/20 mx-2"></div>
+          <div className="hidden lg:block h-6 w-px bg-white/20 mx-2"></div>
           {email ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

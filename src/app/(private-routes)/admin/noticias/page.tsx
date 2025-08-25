@@ -168,9 +168,12 @@ export default function AdminNoticias() {
                     setFiltroCategory(value === "0" ? 0 : Number(value));
                   }}
                 >
-                  <SelectTrigger className="w-48 cursor-pointer">
+                  <SelectTrigger className="w-20 md:w-48 cursor-pointer">
                     <Filter className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Filtrar por editoria" />
+                    <SelectValue
+                      placeholder="Filtrar por editoria"
+                      className="hidden md:block"
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="0">Todas as editorias</SelectItem>

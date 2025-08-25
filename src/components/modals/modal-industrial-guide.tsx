@@ -146,8 +146,14 @@ export const ModalIndustrialGuide = ({
         "sector_ids",
         industrialGuide.data.sectors.map((sector) => sector.id)
       );
-      setValue("created_at", new Date(industrialGuide.data.created_at).toISOString().slice(0, 16));
-      setValue("updated_at", new Date(industrialGuide.data.updated_at).toISOString().slice(0, 16));
+      setValue(
+        "created_at",
+        new Date(industrialGuide.data.created_at).toISOString().slice(0, 16)
+      );
+      setValue(
+        "updated_at",
+        new Date(industrialGuide.data.updated_at).toISOString().slice(0, 16)
+      );
       setValue("image_url", industrialGuide.data.image_url);
     }
   }, [industrialGuide, isUpdate, reset]);
@@ -309,14 +315,14 @@ export const ModalIndustrialGuide = ({
               </div>
 
               {/* Setores */}
-              <FormField
-                control={control}
-                name="sector_ids"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Setores *</FormLabel>
-                    <FormControl>
-                      {view ? (
+              {view ? (
+                <FormField
+                  control={control}
+                  name="sector_ids"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Setores *</FormLabel>
+                      <FormControl>
                         <div className="p-3 border rounded-md bg-gray-50">
                           {field.value?.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
@@ -340,20 +346,21 @@ export const ModalIndustrialGuide = ({
                             </span>
                           )}
                         </div>
-                      ) : (
-                        <CustomMultiSelect
-                          name="sector_ids"
-                          data={sectors}
-                          fieldValue="id"
-                          fieldLabel="name"
-                          containerClassName="w-full"
-                        />
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <CustomMultiSelect
+                  name="sector_ids"
+                  data={sectors}
+                  fieldValue="id"
+                  label="Setores"
+                  fieldLabel="name"
+                  containerClassName="w-full"
+                />
+              )}
             </div>
 
             {/* Botões fixos na parte inferior */}
