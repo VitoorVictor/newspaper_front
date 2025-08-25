@@ -140,22 +140,6 @@ const CustomImage = Image.extend({
       },
     };
   },
-
-  addCommands() {
-    return {
-      ...this.parent?.(),
-      setImageSize:
-        (width: string): Command =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { width });
-        },
-      setImageAlign:
-        (align: string): Command =>
-        ({ commands }) => {
-          return commands.updateAttributes(this.name, { align });
-        },
-    };
-  },
 });
 
 const CustomVideo = Node.create({
@@ -299,7 +283,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         },
       }),
       TextAlign.configure({
-        types: ["heading", "paragraph", "image", "customVideo"],
+        types: ["heading", "paragraph"],
       }),
       Highlight.configure({
         multicolor: true,
@@ -332,18 +316,59 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       const { selection } = editor.state;
       const node = editor.state.doc.nodeAt(selection.from);
 
+      // Verificar se o nó atual é uma imagem ou vídeo
       if (node?.type.name === "image") {
         setSelectedMediaType("image");
       } else if (node?.type.name === "customVideo") {
         setSelectedMediaType("video");
       } else {
-        setSelectedMediaType(null);
+        // Verificar se há uma imagem ou vídeo próximo ao cursor
+        const pos = selection.from;
+        const doc = editor.state.doc;
+
+        let foundMedia = false;
+
+        // Procurar por nós de mídia próximos
+        doc.descendants((node, pos) => {
+          if (foundMedia) return false;
+
+          if (node.type.name === "image" || node.type.name === "customVideo") {
+            const nodeStart = pos;
+            const nodeEnd = pos + node.nodeSize;
+
+            // Verificar se o cursor está próximo ou dentro do nó
+            if (
+              Math.abs(selection.from - nodeStart) <= 1 ||
+              Math.abs(selection.from - nodeEnd) <= 1 ||
+              (selection.from >= nodeStart && selection.from <= nodeEnd)
+            ) {
+              setSelectedMediaType(
+                node.type.name === "image" ? "image" : "video"
+              );
+              foundMedia = true;
+              return false;
+            }
+          }
+        });
+
+        if (!foundMedia) {
+          setSelectedMediaType(null);
+        }
       }
     },
     editorProps: {
       attributes: {
         class:
           "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4",
+      },
+      handleClick: (view, pos, event) => {
+        const node = view.state.doc.nodeAt(pos);
+        if (node?.type.name === "image") {
+          setSelectedMediaType("image");
+        } else if (node?.type.name === "customVideo") {
+          setSelectedMediaType("video");
+        }
+        return false; // Permite que o TipTap continue processando o clique
       },
     },
   });
@@ -394,11 +419,35 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
 
         if (videoId) {
           const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-          editor.chain().focus().run();
+          editor
+            .chain()
+            .focus()
+            .insertContent({
+              type: "customVideo",
+              attrs: {
+                src: embedUrl,
+                width: "100%",
+                align: "center",
+                type: "youtube",
+              },
+            })
+            .run();
         }
       } else {
         // Vídeo direto por URL
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: "customVideo",
+            attrs: {
+              src: videoUrl,
+              width: "100%",
+              align: "center",
+              type: "video",
+            },
+          })
+          .run();
       }
       setVideoUrl("");
     }
@@ -407,7 +456,19 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   const addVideoFromFile = useCallback(
     (file: File, dataUrl: string) => {
       if (editor) {
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: "customVideo",
+            attrs: {
+              src: dataUrl,
+              width: "100%",
+              align: "center",
+              type: "video",
+            },
+          })
+          .run();
       }
     },
     [editor]
@@ -429,9 +490,17 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       const widthStr = `${width}%`;
 
       if (selectedMediaType === "image") {
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .updateAttributes("image", { width: widthStr })
+          .run();
       } else if (selectedMediaType === "video") {
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .updateAttributes("customVideo", { width: widthStr })
+          .run();
       }
     },
     [editor, selectedMediaType]
@@ -442,9 +511,17 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       if (!editor || !selectedMediaType) return;
 
       if (selectedMediaType === "image") {
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .updateAttributes("image", { align: alignment })
+          .run();
       } else if (selectedMediaType === "video") {
-        editor.chain().focus().run();
+        editor
+          .chain()
+          .focus()
+          .updateAttributes("customVideo", { align: alignment })
+          .run();
       }
     },
     [editor, selectedMediaType]
@@ -906,7 +983,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       <div className="min-h-[200px]">
         <EditorContent
           editor={editor}
-          className="prose prose-sm max-w-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ul]:ml-6 [&_.ProseMirror_ol]:ml-6"
+          className="prose prose-sm max-w-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ul]:ml-6 [&_.ProseMirror_ol]:ml-6 [&_.ProseMirror_img]:max-w-full [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_img]:cursor-pointer [&_.ProseMirror_img:hover]:ring-2 [&_.ProseMirror_img:hover]:ring-blue-500 [&_.ProseMirror_img:hover]:transition-all [&_.ProseMirror_.video-wrapper]:my-4 [&_.ProseMirror_.video-wrapper]:text-center [&_.ProseMirror_.video-wrapper_video]:max-w-full [&_.ProseMirror_.video-wrapper_video]:h-auto [&_.ProseMirror_.video-wrapper_iframe]:max-w-full [&_.ProseMirror_.video-wrapper_iframe]:border-0 [&_.ProseMirror_.video-wrapper_iframe]:rounded-lg"
         />
       </div>
 
