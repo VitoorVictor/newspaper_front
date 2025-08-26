@@ -12,14 +12,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_IMAGE_URL || "localhost",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "http",
-        hostname: process.env.NEXT_PUBLIC_IMAGE_URL || "localhost",
-        port: "",
+        hostname: "revistaimagemindustrial.com",
         pathname: "/**",
       },
     ],
