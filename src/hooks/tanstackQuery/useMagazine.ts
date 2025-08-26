@@ -12,7 +12,7 @@ export const useMagazines = (filters: { search: string; page: number }) => {
   });
 };
 
-export const useMagazinesBySlug = (slug?: string) => {
+export const useMagazineBySlug = (slug?: string) => {
   return useQuery({
     enabled: !!slug,
     queryKey: ["magazines", slug],
@@ -23,7 +23,7 @@ export const useMagazinesBySlug = (slug?: string) => {
   });
 };
 
-export const useCreateMagazines = () => {
+export const useCreateMagazine = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: magazineService.create,
@@ -46,7 +46,7 @@ export const useCreateMagazines = () => {
   });
 };
 
-export const useUpdateMagazines = (id: number) => {
+export const useUpdateMagazine = (id: number) => {
   const queryClient = useQueryClient();
 
   if (!id) null;
@@ -73,7 +73,7 @@ export const useUpdateMagazines = (id: number) => {
   });
 };
 
-export const useDeleteMagazines = () => {
+export const useDeleteMagazine = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -11,9 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import { Title } from "@/components/page-header/title";
-import { Input } from "@/components/ui/input";
 import AddBtn from "@/components/custom-btns/add-btn";
 import { SearchBar } from "@/components/search-bar";
 import { ModalNews } from "@/components/modals/modal-news";

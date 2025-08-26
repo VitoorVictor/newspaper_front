@@ -89,14 +89,16 @@ export function Navbar({ email }: { email: string }) {
             <Menu className="h-5 w-5" />
             <span className="sr-only">Trocar Sidebar</span>
           </Button>
-          <Image
-            src="/orange_logo_border.png"
-            alt="Logo"
-            width={2237}
-            height={366}
-            className="h-8 w-auto object-contain"
-            priority
-          />
+          <Link href="/">
+            <Image
+              src="/orange_logo_border.png"
+              alt="Logo"
+              width={2237}
+              height={366}
+              className="h-8 w-auto object-contain"
+              priority
+            />
+          </Link>
         </div>
 
         {/* Seção central - Menu de navegação */}

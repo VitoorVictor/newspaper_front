@@ -9,6 +9,7 @@ import {
 } from "@/components/news";
 import { ItemsSearch } from "@/components/items-seach";
 import categoryService from "@/services/category";
+import { CustomPagination } from "@/components/custom-pagination";
 
 interface NoticiasByCategoryPageProps {
   params: Promise<{ category: string }>;
@@ -134,6 +135,10 @@ export default async function NoticiasByCategoryPage({
             </div>
           </div>
         )}
+        <CustomPagination
+          totalPages={data.last_page}
+          currentPage={data.current_page}
+        />
       </div>
     </div>
   );

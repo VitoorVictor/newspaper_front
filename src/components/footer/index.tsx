@@ -10,6 +10,7 @@ import {
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -45,14 +46,14 @@ export default function Footer() {
                 className="text-white hover:bg-white/10 hover:text-white h-9 w-9"
                 asChild
               >
-                <a
+                <Link
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
                 >
                   <Instagram className="h-4 w-4" />
-                </a>
+                </Link>
               </Button>
               <Button
                 variant="ghost"
@@ -60,14 +61,14 @@ export default function Footer() {
                 className="text-white hover:bg-white/10 hover:text-white h-9 w-9"
                 asChild
               >
-                <a
+                <Link
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Twitter"
                 >
                   <Twitter className="h-4 w-4" />
-                </a>
+                </Link>
               </Button>
               <Button
                 variant="ghost"
@@ -75,14 +76,14 @@ export default function Footer() {
                 className="text-white hover:bg-white/10 hover:text-white h-9 w-9"
                 asChild
               >
-                <a
+                <Link
                   href="https://facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
                 >
                   <Facebook className="h-4 w-4" />
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
@@ -94,28 +95,28 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
+                <Link
                   href="/sobre"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Sobre
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/contato"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Contato
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/trabalhe-conosco"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Trabalhe Conosco
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -125,28 +126,28 @@ export default function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Serviços</h4>
             <ul className="space-y-3">
               <li>
-                <a
+                <Link
                   href="/assinar-revista"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Assinar Revista
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/guia"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Guia Industrial
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/anuncie"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Anuncie
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -191,24 +192,24 @@ export default function Footer() {
 
           {/* Links legais */}
           <div className="flex items-center gap-6">
-            <a
-              href="/"
+            <Link
+              href="/politica-de-privacidade"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Política de Privacidade
-            </a>
-            <a
-              href="/"
+            </Link>
+            <Link
+              href="/termos-de-uso"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Termos de Uso
-            </a>
-            <a
-              href="/"
+            </Link>
+            <Link
+              href="/cookies"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Cookies
-            </a>
+            </Link>
           </div>
         </div>
       </div>
