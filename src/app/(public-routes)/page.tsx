@@ -12,7 +12,7 @@ export default async function HomePage() {
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const { data } = await homeService.get();
 
-  const { news, social_columns, magazines, industrial_guides } = data;
+  const { principais_noticias, social_columns, magazines, industrial_guides } = data;
   return (
     <div className="min-h-full my-8">
       <div className="px-[10.5%] mx-auto space-y-6 pb-6">
@@ -25,8 +25,8 @@ export default async function HomePage() {
         )}
 
         <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">
-          {news &&
-            news.map((news, index) => {
+          {principais_noticias &&
+            principais_noticias.map((news, index) => {
               if (index === 0)
                 return (
                   <NewsMain

@@ -47,7 +47,7 @@ export default async function EdicaoBySlugPage({
                   />
                 </svg>
                 <span className="font-medium text-gray-700">Postado em:</span>
-                <span>{formatDateTime(data.created_at)}</span>
+                <span>{formatDateTime(data.created_at, false)}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export default async function EdicaoBySlugPage({
                 <span className="font-medium text-gray-700">
                   Atualizado em:
                 </span>
-                <span>{formatDateTime(data.updated_at)}</span>
+                <span>{formatDateTime(data.updated_at, false)}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export default async function EdicaoBySlugPage({
             </div>
           </div>
         </div>
-        {data && <>Em breve...</>}
+        {data && <>Em desenvolvimento...</>}
       </div>
     </div>
   );

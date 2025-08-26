@@ -117,14 +117,6 @@ export default function Footer() {
                   Trabalhe Conosco
                 </a>
               </li>
-              <li>
-                <a
-                  href="/anuncie"
-                  className="text-white/80 hover:text-white transition-colors text-sm"
-                >
-                  Anuncie
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -150,10 +142,10 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/cadastre-se"
+                  href="/anuncie"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
-                  Cadastre-se
+                  Anuncie
                 </a>
               </li>
             </ul>
@@ -167,7 +159,7 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-white/80 text-sm">
                 <Mail className="h-4 w-4 flex-shrink-0" />
-                <span>contato@newsletter.com.br</span>
+                <span>clnegocioserepresentacoe@hotmail.com </span>
               </div>
               <div className="flex items-center gap-3 text-white/80 text-sm">
                 <Phone className="h-4 w-4 flex-shrink-0" />
@@ -175,7 +167,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3 text-white/80 text-sm">
                 <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span>São Paulo, SP</span>
+                <span>Umuarama, PR</span>
               </div>
             </div>
           </div>
@@ -190,29 +182,29 @@ export default function Footer() {
           {/* Copyright e CNPJ */}
           <div className="text-center md:text-left">
             <p className="text-white/80 text-sm">
-              © 2024 Newsletter Industrial. Todos os direitos reservados.
+              © 2025 Revista Imagem Industrial. Todos os direitos reservados.
             </p>
-            <p className="text-white/60 text-xs mt-1">
+            {/* <p className="text-white/60 text-xs mt-1">
               CNPJ: 12.345.678/0001-90
-            </p>
+            </p> */}
           </div>
 
           {/* Links legais */}
           <div className="flex items-center gap-6">
             <a
-              href="/politica-privacidade"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Política de Privacidade
             </a>
             <a
-              href="/termos-uso"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Termos de Uso
             </a>
             <a
-              href="/cookies"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Cookies
