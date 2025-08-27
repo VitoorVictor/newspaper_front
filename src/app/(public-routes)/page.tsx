@@ -3,19 +3,19 @@ import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { IndustryCard } from "@/components/industry-card.tsx";
 import { NewsMain, NewsSecondary } from "@/components/news";
 import { SocialEventCard } from "@/components/social-card";
-import { Button } from "@/components/ui/button";
 import bannerService from "@/services/banner";
 import homeService from "@/services/home";
-import { ArrowRight } from "lucide-react";
 
 export default async function HomePage() {
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const { data } = await homeService.get();
 
-  const { principais_noticias, social_columns, magazines, industrial_guides } = data;
+  const { principais_noticias, social_columns, magazines, industrial_guides } =
+    data;
   return (
-    <div className="min-h-full my-8">
-      <div className="px-[10.5%] mx-auto space-y-6 pb-6">
+    <div className="space-y-0">
+      {/* Seção de Banner e Notícias Principais */}
+      <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
         {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
           <SimpleImageCarousel
             images={dataAdBanners.top}
@@ -24,7 +24,7 @@ export default async function HomePage() {
           />
         )}
 
-        <div className="grid grid-cols-12 grid-rows-3 gap-4 max-h-[500px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-3 gap-4 lg:max-h-[500px]">
           {principais_noticias &&
             principais_noticias.map((news, index) => {
               if (index === 0)
@@ -36,7 +36,7 @@ export default async function HomePage() {
                     badge={news.badge}
                     time={news.created_at}
                     image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                    className="col-span-7 row-span-3"
+                    className="sm:col-span-2 lg:col-span-7 lg:row-span-3"
                     slug={news.slug}
                   />
                 );
@@ -48,13 +48,14 @@ export default async function HomePage() {
                   badge={news.badge}
                   time={news.created_at}
                   image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                  className="col-span-5"
+                  className="sm:col-span-1 lg:col-span-5"
                   slug={news.slug}
                 />
               );
             })}
         </div>
-        <div className="flex justify-center">
+
+        <div className="flex justify-center mt-8">
           <SeeMoreBtn
             path="/noticias"
             label="Ver todas as notícias"
@@ -63,41 +64,47 @@ export default async function HomePage() {
           />
         </div>
       </div>
-      <div className="px-[10.5%] mx-auto space-y-6 py-6 bg-white">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Guia Industrial
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Vejas as principais industrias e empresas da região
-          </p>
-        </div>
 
-        <div className="grid lg:grid-cols-4 gap-6">
-          {industrial_guides.map((industry) => (
-            <IndustryCard
-              key={industry.id}
-              id={industry.id}
-              sectors={industry.sectors}
-              title={industry.name}
-              slug={industry.slug}
-              image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${industry.image_url}`}
-              address={industry.address}
-              number={industry.number}
-              description={industry.description}
+      {/* Seção do Guia Industrial - com cor de fundo que cobre toda a largura */}
+      <div className="bg-gray-100 py-8 md:py-12 mt-8">
+        <div className="container mx-auto px-4 space-y-4 md:space-y-6">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Guia Industrial
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Vejas as principais industrias e empresas da região
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-6">
+            {industrial_guides.map((industry) => (
+              <IndustryCard
+                key={industry.id}
+                id={industry.id}
+                sectors={industry.sectors}
+                title={industry.name}
+                slug={industry.slug}
+                image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${industry.image_url}`}
+                address={industry.address}
+                number={industry.number}
+                description={industry.description}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <SeeMoreBtn
+              path="/guias-industriais"
+              label="Ver guia completo"
+              className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+              variant="outline"
             />
-          ))}
-        </div>
-        <div className="flex justify-center">
-          <SeeMoreBtn
-            path="/guias-industriais"
-            label="Ver guia completo"
-            className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-            variant="outline"
-          />
+          </div>
         </div>
       </div>
-      <div className="px-[10.5%] mx-auto space-y-6 pt-6">
+
+      {/* Seção da Coluna Social */}
+      <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Coluna Social
