@@ -210,7 +210,7 @@ export const ModalSocialColumns = ({
   return (
     <>
       <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-        <DialogContent className="md:max-w-4xl w-full aspace-y-6">
+        <DialogContent className="md:max-w-4xl w-full aspace-y-6" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>

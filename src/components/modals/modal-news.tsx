@@ -184,7 +184,10 @@ export const ModalNews = ({
 
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-      <DialogContent className="md:max-w-4xl w-full aspace-y-6">
+      <DialogContent
+        className="md:max-w-4xl w-full aspace-y-6"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
@@ -295,7 +298,7 @@ export const ModalNews = ({
                     <FormControl>
                       {view ? (
                         <div
-                          className="p-4 border rounded-md bg-gray-50 min-h-[200px] prose prose-sm max-w-none"
+                          className="p-4 border rounded-md bg-gray-50 min-h-[400px] prose prose-sm max-w-none"
                           dangerouslySetInnerHTML={{
                             __html: field.value || "",
                           }}

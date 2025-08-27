@@ -197,12 +197,32 @@ const CustomVideo = Node.create({
 
   renderHTML({ HTMLAttributes }) {
     const { src, width, align, type } = HTMLAttributes;
-    const wrapperStyle = `text-align: ${align}; margin: 1rem 0; width: 100%;`;
-    const mediaStyle = `width: ${width}; height: auto; max-width: 100%; border-radius: 8px;`;
+
+    // Calcular margens baseadas no alinhamento
+    let marginStyle = "1rem auto";
+    if (align === "left") {
+      marginStyle = "1rem 0 1rem 0";
+    } else if (align === "right") {
+      marginStyle = "1rem 0 1rem auto";
+    } else if (align === "center") {
+      marginStyle = "1rem auto";
+    }
+
+    const wrapperStyle = `text-align: ${align}; margin: ${marginStyle}; width: 100%;`;
 
     if (type === "youtube") {
-      const aspectRatio =
-        width === "100%" ? "315px" : `${Number.parseInt(width) * 0.5625}px`;
+      // Para YouTube, calcular altura baseada na largura e aspect ratio 16:9
+      let videoHeight = "315px";
+      if (width !== "100%") {
+        const widthValue = width.replace("%", "");
+        const widthNum = parseInt(widthValue);
+        if (!isNaN(widthNum)) {
+          // Aspect ratio 16:9 (0.5625)
+          const heightNum = Math.round(widthNum * 0.5625);
+          videoHeight = `${heightNum}px`;
+        }
+      }
+
       return [
         "div",
         {
@@ -216,16 +236,16 @@ const CustomVideo = Node.create({
           "iframe",
           {
             src,
-            style: `${mediaStyle} height: ${aspectRatio};`,
+            style: `width: ${width}; height: ${videoHeight}; max-width: 100%; border-radius: 8px;`,
             frameborder: "0",
             allowfullscreen: "true",
-            class:
-              "hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer",
+            class: "hover:ring-0 hover:ring-none transition-all cursor-pointer",
           },
         ],
       ];
     }
 
+    // Para vídeos normais, manter aspect ratio original
     return [
       "div",
       {
@@ -240,9 +260,8 @@ const CustomVideo = Node.create({
         {
           src,
           controls: "true",
-          style: mediaStyle,
-          class:
-            "hover:ring-2 hover:ring-blue-500 transition-all cursor-pointer",
+          style: `width: ${width}; height: auto; max-width: 100%; border-radius: 8px;`,
+          class: "hover:ring-0 hover:ring-none transition-all cursor-pointer",
         },
       ],
     ];
@@ -297,7 +316,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       CustomImage.configure({
         HTMLAttributes: {
           class:
-            "max-w-full h-auto rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all",
+            "max-w-full h-auto rounded-lg cursor-pointer hover:ring-0 hover:ring-none transition-all",
         },
         allowBase64: true,
       }),
@@ -496,11 +515,17 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
           .updateAttributes("image", { width: widthStr })
           .run();
       } else if (selectedMediaType === "video") {
+        // Para vídeos, garantir que o redimensionamento seja aplicado corretamente
         editor
           .chain()
           .focus()
           .updateAttributes("customVideo", { width: widthStr })
           .run();
+
+        // Forçar re-render para aplicar as mudanças
+        setTimeout(() => {
+          editor.commands.focus();
+        }, 10);
       }
     },
     [editor, selectedMediaType]
@@ -517,11 +542,17 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
           .updateAttributes("image", { align: alignment })
           .run();
       } else if (selectedMediaType === "video") {
+        // Para vídeos, garantir que o alinhamento seja aplicado corretamente
         editor
           .chain()
           .focus()
           .updateAttributes("customVideo", { align: alignment })
           .run();
+
+        // Forçar re-render para aplicar as mudanças
+        setTimeout(() => {
+          editor.commands.focus();
+        }, 10);
       }
     },
     [editor, selectedMediaType]
@@ -697,7 +728,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
                 "#2563EB",
                 "#7C3AED",
                 "#C026D3",
-                "#DC2626",
+                "#F59E0B",
               ].map((color) => (
                 <button
                   type="button"
@@ -980,22 +1011,18 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       </div>
 
       {/* Editor */}
-      <div className="min-h-[200px]">
+      <div className="min-h-[400px]">
         <EditorContent
           editor={editor}
-          className="prose prose-sm max-w-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ul]:ml-6 [&_.ProseMirror_ol]:ml-6 [&_.ProseMirror_img]:max-w-full [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_img]:cursor-pointer [&_.ProseMirror_img:hover]:ring-2 [&_.ProseMirror_img:hover]:ring-blue-500 [&_.ProseMirror_img:hover]:transition-all [&_.ProseMirror_.video-wrapper]:my-4 [&_.ProseMirror_.video-wrapper]:text-center [&_.ProseMirror_.video-wrapper_video]:max-w-full [&_.ProseMirror_.video-wrapper_video]:h-auto [&_.ProseMirror_.video-wrapper_iframe]:max-w-full [&_.ProseMirror_.video-wrapper_iframe]:border-0 [&_.ProseMirror_.video-wrapper_iframe]:rounded-lg"
+          className="prose prose-sm max-w-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ul]:ml-6 [&_.ProseMirror_ol]:ml-6 [&_.ProseMirror_img]:max-w-full [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:rounded-lg [&_.ProseMirror_img]:cursor-pointer [&_.ProseMirror_.video-wrapper]:my-4 [&_.ProseMirror_.video-wrapper]:text-center [&_.ProseMirror_.video-wrapper_video]:max-w-full [&_.ProseMirror_.video-wrapper_video]:h-auto [&_.ProseMirror_.video-wrapper_iframe]:max-w-full [&_.ProseMirror_.video-wrapper_iframe]:border-0 [&_.ProseMirror_.video-wrapper_iframe]:rounded-lg"
         />
       </div>
 
       {/* Controles de mídia selecionada */}
-      {selectedMediaType && (
+      {selectedMediaType && selectedMediaType === "image" && (
         <div className="border-t p-3 bg-muted/30">
           <div className="flex items-center gap-4 flex-wrap">
-            <div className="text-sm font-medium">
-              {selectedMediaType === "image"
-                ? "🖼️ Imagem selecionada"
-                : "🎥 Vídeo selecionado"}
-            </div>
+            <div className="text-sm font-medium">🖼️ Imagem selecionada</div>
 
             {/* Controles de tamanho */}
             <div className="flex items-center gap-2">
@@ -1039,36 +1066,38 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
             </div>
 
             {/* Controles de alinhamento */}
-            <div className="flex items-center gap-1">
-              <Label className="text-xs">Alinhar:</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => alignSelectedMedia("left")}
-                className="h-7 w-7 p-0"
-              >
-                <AlignLeft className="h-3 w-3" />
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => alignSelectedMedia("center")}
-                className="h-7 w-7 p-0"
-              >
-                <AlignCenter className="h-3 w-3" />
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => alignSelectedMedia("right")}
-                className="h-7 w-7 p-0"
-              >
-                <AlignRight className="h-3 w-3" />
-              </Button>
-            </div>
+            {selectedMediaType === "image" && (
+              <div className="flex items-center gap-1">
+                <Label className="text-xs">Alinhar:</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => alignSelectedMedia("left")}
+                  className="h-7 w-7 p-0"
+                >
+                  <AlignLeft className="h-3 w-3" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => alignSelectedMedia("center")}
+                  className="h-7 w-7 p-0"
+                >
+                  <AlignCenter className="h-3 w-3" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => alignSelectedMedia("right")}
+                  className="h-7 w-7 p-0"
+                >
+                  <AlignRight className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
