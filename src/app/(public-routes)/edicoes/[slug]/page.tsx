@@ -1,6 +1,6 @@
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import { Flipbook } from "@/components/flipbook";
 import { Title } from "@/components/page-header/title";
+import PDFViewer from "@/components/pdf-viewer";
 import bannerService from "@/services/banner";
 import maganizeService from "@/services/magazine";
 import { formatDateTime } from "@/utils/formatDateTime";
@@ -15,29 +15,6 @@ export default async function EdicaoBySlugPage({
   const { slug } = await params;
   const { data } = await maganizeService.getBySlug(slug ?? "");
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
-
-  const revistaPages = [
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0001.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0002.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0003.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0004.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0005.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0006.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0007.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0008.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0009.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0010.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0011.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0012.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0013.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0014.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0015.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0016.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0017.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0018.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0019.jpg",
-    "/imgs/Contigo - Edição 2157 - (23 Janeiro 2017)_page-0020.jpg",
-  ];
 
   return (
     <div>
@@ -117,7 +94,9 @@ export default async function EdicaoBySlugPage({
             </div>
           </div>
         </div>
-        {data && <Flipbook images={revistaPages} />}
+        {data && (
+          <PDFViewer file={"/Contigo - Edição 2157 - (23 Janeiro 2017).pdf"} />
+        )}
       </div>
     </div>
   );
