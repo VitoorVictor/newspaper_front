@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -37,13 +36,11 @@ const getSocialColumnsSchema = (isUpdate: boolean) =>
   z.object({
     title: z
       .string({ message: "Obrigatório" })
-      .min(5, "O título deve ter pelo menos 5 caracteres")
-      .max(200, "O título deve ter no máximo 255 caracteres"),
+      .min(3, "O título deve ter pelo menos 3 caracteres"),
 
     description: z
       .string()
-      .min(10, "A descrição deve ter pelo menos 10 caracteres")
-      .max(300, "A descrição deve ter no máximo 255 caracteres")
+      .min(5, "A descrição deve ter pelo menos 5 caracteres")
       .or(z.literal(""))
       .transform((val) => (val === "" ? null : val))
       .optional()
@@ -210,7 +207,10 @@ export const ModalSocialColumns = ({
   return (
     <>
       <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-        <DialogContent className="md:max-w-4xl w-full aspace-y-6" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogContent
+          className="md:max-w-4xl w-full aspace-y-6"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>

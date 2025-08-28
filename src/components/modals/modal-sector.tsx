@@ -2,14 +2,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
   useSectorById,
@@ -23,7 +21,7 @@ import { CustomFooterDialog } from "../custom-footer-dialog";
 const sectorSchema = z.object({
   name: z
     .string({ message: "Obrigatório" })
-    .min(5, "O nome deve ter pelo menos 3 caracteres")
+    .min(3, "O nome deve ter pelo menos 3 caracteres")
     .max(200, "O nome deve ter no máximo 255 caracteres"),
 });
 

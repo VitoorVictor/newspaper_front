@@ -25,8 +25,7 @@ const getUserSchema = (isUpdate: boolean) => {
     .object({
       name: z
         .string({ message: "Obrigatório" })
-        .min(5, "O nome deve ter pelo menos 5 caracteres")
-        .max(200, "O nome deve ter no máximo 200 caracteres"),
+        .min(3, "O nome deve ter pelo menos 3 caracteres"),
       email: z
         .string({ message: "Obrigatório" })
         .email({ message: "Deve ser um email válido" }),
@@ -35,7 +34,6 @@ const getUserSchema = (isUpdate: boolean) => {
         : z
             .string({ message: "Obrigatório" })
             .min(6, "A senha deve ter pelo menos 6 caracteres")
-            .max(200, "A senha deve ter no máximo 200 caracteres")
             .regex(
               /[A-Z]/,
               "A senha deve conter pelo menos uma letra maiúscula"
@@ -50,7 +48,6 @@ const getUserSchema = (isUpdate: boolean) => {
         : z
             .string({ message: "Obrigatório" })
             .min(6, "A confirmação deve ter pelo menos 6 caracteres")
-            .max(200, "A confirmação deve ter no máximo 200 caracteres")
             .regex(
               /[A-Z]/,
               "A senha deve conter pelo menos uma letra maiúscula"

@@ -36,36 +36,28 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
     name: z
       .string({ message: "Obrigatório" })
-      .min(5, "O título deve ter pelo menos 5 caracteres")
-      .max(200, "O título deve ter no máximo 255 caracteres"),
-
+      .min(3, "O título deve ter pelo menos 3 caracteres"),
     description: z
       .string()
-      .min(10, "A descrição deve ter pelo menos 10 caracteres")
-      .max(300, "A descrição deve ter no máximo 255 caracteres")
+      .min(5, "A descrição deve ter pelo menos 5 caracteres")
       .or(z.literal(""))
       .transform((val) => (val === "" ? null : val))
       .optional()
       .nullable(),
-
     address: z
       .string()
-      .min(5, "O endereço deve ter pelo menos 5 caracteres")
-      .max(300, "O endereço deve ter no máximo 255 caracteres")
+      .min(3, "O endereço deve ter pelo menos 3 caracteres")
       .or(z.literal(""))
       .transform((val) => (val === "" ? null : val))
       .optional()
       .nullable(),
-
     number: z
       .string({ message: "Obrigatório" })
       .min(1, "O número deve ter pelo menos 1 caractere")
-      .max(15, "O número deve ter no máximo 15 caracteres")
       .or(z.literal(""))
       .transform((val) => (val === "" ? null : val))
       .optional()
       .nullable(),
-
     image_url: isUpdate
       ? z
           .custom<File>(
@@ -81,11 +73,9 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
       : z.custom<File>((file) => file instanceof File && file.size > 0, {
           message: "Uma imagem válida é obrigatória",
         }),
-
     sector_ids: z.array(z.number(), {
       message: "Selecione pelo menos um tópico",
     }),
-
     sectors: z
       .array(
         z.object({
@@ -95,7 +85,6 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
       )
       .optional()
       .nullable(),
-
     created_at: z.string().optional().nullable(),
     updated_at: z.string().optional().nullable(),
   });
@@ -189,7 +178,10 @@ export const ModalIndustrialGuide = ({
 
   return (
     <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-      <DialogContent className="md:max-w-4xl w-full aspace-y-6" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className="md:max-w-4xl w-full aspace-y-6"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>

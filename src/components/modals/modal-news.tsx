@@ -42,13 +42,11 @@ const getNewsSchema = (isUpdate: boolean) =>
   z.object({
     title: z
       .string({ message: "Obrigatório" })
-      .min(5, "O título deve ter pelo menos 5 caracteres")
-      .max(200, "O título deve ter no máximo 255 caracteres"),
+      .min(3, "O título deve ter pelo menos 3 caracteres"),
     sub_title: z
       .string({ message: "Obrigatório" })
-      .min(10, "O subtítulo deve ter pelo menos 10 caracteres")
-      .max(300, "O subtítulo deve ter no máximo 255 caracteres"),
-    content: z.string().min(20, "O conteúdo deve ter pelo menos 20 caracteres"),
+      .min(5, "O subtítulo deve ter pelo menos 5 caracteres"),
+    content: z.string().min(10, "O conteúdo deve ter pelo menos 10 caracteres"),
 
     image_url: isUpdate
       ? z
