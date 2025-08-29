@@ -16,6 +16,7 @@ interface PDFClientProps {
 }
 
 export default function PDFClient({ file, className = "" }: PDFClientProps) {
+  console.log(file);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,11 +40,11 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       setLoading(true);
       setError(null);
 
-      // Adiciona o proxy CORS apenas para testes
-      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+      console.log(url);
 
-      const response = await fetch(proxyUrl);
+      const response = await fetch(url);
 
+      console.log(response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

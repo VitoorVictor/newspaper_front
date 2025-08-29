@@ -19,7 +19,7 @@ const magazineService = {
     return axios.get<PaginatedResponse<IMagazine>>(url);
   },
   getBySlug: (slug: string) => {
-    return axios.get<IMagazine>(
+    return axios.get<{ magazine: IMagazine; related: IMagazine[] }>(
       `${process.env.NEXT_PUBLIC_API_URL}/magazine/${slug}`
     );
   },

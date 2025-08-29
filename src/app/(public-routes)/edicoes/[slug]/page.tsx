@@ -15,6 +15,8 @@ export default async function EdicaoBySlugPage({
   const { slug } = await params;
   const { data } = await maganizeService.getBySlug(slug ?? "");
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
+  const magazine = data.magazine;
+  const related = data.related;
 
   return (
     <div>
@@ -29,7 +31,7 @@ export default async function EdicaoBySlugPage({
         <div className="border-b border-gray-200 pb-6">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <Title title={data.title} subtitle={data.description} />
+              <Title title={magazine.title} subtitle={magazine.description} />
             </div>
 
             {/* Informações da publicação */}
@@ -49,7 +51,7 @@ export default async function EdicaoBySlugPage({
                   />
                 </svg>
                 <span className="font-medium text-gray-700">Postado em:</span>
-                <span>{formatDateTime(data.created_at, false)}</span>
+                <span>{formatDateTime(magazine.created_at, false)}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -69,7 +71,7 @@ export default async function EdicaoBySlugPage({
                 <span className="font-medium text-gray-700">
                   Atualizado em:
                 </span>
-                <span>{formatDateTime(data.updated_at, false)}</span>
+                <span>{formatDateTime(magazine.updated_at, false)}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -88,14 +90,16 @@ export default async function EdicaoBySlugPage({
                 </svg>
                 <span className="font-medium text-gray-700">Postado por:</span>
                 <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
-                  Usuário #{data.user_id}
+                  {magazine.user.name}
                 </span>
               </div>
             </div>
           </div>
         </div>
         {data && (
-          <PDFViewer file={`${process.env.NEXT_PUBLIC_API_URL}${data.file}`} />
+          <PDFViewer
+            file={`${process.env.NEXT_PUBLIC_API_URL}${magazine.file}`}
+          />
         )}
       </div>
     </div>
