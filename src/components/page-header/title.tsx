@@ -2,7 +2,7 @@ import { Badge } from "../ui/badge";
 
 interface TitleProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   showlResults?: boolean;
   totalResults?: number;
 }
@@ -26,7 +26,7 @@ export const Title = ({
           </Badge>
         )}
       </div>
-      <p className="text-gray-600 text-lg">{subtitle}</p>
+      {subtitle && <p className="text-gray-600 text-lg">{subtitle}</p>}
     </div>
   );
 };
