@@ -95,7 +95,7 @@ export default async function EdicaoBySlugPage({
           </div>
         </div>
         {data && (
-          <PDFViewer file={"/Contigo - Edição 2157 - (23 Janeiro 2017).pdf"} />
+          <PDFViewer file={`${process.env.NEXT_PUBLIC_API_URL}${data.file}`} />
         )}
       </div>
     </div>
