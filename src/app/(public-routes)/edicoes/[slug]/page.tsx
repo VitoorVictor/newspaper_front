@@ -14,9 +14,14 @@ export default async function EdicaoBySlugPage({
 }: EdicaoBySlugPageProps) {
   const { slug } = await params;
   const { data } = await maganizeService.getBySlug(slug ?? "");
+  console.log("data: ", data);
   const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const magazine = data.magazine;
   const related = data.related;
+
+  if (!data) {
+    return <div>Edição não encontrada</div>;
+  }
 
   return (
     <div>
