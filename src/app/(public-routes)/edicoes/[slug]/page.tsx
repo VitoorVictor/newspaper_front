@@ -36,10 +36,7 @@ export default async function EdicaoBySlugPage({
         <div className="border-b border-gray-200 pb-6">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <Title
-                title={magazine.title}
-                subtitle={magazine.description}
-              />
+              <Title title={magazine.title} subtitle={magazine.description} />
             </div>
 
             {/* Informações da publicação */}
@@ -106,7 +103,7 @@ export default async function EdicaoBySlugPage({
         </div>
         {data && (
           <PDFViewer
-            file={`${process.env.NEXT_PUBLIC_API_URL}${magazine.file}`}
+            file={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.file}`}
           />
         )}
       </div>
