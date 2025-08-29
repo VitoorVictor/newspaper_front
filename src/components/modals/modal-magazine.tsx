@@ -110,19 +110,20 @@ export const ModalMagazine = ({
   const { reset, setValue, handleSubmit, control } = form;
   const createMagazine = useCreateMagazine();
   const updateMagazine = useUpdateMagazine(id!);
-  const { data: magazine, isLoading } = useMagazineBySlug(slug);
+  const { data, isLoading } = useMagazineBySlug(slug);
+  const magazine = data?.data.magazine;
 
   useEffect(() => {
     if (isUpdate && magazine) {
-      setValue("title", magazine.data.title);
-      setValue("description", magazine.data.description);
+      setValue("title", magazine.title);
+      setValue("description", magazine.description);
       setValue(
         "created_at",
-        new Date(magazine.data.created_at).toISOString().slice(0, 16)
+        new Date(magazine.created_at).toISOString().slice(0, 16)
       );
       setValue(
         "updated_at",
-        new Date(magazine.data.updated_at).toISOString().slice(0, 16)
+        new Date(magazine.updated_at).toISOString().slice(0, 16)
       );
     }
   }, [magazine, isUpdate, reset]);
@@ -227,9 +228,9 @@ export const ModalMagazine = ({
                       <FormControl>
                         {view ? (
                           <div className="p-4 border rounded-md bg-gray-50 flex justify-center items-center">
-                            {magazine?.data.image_url ? (
+                            {magazine?.image_url ? (
                               <Image
-                                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.data.image_url}`}
+                                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.image_url}`}
                                 alt="Imagem da edição"
                                 width={256}
                                 height={144}
@@ -252,7 +253,7 @@ export const ModalMagazine = ({
                             hasPreview={
                               isUpdate
                                 ? [
-                                    `${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine?.data.image_url}`,
+                                    `${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine?.image_url}`,
                                   ]
                                 : []
                             }
@@ -277,7 +278,7 @@ export const ModalMagazine = ({
                       <FormControl>
                         {view ? (
                           <div className="p-4 border rounded-md bg-gray-50">
-                            {magazine?.data.file ? (
+                            {magazine?.file ? (
                               <div className="space-y-3">
                                 <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border">
                                   <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -295,8 +296,8 @@ export const ModalMagazine = ({
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-900 truncate">
-                                      {magazine.data.file instanceof File
-                                        ? magazine.data.file.name
+                                      {magazine.file instanceof File
+                                        ? magazine.file.name
                                         : "Arquivo PDF"}
                                     </p>
                                     <p className="text-sm text-gray-500">
@@ -305,7 +306,7 @@ export const ModalMagazine = ({
                                   </div>
                                   <div className="flex-shrink-0">
                                     <a
-                                      href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.data.file}`}
+                                      href={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.file}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
@@ -375,7 +376,7 @@ export const ModalMagazine = ({
                             hasPreview={
                               isUpdate
                                 ? [
-                                    `${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine?.data.file}`,
+                                    `${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine?.file}`,
                                   ]
                                 : []
                             }
