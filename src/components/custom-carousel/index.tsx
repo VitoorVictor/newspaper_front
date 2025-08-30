@@ -20,7 +20,7 @@ interface CustomCarouselProps {
   bannerImages: {
     id: number;
     image_url: string;
-    link: string | null;
+    link?: string | null;
   }[];
   direction?: "horizontal" | "vertical";
   className?: string;
