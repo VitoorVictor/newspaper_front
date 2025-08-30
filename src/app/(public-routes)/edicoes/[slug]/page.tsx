@@ -1,4 +1,5 @@
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import { MagazineCard } from "@/components/magazine-card";
 import { Title } from "@/components/page-header/title";
 import PDFViewer from "@/components/pdf-viewer";
 import bannerService from "@/services/banner";
@@ -105,6 +106,28 @@ export default async function EdicaoBySlugPage({
           <PDFViewer
             file={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.file}`}
           />
+        )}
+        {related && related.length > 0 && (
+          <>
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Veja mais edições da revista
+              </h3>
+            </div>
+            <div className="grid lg:grid-cols-4 gap-6">
+              {related.map((magazine) => (
+                <MagazineCard
+                  key={magazine.id}
+                  id={magazine.id}
+                  title={magazine.title}
+                  slug={magazine.slug}
+                  image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.image_url}`}
+                  description={magazine.description}
+                  created_at={magazine.created_at}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -41,15 +41,15 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
               {/* 3 colunas de cards */}
               <div className="lg:col-span-4">
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {data.data.map((megazine) => (
+                  {data.data.map((magazine) => (
                     <MagazineCard
-                      key={megazine.id}
-                      id={megazine.id}
-                      title={megazine.title}
-                      slug={megazine.slug}
-                      image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${megazine.image_url}`}
-                      description={megazine.description}
-                      created_at={megazine.created_at}
+                      key={magazine.id}
+                      id={magazine.id}
+                      title={magazine.title}
+                      slug={magazine.slug}
+                      image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.image_url}`}
+                      description={magazine.description}
+                      created_at={magazine.created_at}
                     />
                   ))}
                 </div>
