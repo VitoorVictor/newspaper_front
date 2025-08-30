@@ -10,6 +10,7 @@ export interface IBanner {
 export interface IBannerImage {
   id: number;
   image_url: string;
+  link: string | null;
   banner_id: number | null;
   created_at: string;
   updated_at: string;

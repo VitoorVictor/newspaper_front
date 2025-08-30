@@ -32,11 +32,13 @@ import { CustomCarousel } from "../custom-carousel";
 import { Trash2 } from "lucide-react";
 import { ConfirmDialog } from "../confirm-dialog";
 import { CustomFooterDialog } from "../custom-footer-dialog";
+import { CustomInput } from "../custom-inputs/input";
 
 const bannerSchema = z.object({
   image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
     message: "Uma imagem válida é obrigatória",
   }),
+  link: z.string().optional().nullable(),
   banner_id: z.number({ message: "Banner é obrigatório" }),
   created_at: z.string().optional().nullable(),
   updated_at: z.string().optional().nullable(),
@@ -226,6 +228,13 @@ export const ModalBanner = ({
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                {/* URL do Link */}
+                <CustomInput
+                  name="link"
+                  label="URL do banner"
+                  placeholder="https://exemplo.com"
+                  description="Utilizado para redirecionar ao clicar no banner (Opcional)"
                 />
 
                 {/* Botões fixos na parte inferior */}

@@ -10,13 +10,11 @@ function getApiClient() {
 
 const bannerService = {
   getAllTopSide: () => {
-    return axios.get<{ top: string[]; side: string[] }>(
+    return axios.get<{ top: string[]; side: string[]; "pop up": string[] }>(
       `${process.env.NEXT_PUBLIC_API_URL}/banners/top-e-side`
     );
   },
   getAll: () => {
-    // const api = getApiClient();
-    // return api.get<IBanner[]>("/admin/banners");
     return axios.get<IBanner[]>(`${process.env.NEXT_PUBLIC_API_URL}/banners`);
   },
   getById: (id: number) => {

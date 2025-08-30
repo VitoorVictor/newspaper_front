@@ -20,6 +20,7 @@ interface CustomCarouselProps {
   bannerImages: {
     id: number;
     image_url: string;
+    link: string | null;
   }[];
   direction?: "horizontal" | "vertical";
   className?: string;
@@ -94,6 +95,20 @@ const CustomCarousel = React.forwardRef<HTMLDivElement, CustomCarouselProps>(
                     )}
                   </div>
                 </div>
+                {image.link && (
+                  <div className="flex justify-center gap-1">
+                    <span className="text-sm text-gray-500">
+                      Link do Banner:
+                    </span>
+                    <a
+                      href={image.link || "#"}
+                      target="_blank"
+                      className="text-sm text-gray-500"
+                    >
+                      {image.link}
+                    </a>
+                  </div>
+                )}
               </CarouselItem>
             );
           })}
