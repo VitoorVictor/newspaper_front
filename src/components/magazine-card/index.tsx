@@ -11,7 +11,7 @@ interface MagazineCardProps {
   id: number;
   title: string;
   slug: string;
-  description: string;
+  description?: string;
   created_at: string;
   image: string;
 }
@@ -68,11 +68,13 @@ export function MagazineCard({
       </div>
 
       <CardContent className="p-6 space-y-4 bg-gradient-to-b from-card to-card/80">
-        <div className="space-y-3">
-          <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm">
-            {description}
-          </p>
-        </div>
+        {description && (
+          <div className="space-y-3">
+            <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm">
+              {description}
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center justify-between pt-4 border-t border-border/50">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
