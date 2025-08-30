@@ -104,7 +104,7 @@ export default async function EdicaoBySlugPage({
         </div>
         {data && (
           <PDFViewer
-            file={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.file}`}
+            file={process.env.NODE_ENV === "development" ? "/pdfInDev.pdf" : `${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.file}`}
           />
         )}
         {related && related.length > 0 && (
