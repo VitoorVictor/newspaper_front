@@ -4,6 +4,7 @@ import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { ItemsSearch } from "@/components/items-seach";
 import categoryService from "@/services/category";
 import { formatDateTime } from "@/utils/formatDateTime";
+import { NewsSecondaryEditorial } from "@/components/news";
 
 interface NoticiasByCategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -163,6 +164,20 @@ export default async function NoticiasByCategoryPage({
               )}
           </div>
         </div>
+        {data.related_news && data.related_news.length > 0 && (
+          <div className="grid lg:grid-cols-4 gap-6">
+            {data.related_news.map((news) => (
+              <NewsSecondaryEditorial
+                key={news.id}
+                title={news.title}
+                badge={news.badge}
+                time={news.created_at}
+                image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
+                slug={news.slug}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ICategory } from "./category";
+import { IUser } from "./user";
 
 export interface INews {
   id: number;
@@ -8,8 +9,8 @@ export interface INews {
   image_url: File;
   badge: string;
   user_id: string;
-  user: any;
-  slug:string
+  user: IUser;
+  slug: string;
   top_position: string;
   status: "draft" | "published";
   category_ids: number[];
@@ -17,4 +18,5 @@ export interface INews {
   created_at: string;
   updated_at: string;
   deleted_at: string;
+  related_news: INews[];
 }
