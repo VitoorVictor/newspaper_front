@@ -5,18 +5,18 @@ import {
 } from "@/components/news";
 import { ItemsSearch } from "@/components/items-seach";
 import { PageHeader } from "@/components/page-header";
-import { Button } from "@/components/ui/button";
 import categoryService from "@/services/category";
 import newsService from "@/services/news";
-import { ArrowRight } from "lucide-react";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import bannerService from "@/services/banner";
 import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 
 export default async function NoticiasPage() {
   const { data: dataNews } = await newsService.getAll();
   const { data: dataCategories } = await categoryService.getAll();
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const { principais, editorias } = dataNews;
 
   const hasNewsByCategory = Boolean(
@@ -34,13 +34,7 @@ export default async function NoticiasPage() {
       )}
       <div className="container mx-auto my-4 md:my-8 px-4 space-y-4 md:space-y-6">
         {/* Banner superior - apenas em desktop */}
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
 
         <PageHeader
           title="Notícias"
@@ -86,7 +80,7 @@ export default async function NoticiasPage() {
         </div>
 
         {hasNewsByCategory && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
             <div className="lg:col-span-3 space-y-8 md:space-y-10">
               {editorias.map((section, idx) => {
@@ -129,18 +123,8 @@ export default async function NoticiasPage() {
             </div>
 
             {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
-            <div className="lg:col-span-1 order-first lg:order-last">
-              {dataAdBanners &&
-                dataAdBanners.side &&
-                dataAdBanners.side.length > 0 && (
-                  <div className="lg:sticky lg:top-40">
-                    <SimpleImageCarousel
-                      images={dataAdBanners.side}
-                      variant="vertical"
-                      autoPlay={true}
-                    />
-                  </div>
-                )}
+            <div className="hidden lg:block col-span-1 order-last">
+              <BannerSideSection />
             </div>
           </div>
         )}

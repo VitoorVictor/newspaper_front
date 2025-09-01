@@ -4,11 +4,10 @@ import { IndustryCard } from "@/components/industry-card.tsx";
 import { MagazineCard } from "@/components/magazine-card";
 import { NewsMain, NewsSecondary } from "@/components/news";
 import { SocialEventCard } from "@/components/social-card";
-import bannerService from "@/services/banner";
+import { BannerTopSection } from "@/components/banner-section";
 import homeService from "@/services/home";
 
 export default async function HomePage() {
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   const { data } = await homeService.get();
 
   const {
@@ -18,24 +17,17 @@ export default async function HomePage() {
     industrial_guides,
     banners_home,
   } = data;
+
   return (
     <div className="space-y-0">
-      {/* Seção de Banner*/}
-      {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-        <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        </div>
-      )}
+      {/* Seção de Banner - usando store Zustand */}
+      <BannerTopSection />
 
       {/* Notícias Principais */}
       {principais_noticias && principais_noticias.length > 0 && (
         <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-3 gap-4 lg:max-h-[500px]">
-            {principais_noticias.map((news, index) => {
+            {principais_noticias.map((news: any, index: number) => {
               if (index === 0)
                 return (
                   <NewsMain
@@ -100,7 +92,7 @@ export default async function HomePage() {
             </div>
 
             <div className="grid lg:grid-cols-4 gap-6">
-              {industrial_guides.map((industry) => (
+              {industrial_guides.map((industry: any) => (
                 <IndustryCard
                   key={industry.id}
                   id={industry.id}
@@ -150,14 +142,14 @@ export default async function HomePage() {
           </div>
 
           <div className="grid lg:grid-cols-4 gap-6">
-            {social_columns.map((socialColumn) => (
+            {social_columns.map((socialColumn: any) => (
               <SocialEventCard
                 key={socialColumn.id}
                 title={socialColumn.title}
                 slug={socialColumn.slug}
                 photoCount={socialColumn.images.length}
                 eventLogo={
-                  socialColumn.images.find((sci) => sci.is_cover === 1)
+                  socialColumn.images.find((sci: any) => sci.is_cover === 1)
                     ?.image_url || ""
                 }
               />
@@ -195,7 +187,7 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="grid lg:grid-cols-4 gap-6">
-            {magazines.map((magazine) => (
+            {magazines.map((magazine: any) => (
               <MagazineCard
                 key={magazine.id}
                 id={magazine.id}

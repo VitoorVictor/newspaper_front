@@ -1,6 +1,4 @@
-import bannerService from "@/services/banner";
 import newsService from "@/services/news";
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { PageHeader } from "@/components/page-header";
 import {
   NewsMain,
@@ -10,6 +8,10 @@ import {
 import { ItemsSearch } from "@/components/items-seach";
 import categoryService from "@/services/category";
 import { CustomPagination } from "@/components/custom-pagination";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 
 interface NoticiasByCategoryPageProps {
   params: Promise<{ category: string }>;
@@ -29,7 +31,6 @@ export default async function NoticiasByCategoryPage({
     page: Number(pagina) ?? 0,
   });
   const { data: dataCategories } = await categoryService.getAll();
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
 
   return (
     <div>
@@ -42,15 +43,7 @@ export default async function NoticiasByCategoryPage({
       )}
       <div className="container mx-auto my-4 md:my-8 px-4 space-y-4 md:space-y-6">
         {/* Banner superior - apenas em desktop */}
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <div className="hidden lg:block">
-            <SimpleImageCarousel
-              images={dataAdBanners.top}
-              variant="horizontal"
-              autoPlay={true}
-            />
-          </div>
-        )}
+        <BannerTopSection />
 
         <PageHeader
           title={`${
@@ -102,7 +95,7 @@ export default async function NoticiasByCategoryPage({
         </div>
 
         {data.data.length > 4 && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
             <div className="lg:col-span-3 space-y-6 md:space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -120,18 +113,8 @@ export default async function NoticiasByCategoryPage({
             </div>
 
             {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
-            <div className="lg:col-span-1 order-first lg:order-last">
-              {dataAdBanners &&
-                dataAdBanners.side &&
-                dataAdBanners.side.length > 0 && (
-                  <div className="lg:sticky lg:top-40">
-                    <SimpleImageCarousel
-                      images={dataAdBanners.side}
-                      variant="vertical"
-                      autoPlay={true}
-                    />
-                  </div>
-                )}
+            <div className="hidden lg:block col-span-1 order-last">
+              <BannerSideSection />
             </div>
           </div>
         )}

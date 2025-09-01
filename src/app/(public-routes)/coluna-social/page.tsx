@@ -1,8 +1,10 @@
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
 import { PageHeader } from "@/components/page-header";
 import { SocialEventCard } from "@/components/social-card";
-import bannerService from "@/services/banner";
 import socialColumnService from "@/services/social-column";
 
 interface ColunaSocialPageProps {
@@ -18,49 +20,10 @@ export default async function ColunaSocialPage({
     search: pesquisa ?? "",
     page: Number(pagina) ?? 0,
   });
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   return (
-    // <div className="container mx-auto my-8 px-4 space-y-6">
-    //   <BannerHorizontal />
-    //   <PageHeader
-    //     title="Coluna Social"
-    //     subtitle="Vejas eventos importantes que participamos na região."
-    //     placeholder="Buscar eventos sociais, culturais, empresariais..."
-    //     quickSearch={[
-    //       "Feiras e Exposições",
-    //       "Lançamentos de Produtos",
-    //       "Eventos Corporativos",
-    //       "Eventos Culturais",
-    //       "Premiações e Homenagens",
-    //     ]}
-    //   />
-    //   <div className="grid lg:grid-cols-4 gap-6">
-    //     {/* 3 colunas de cards */}
-    //     <div className="lg:col-span-3">
-    //       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-    //         <SocialEventCard {...sampleEvent} />
-    //         <SocialEventCard {...sampleEvent} />
-    //         <SocialEventCard {...sampleEvent} />
-    //         <SocialEventCard {...sampleEvent} />
-    //       </div>
-    //     </div>
-
-    //     {/* Banner lateral */}
-    //     <div className="col-span-1 h-fit sticky top-20">
-    //       <BannerVertical />
-    //     </div>
-    //   </div>
-    //   <CustomPagination totalPages={0} currentPage={0} />
-    // </div>
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
         <PageHeader
           title="Coluna Social"
           subtitle="Vejas eventos importantes que participamos na região."
@@ -90,16 +53,8 @@ export default async function ColunaSocialPage({
               </div>
 
               {/* Banner lateral */}
-              <div className="col-span-1 h-fit sticky top-20">
-                {dataAdBanners &&
-                  dataAdBanners.side &&
-                  dataAdBanners.side.length > 0 && (
-                    <SimpleImageCarousel
-                      images={dataAdBanners.side}
-                      variant="vertical"
-                      autoPlay={true}
-                    />
-                  )}
+              <div className="hidden lg:block col-span-1 order-last">
+                <BannerSideSection />
               </div>
             </div>
             <CustomPagination

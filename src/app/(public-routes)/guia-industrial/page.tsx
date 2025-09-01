@@ -1,9 +1,11 @@
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
 import { IndustryCard } from "@/components/industry-card.tsx";
 import { ItemsSearch } from "@/components/items-seach";
 import { PageHeader } from "@/components/page-header";
-import bannerService from "@/services/banner";
 import industrialGuideService from "@/services/industrial-guide";
 import sectorService from "@/services/sector";
 
@@ -22,7 +24,6 @@ export default async function GuiaIndustrialPage({
     sector: setor ?? "",
     page: Number(pagina) ?? 0,
   });
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
 
   return (
     <div>
@@ -34,13 +35,7 @@ export default async function GuiaIndustrialPage({
         />
       )}
       <div className="container mx-auto my-8 px-4 space-y-6">
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
         <PageHeader
           title="Guia Industrial"
           subtitle="Vejas as industrias de Umuarama e região."
@@ -73,16 +68,8 @@ export default async function GuiaIndustrialPage({
               </div>
 
               {/* Banner lateral */}
-              <div className="col-span-1 h-fit sticky top-20">
-                {dataAdBanners &&
-                  dataAdBanners.side &&
-                  dataAdBanners.side.length > 0 && (
-                    <SimpleImageCarousel
-                      images={dataAdBanners.side}
-                      variant="vertical"
-                      autoPlay={true}
-                    />
-                  )}
+              <div className="hidden lg:block col-span-1 order-last">
+                <BannerSideSection />
               </div>
             </div>
             <CustomPagination

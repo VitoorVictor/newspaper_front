@@ -1,8 +1,10 @@
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
 import { MagazineCard } from "@/components/magazine-card";
 import { PageHeader } from "@/components/page-header";
-import bannerService from "@/services/banner";
 import magazineService from "@/services/magazine";
 
 interface EdicoesPageProps {
@@ -16,18 +18,11 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
     search: pesquisa ?? "",
     page: Number(pagina) ?? 0,
   });
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
 
   return (
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
         <PageHeader
           title="Edições"
           subtitle="Veja as edições da revista Imagem Industrial."
@@ -56,16 +51,8 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
               </div>
 
               {/* Banner lateral */}
-              <div className="col-span-1 h-fit sticky top-20">
-                {dataAdBanners &&
-                  dataAdBanners.side &&
-                  dataAdBanners.side.length > 0 && (
-                    <SimpleImageCarousel
-                      images={dataAdBanners.side}
-                      variant="vertical"
-                      autoPlay={true}
-                    />
-                  )}
+              <div className="hidden lg:block col-span-1 order-last">
+                <BannerSideSection />
               </div>
             </div>
             <CustomPagination

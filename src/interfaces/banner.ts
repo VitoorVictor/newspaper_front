@@ -15,3 +15,8 @@ export interface IBannerImage {
   created_at: string;
   updated_at: string;
 }
+export interface IBannerTopSidePopUp {
+  top: { url: string; link: string }[];
+  side: { url: string; link: string }[];
+  "pop up": { url: string; link: string }[];
+}

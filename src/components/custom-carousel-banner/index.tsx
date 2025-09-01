@@ -6,8 +6,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
+interface BannerItem {
+  url: string;
+  link: string;
+}
+
 interface SimpleImageCarouselProps {
-  images: string[];
+  images: string[] | BannerItem[];
   variant?: "horizontal" | "vertical";
   autoPlay?: boolean;
   autoPlayInterval?: number;
@@ -23,6 +28,12 @@ export function SimpleImageCarousel({
 }: SimpleImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Verificar se é array de strings ou objetos com url/link
+  const isBannerItems =
+    images.length > 0 && typeof images[0] === "object" && "url" in images[0];
+  const bannerItems = isBannerItems ? (images as BannerItem[]) : null;
+  const stringImages = !isBannerItems ? (images as string[]) : null;
+
   const getImageUrl = (imagePath: string) => {
     const baseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
     // Se a imagem já tem protocolo (http/https) ou é placeholder, retorna como está
@@ -31,6 +42,27 @@ export function SimpleImageCarousel({
     }
     // Concatena com a URL base, garantindo que não há barras duplas
     return `${baseUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+  };
+
+  const getCurrentImageUrl = () => {
+    if (bannerItems) {
+      return getImageUrl(bannerItems[currentIndex]?.url || "");
+    }
+    return getImageUrl(stringImages?.[currentIndex] || "");
+  };
+
+  const getCurrentLink = () => {
+    if (bannerItems) {
+      return bannerItems[currentIndex]?.link || "";
+    }
+    return "";
+  };
+
+  const handleBannerClick = () => {
+    const link = getCurrentLink();
+    if (link) {
+      window.open(link, "_blank", "noopener,noreferrer");
+    }
   };
 
   const nextSlide = () => {
@@ -60,6 +92,7 @@ export function SimpleImageCarousel({
   if (!images.length) return null;
 
   const isHorizontal = variant === "horizontal";
+  const hasLink = bannerItems && getCurrentLink();
 
   return (
     <div className={`relative group ${className}`}>
@@ -70,12 +103,17 @@ export function SimpleImageCarousel({
           }`}
         >
           {/* Current Image */}
-          <div className="relative w-full h-full">
+          <div
+            className={`relative w-full h-full ${
+              hasLink ? "cursor-pointer" : ""
+            }`}
+            onClick={hasLink ? handleBannerClick : undefined}
+          >
             <Image
-              src={getImageUrl(images[currentIndex]) || "/placeholder.svg"}
+              src={getCurrentImageUrl() || "/placeholder.svg"}
               alt={`Slide ${currentIndex + 1}`}
               fill
-              className="object-cover transition-opacity duration-300"
+              className="object-contain transition-opacity duration-300"
               priority={currentIndex === 0}
             />
           </div>
@@ -86,7 +124,7 @@ export function SimpleImageCarousel({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 onClick={prevSlide}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -95,7 +133,7 @@ export function SimpleImageCarousel({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 onClick={nextSlide}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -106,7 +144,7 @@ export function SimpleImageCarousel({
 
         {/* Dots Indicator */}
         {images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
             {images.map((_, index) => (
               <button
                 key={index}

@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { BannerPopUpSection } from "@/components/banner-section";
 import { BuildingScreen } from "@/components/buiding-screen";
 import Footer from "@/components/footer";
 import { Navbar } from "@/components/navbar";
@@ -16,6 +17,7 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
       <AppSidebar session={session} />
       <Navbar email={session?.user.email || ""} />
       <main className="flex-1">
+        <BannerPopUpSection />
         {process.env.NODE_ENV === "production" && !session ? (
           <BuildingScreen />
         ) : (

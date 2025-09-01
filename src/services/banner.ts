@@ -1,4 +1,4 @@
-import { IBanner } from "./../interfaces/banner";
+import { IBanner, IBannerTopSidePopUp } from "./../interfaces/banner";
 import { getCookie } from "cookies-next";
 import { createApi } from "./api";
 import axios from "axios";
@@ -10,9 +10,7 @@ function getApiClient() {
 
 const bannerService = {
   getAllTopSide: () => {
-    return axios.get<{ top: string[]; side: string[]; "pop up": string[] }>(
-      `${process.env.NEXT_PUBLIC_API_URL}/banners/top-e-side`
-    );
+    return axios.get<IBannerTopSidePopUp>(`${process.env.NEXT_PUBLIC_API_URL}/banners/top-e-side`);
   },
   getAll: () => {
     return axios.get<IBanner[]>(`${process.env.NEXT_PUBLIC_API_URL}/banners`);

@@ -1,9 +1,11 @@
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { Title } from "@/components/page-header/title";
-import bannerService from "@/services/banner";
 import socialColumnService from "@/services/social-column";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 
 interface ColunaSocialBySlugPageProps {
   params: Promise<{ slug: string }>;
@@ -14,17 +16,10 @@ export default async function ColunaSocialBySlugPage({
 }: ColunaSocialBySlugPageProps) {
   const { slug } = await params;
   const { data } = await socialColumnService.getBySlug(slug ?? "");
-  const { data: dataAdBanners } = await bannerService.getAllTopSide();
   return (
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
         <div className="border-b border-gray-200 pb-6">
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -103,16 +98,8 @@ export default async function ColunaSocialBySlugPage({
             </div>
 
             {/* Banner lateral */}
-            <div className="col-span-1 h-fit sticky top-20">
-              {dataAdBanners &&
-                dataAdBanners.side &&
-                dataAdBanners.side.length > 0 && (
-                  <SimpleImageCarousel
-                    images={dataAdBanners.side}
-                    variant="vertical"
-                    autoPlay={true}
-                  />
-                )}
+            <div className="hidden lg:block col-span-1 order-last">
+              <BannerSideSection />
             </div>
           </div>
         )}

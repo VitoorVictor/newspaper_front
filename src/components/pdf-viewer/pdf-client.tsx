@@ -285,7 +285,11 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   }
 
   return (
-    <div className={`pdf-viewer-container ${className}`} ref={containerRef}>
+    <div
+      className={`pdf-viewer-container ${className}`}
+      ref={containerRef}
+      data-zoom-mode={isZoomMode}
+    >
       {/* Controles mínimos */}
       <div className="minimal-controls">
         <div className="zoom-info">

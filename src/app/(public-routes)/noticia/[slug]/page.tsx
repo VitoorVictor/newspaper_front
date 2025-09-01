@@ -1,10 +1,13 @@
 import bannerService from "@/services/banner";
 import newsService from "@/services/news";
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { ItemsSearch } from "@/components/items-seach";
 import categoryService from "@/services/category";
 import { formatDateTime } from "@/utils/formatDateTime";
 import { NewsSecondaryEditorial } from "@/components/news";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
 
 interface NoticiasByCategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -28,13 +31,7 @@ export default async function NoticiasByCategoryPage({
         />
       )}
       <div className="container mx-auto my-8 px-4 space-y-6">
-        {dataAdBanners && dataAdBanners.top && dataAdBanners.top.length > 0 && (
-          <SimpleImageCarousel
-            images={dataAdBanners.top}
-            variant="horizontal"
-            autoPlay={true}
-          />
-        )}
+        <BannerTopSection />
         {/* Layout Principal com Conteúdo da Notícia e Banner Lateral */}
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Conteúdo da Notícia - 3 colunas */}
@@ -152,16 +149,8 @@ export default async function NoticiasByCategoryPage({
           </div>
 
           {/* Banner lateral - 1 coluna */}
-          <div className="col-span-1 h-fit sticky top-20">
-            {dataAdBanners &&
-              dataAdBanners.side &&
-              dataAdBanners.side.length > 0 && (
-                <SimpleImageCarousel
-                  images={dataAdBanners.side}
-                  variant="vertical"
-                  autoPlay={true}
-                />
-              )}
+          <div className="hidden lg:block col-span-1 order-last">
+            <BannerSideSection />
           </div>
         </div>
         {data.related_news && data.related_news.length > 0 && (
