@@ -102,7 +102,7 @@ export function PageHeader({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={placeholder}
-                  className="pl-12 pr-10 py-3 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 text-gray-900 placeholder:text-gray-500"
+                  className="pl-12 pr-20 py-3 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 text-gray-900 placeholder:text-gray-500 truncate sm:text-clip"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSearch(searchTerm, "search");
                   }}
@@ -135,7 +135,7 @@ export function PageHeader({
               </div>
             </div>
 
-            {quickSearch && (
+            {quickSearch && quickSearch.length > 0 && (
               <div className="flex items-center gap-2 mt-4 overflow-x-auto">
                 <span className="text-sm text-gray-500 whitespace-nowrap">
                   Busca rápida:
