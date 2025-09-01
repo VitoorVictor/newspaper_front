@@ -6,7 +6,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import HTMLFlipbook from "react-pageflip";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Button } from "../ui/button";
-import { RotateCw, Download, Search } from "lucide-react";
+import { RotateCw, Download, Search, X } from "lucide-react";
 
 // Configura o worker local do pdfjs (sem usar CDN)
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -25,9 +25,12 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [isZoomMode, setIsZoomMode] = useState<boolean>(false);
+  const [isMagnifierMode, setIsMagnifierMode] = useState<boolean>(false);
+  const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
+  const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const magnifierRef = useRef<HTMLDivElement>(null);
 
   // Detecta se é mobile
   useEffect(() => {
@@ -121,90 +124,76 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }, [pdfFile]);
 
-  const toggleZoomMode = useCallback(() => {
-    setIsZoomMode((prev) => !prev);
-  }, []);
+  const toggleMagnifierMode = useCallback(() => {
+    setIsMagnifierMode((prev) => !prev);
+    if (isMagnifierMode) {
+      setShowMagnifier(false);
+    }
+  }, [isMagnifierMode]);
 
-  // Gestos de zoom para mobile
+  // Sistema de lupa
   useEffect(() => {
-    if (!isMobile || !containerRef.current) return;
-
-    let initialDistance = 0;
-    let initialScale = 1;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 2) {
-        initialDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        initialScale = scale;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        const currentDistance = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-
-        const newScale = (currentDistance / initialDistance) * initialScale;
-        setScale(Math.max(0.5, Math.min(3, newScale)));
-      }
-    };
+    if (!isMagnifierMode || !containerRef.current) return;
 
     const container = containerRef.current;
-    container.addEventListener("touchstart", handleTouchStart, {
-      passive: false,
-    });
-    container.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
+    const magnifier = magnifierRef.current;
 
-    return () => {
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-    };
-  }, [isMobile, scale]);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!magnifier) return;
 
-  // Zoom com mouse (lupa)
-  useEffect(() => {
-    if (!isZoomMode || !containerRef.current) return;
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    const container = containerRef.current;
+      setMagnifierPosition({ x, y });
+      setShowMagnifier(true);
 
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale((prev) => Math.max(0.5, Math.min(3, prev + delta)));
-    };
+      // Posiciona a lupa
+      magnifier.style.left = `${x - 100}px`;
+      magnifier.style.top = `${y - 100}px`;
 
-    const handleClick = (e: MouseEvent) => {
-      if (e.button === 0) {
-        // Botão esquerdo
-        setScale((prev) => Math.min(3, prev + 0.25));
-      } else if (e.button === 2) {
-        // Botão direito
-        setScale((prev) => Math.max(0.5, prev - 0.25));
+      // Calcula o zoom da área
+      const zoomX = (x / rect.width) * 100;
+      const zoomY = (y / rect.height) * 100;
+
+      // Aplica o zoom na imagem dentro da lupa
+      const magnifierContent = magnifier.querySelector(
+        ".magnifier-content"
+      ) as HTMLElement;
+      if (magnifierContent) {
+        magnifierContent.style.transform = `scale(2.5) translate(${
+          -zoomX + 20
+        }%, ${-zoomY + 20}%)`;
       }
     };
 
-    const handleContextMenu = (e: Event) => {
-      e.preventDefault();
+    const handleMouseLeave = () => {
+      setShowMagnifier(false);
     };
 
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    container.addEventListener("click", handleClick);
-    container.addEventListener("contextmenu", handleContextMenu);
+    const handleMouseEnter = () => {
+      if (isMagnifierMode) {
+        setShowMagnifier(true);
+      }
+    };
+
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
-      container.removeEventListener("wheel", handleWheel);
-      container.removeEventListener("click", handleClick);
-      container.removeEventListener("contextmenu", handleContextMenu);
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [isZoomMode]);
+  }, [isMagnifierMode]);
+
+  // Desativa o modo lupa quando não está ativo
+  useEffect(() => {
+    if (!isMagnifierMode) {
+      setShowMagnifier(false);
+    }
+  }, [isMagnifierMode]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -288,7 +277,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     <div
       className={`pdf-viewer-container ${className}`}
       ref={containerRef}
-      data-zoom-mode={isZoomMode}
+      data-magnifier-mode={isMagnifierMode}
     >
       {/* Controles mínimos */}
       <div className="minimal-controls">
@@ -298,11 +287,11 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
         <div className="control-buttons">
           <Button
-            onClick={toggleZoomMode}
+            onClick={toggleMagnifierMode}
             size="sm"
-            variant={isZoomMode ? "default" : "outline"}
+            variant={isMagnifierMode ? "default" : "outline"}
             className="control-btn"
-            title={isZoomMode ? "Desativar modo zoom" : "Ativar modo zoom"}
+            title={isMagnifierMode ? "Desativar lupa" : "Ativar lupa"}
           >
             <Search className="w-4 h-4" />
           </Button>
@@ -375,6 +364,41 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
         )}
       </Document>
 
+      {/* Lupa */}
+      {isMagnifierMode && showMagnifier && (
+        <div
+          ref={magnifierRef}
+          className="magnifier"
+          style={{
+            left: `${magnifierPosition.x - 100}px`,
+            top: `${magnifierPosition.y - 100}px`,
+          }}
+        >
+          <div className="magnifier-content">
+            <Document file={pdfFile}>
+              {numPages > 0 && (
+                <div className="magnifier-pages">
+                  {Array.from(new Array(numPages), (_, index) => (
+                    <div
+                      key={`magnifier_page_${index + 1}`}
+                      className="magnifier-page"
+                    >
+                      <Page
+                        pageNumber={index + 1}
+                        renderAnnotationLayer={false}
+                        renderTextLayer={false}
+                        width={isMobile ? 300 : 600}
+                        className="magnifier-pdf-page"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Document>
+          </div>
+        </div>
+      )}
+
       {numPages > 0 && (
         <div className="page-navigation">
           <div className="page-indicator">
@@ -429,6 +453,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           padding: 20px;
           overflow: hidden;
           touch-action: manipulation;
+          position: relative;
         }
 
         .minimal-controls {
@@ -495,6 +520,48 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           max-width: 100%;
           height: auto;
           transition: transform 0.3s ease;
+        }
+
+        /* Lupa */
+        .magnifier {
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          border: 3px solid #333;
+          border-radius: 50%;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1000;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          background: white;
+        }
+
+        .magnifier-content {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-radius: 50%;
+          transform-origin: center;
+        }
+
+        .magnifier-pages {
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+
+        .magnifier-page {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .magnifier-pdf-page {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
         }
 
         .loading-container {
@@ -617,6 +684,11 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             font-size: 14px;
             padding: 6px 12px;
           }
+
+          .magnifier {
+            width: 150px;
+            height: 150px;
+          }
         }
 
         /* Melhorias de performance */
@@ -628,13 +700,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           will-change: transform;
         }
 
-        /* Cursor de lupa quando em modo zoom */
-        .pdf-viewer-container[data-zoom-mode="true"] {
-          cursor: zoom-in;
+        /* Cursor de lupa quando em modo lupa */
+        .pdf-viewer-container[data-magnifier-mode="true"] {
+          cursor: crosshair;
         }
 
-        .pdf-viewer-container[data-zoom-mode="true"] .flipbook-wrapper {
-          cursor: zoom-in;
+        .pdf-viewer-container[data-magnifier-mode="true"] .flipbook-wrapper {
+          cursor: crosshair;
         }
       `}</style>
     </div>

@@ -223,7 +223,7 @@ export default function AdminGuiaIndustrialPage() {
               <div className="flex justify-between items-center">
                 <CardTitle>Exibindo Setores</CardTitle>
                 <AddBtn
-                  label="Novo setor"
+                  label="Novo Setor"
                   onClick={() => setShowModalSector(true)}
                 />
                 {showModalSector && (
