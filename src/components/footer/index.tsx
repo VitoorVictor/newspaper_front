@@ -32,9 +32,9 @@ export default function Footer() {
                 />
               </div>
               <p className="text-white/80 text-sm leading-relaxed max-w-md">
-                Sua fonte confiável de informações sobre indústria, economia e
-                negócios. Conectando você ao que realmente importa no mundo
-                corporativo.
+                Sua fonte confiável de informações sobre a Indústria Brasileira
+                de Tintas. Conectando você ao que realmente importa no setor
+                industrial.
               </p>
             </div>
 
