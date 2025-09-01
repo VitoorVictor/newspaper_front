@@ -22,15 +22,16 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<string | null>(null);
-  const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isMagnifierMode, setIsMagnifierMode] = useState<boolean>(false);
   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
   const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
+  const [magnifierZoom, setMagnifierZoom] = useState<number>(2.5);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const magnifierRef = useRef<HTMLDivElement>(null);
+  const magnifierContentRef = useRef<HTMLDivElement>(null);
 
   // Detecta se é mobile
   useEffect(() => {
@@ -102,13 +103,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     };
   }, [pdfFile, file, isUrl]);
 
-  // Controles de zoom
+  // Controles de zoom da lupa
   const handleZoomIn = useCallback(() => {
-    setScale((prev) => Math.min(prev + 0.25, 3));
+    setMagnifierZoom((prev) => Math.min(prev + 0.5, 5));
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setScale((prev) => Math.max(prev - 0.25, 0.5));
+    setMagnifierZoom((prev) => Math.max(prev - 0.5, 1.5));
   }, []);
 
   const handleRotate = useCallback(() => {
@@ -131,20 +132,22 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }, [isMagnifierMode]);
 
-  // Sistema de lupa
+  // Sistema de lupa que segue o mouse
   useEffect(() => {
     if (!isMagnifierMode || !containerRef.current) return;
 
     const container = containerRef.current;
     const magnifier = magnifierRef.current;
+    const magnifierContent = magnifierContentRef.current;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!magnifier) return;
+      if (!magnifier || !magnifierContent) return;
 
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
+      // Atualiza a posição da lupa
       setMagnifierPosition({ x, y });
       setShowMagnifier(true);
 
@@ -152,19 +155,14 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       magnifier.style.left = `${x - 100}px`;
       magnifier.style.top = `${y - 100}px`;
 
-      // Calcula o zoom da área
+      // Calcula o offset para o zoom da área
       const zoomX = (x / rect.width) * 100;
       const zoomY = (y / rect.height) * 100;
 
       // Aplica o zoom na imagem dentro da lupa
-      const magnifierContent = magnifier.querySelector(
-        ".magnifier-content"
-      ) as HTMLElement;
-      if (magnifierContent) {
-        magnifierContent.style.transform = `scale(2.5) translate(${
-          -zoomX + 20
-        }%, ${-zoomY + 20}%)`;
-      }
+      magnifierContent.style.transform = `scale(${magnifierZoom}) translate(${
+        -zoomX + 20
+      }%, ${-zoomY + 20}%)`;
     };
 
     const handleMouseLeave = () => {
@@ -186,7 +184,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       container.removeEventListener("mouseleave", handleMouseLeave);
       container.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [isMagnifierMode]);
+  }, [isMagnifierMode, magnifierZoom]);
 
   // Desativa o modo lupa quando não está ativo
   useEffect(() => {
@@ -226,13 +224,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           pageNumber={index + 1}
           renderAnnotationLayer={false}
           renderTextLayer={false}
-          width={isMobile ? 300 * scale : 600 * scale}
+          width={isMobile ? 300 : 600}
           className="pdf-page"
           loading="lazy"
         />
       </div>
     ));
-  }, [numPages, scale, isMobile]);
+  }, [numPages, isMobile]);
 
   // Mostra loading enquanto faz download
   if (loading) {
@@ -282,7 +280,9 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       {/* Controles mínimos */}
       <div className="minimal-controls">
         <div className="zoom-info">
-          <span className="zoom-level">{Math.round(scale * 100)}%</span>
+          <span className="zoom-level">
+            {isMagnifierMode ? `${Math.round(magnifierZoom * 100)}%` : "100%"}
+          </span>
         </div>
 
         <div className="control-buttons">
@@ -295,6 +295,31 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           >
             <Search className="w-4 h-4" />
           </Button>
+
+          {isMagnifierMode && (
+            <>
+              <Button
+                onClick={handleZoomOut}
+                size="sm"
+                variant="outline"
+                className="control-btn"
+                title="Diminuir zoom"
+                disabled={magnifierZoom <= 1.5}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleZoomIn}
+                size="sm"
+                variant="outline"
+                className="control-btn"
+                title="Aumentar zoom"
+                disabled={magnifierZoom >= 5}
+              >
+                +
+              </Button>
+            </>
+          )}
 
           <Button
             onClick={handleRotate}
@@ -332,7 +357,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
               style={{
                 width: "100%",
                 height: "auto",
-                transform: `rotate(${rotation}deg) scale(${scale})`,
+                transform: `rotate(${rotation}deg)`,
                 transformOrigin: "center center",
               }}
               startPage={0}
@@ -374,7 +399,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             top: `${magnifierPosition.y - 100}px`,
           }}
         >
-          <div className="magnifier-content">
+          <div ref={magnifierContentRef} className="magnifier-content">
             <Document file={pdfFile}>
               {numPages > 0 && (
                 <div className="magnifier-pages">
@@ -542,6 +567,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           overflow: hidden;
           border-radius: 50%;
           transform-origin: center;
+          transition: transform 0.1s ease;
         }
 
         .magnifier-pages {
