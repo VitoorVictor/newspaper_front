@@ -7,6 +7,5 @@ interface AuthLayoutProps {
 
 export default async function AuthLayout({ children }: AuthLayoutProps) {
   const session = await auth();
-  console.log(session);
   return <>{children}</>;
 }

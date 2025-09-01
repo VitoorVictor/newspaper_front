@@ -27,8 +27,6 @@ const newsService = {
       category === "" ? "null" : category
     }/${search || "null"}${page ? `?page=${page}` : ""}`;
 
-    console.log(url);
-
     return axios.get<PaginatedResponse<INews>>(url);
   },
   getBySlug: (slug: string) => {

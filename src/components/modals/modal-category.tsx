@@ -53,7 +53,6 @@ export const ModalCategory = ({
 
   useEffect(() => {
     if (isUpdate && categories) {
-      console.log(categories.data);
       reset(categories.data);
     }
   }, [categories, isUpdate, reset]);
