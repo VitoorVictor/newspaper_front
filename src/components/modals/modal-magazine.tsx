@@ -408,7 +408,7 @@ export const ModalMagazine = ({
                   onOpenChange={() => onOpenChange(false)}
                   isSubmitting={isSubmitting}
                   isUpdate={isUpdate}
-                  label="Evento"
+                  label="Edição de Revista"
                 />
               )}
             </form>
