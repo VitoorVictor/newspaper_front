@@ -8,116 +8,111 @@ export default function SobrePage() {
             Sobre a Revista Imagem Industrial
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Conheça nossa história e missão
+            A Imagem da Indústria Brasileira de Tintas
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-gray-800">
-              Nossa História
+              Nossa Essência
             </h2>
             <p className="text-gray-600 leading-relaxed">
-              A Revista Industrial nasceu da necessidade de conectar empresas,
-              empreendedores e profissionais do setor industrial, criando uma
-              plataforma que não apenas informa, mas também inspira e fortalece
-              o ecossistema industrial da região.
+              A <strong>Revista Imagem Industrial</strong> é uma publicação
+              especializada que acompanha de perto o desenvolvimento da{" "}
+              <strong>Indústria Brasileira de Tintas</strong>, valorizando cada
+              elo da cadeia produtiva — dos insumos químicos às embalagens, dos
+              equipamentos às soluções de automação, das cargas minerais ao
+              transporte, do laboratório à linha de produção.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Nossa missão é ser a principal fonte de informação e conexão para
-              o setor industrial, promovendo o desenvolvimento sustentável, a
-              inovação tecnológica e o crescimento econômico da região.
+              Voltada a Empresários, Gestores, Técnicos, Fornecedores e
+              Representantes Comerciais, nossa missão é oferecer informação
+              estratégica, tendências de mercado, inovação tecnológica e
+              conteúdo que apoie o crescimento sustentável e competitivo do
+              setor no Brasil.
             </p>
           </div>
 
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              O que oferecemos
+              O que você encontra em cada edição
             </h3>
             <ul className="space-y-3 text-gray-600">
               <li className="flex items-center">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
-                Notícias atualizadas do setor industrial
+                Entrevistas e artigos técnicos
               </li>
               <li className="flex items-center">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
-                Guia completo de empresas e fornecedores
+                Análises econômicas e tendências de mercado
               </li>
               <li className="flex items-center">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
-                Cobertura de eventos e feiras do setor
+                Avanços em pesquisa e desenvolvimento
               </li>
               <li className="flex items-center">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mr-3"></span>
-                Coluna social com eventos da comunidade
+                Casos de empresas que fazem a diferença
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Seção de Estatísticas - com cor de fundo que cobre toda a largura */}
+      {/* Seção de Destaque */}
       <div className="bg-gray-100 py-8 md:py-12">
         <div className="container mx-auto px-4 space-y-4 md:space-y-6">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Números que nos orgulham
+              Mais do que uma Revista
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Resultados que demonstram nosso compromisso com a qualidade
+              Somos uma <strong>Plataforma de Conexão e Valorização</strong> do
+              nosso segmento, reunindo quem investe, produz, representa,
+              transforma e acredita na força da Indústria Brasileira de Tintas.
             </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-500 mb-2">
-                500+
-              </div>
-              <div className="text-gray-600">Empresas cadastradas</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-500 mb-2">
-                1000+
-              </div>
-              <div className="text-gray-600">Notícias publicadas</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-500 mb-2">50+</div>
-              <div className="text-gray-600">Eventos cobertos</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-500 mb-2">
-                10k+
-              </div>
-              <div className="text-gray-600">Leitores mensais</div>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Seção dos Desenvolvedores */}
-      <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
-        <div className="max-w-2xl mx-auto text-center border-t pt-8">
-          <p className="text-sm text-gray-500 mb-4">Desenvolvido com ❤️ por</p>
-          <div className="flex justify-center space-x-6 text-xs text-gray-400">
-            <a
-              href="https://github.com/dev1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-600 transition-colors"
-            >
-              @dev1
-            </a>
-            <span className="text-gray-300">•</span>
-            <a
-              href="https://github.com/dev2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-gray-600 transition-colors"
-            >
-              @dev2
-            </a>
+      <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
+          <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+            <span className="text-orange-600 text-xl font-bold">📰</span>
           </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Publicação Especializada
+          </h3>
+          <p className="text-gray-600 text-sm flex-grow">
+            Foco exclusivo na Indústria Brasileira de Tintas e toda sua cadeia
+            produtiva
+          </p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
+          <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+            <span className="text-orange-600 text-xl font-bold">🎯</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Público-Alvo Definido
+          </h3>
+          <p className="text-gray-600 text-sm flex-grow">
+            Empresários, Gestores, Técnicos, Fornecedores e Representantes
+            Comerciais
+          </p>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
+          <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+            <span className="text-orange-600 text-xl font-bold">🔗</span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Plataforma de Conexão
+          </h3>
+          <p className="text-gray-600 text-sm flex-grow">
+            Reunindo todos os elos da cadeia produtiva em um só lugar
+          </p>
         </div>
       </div>
     </div>
