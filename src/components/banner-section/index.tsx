@@ -113,20 +113,18 @@ function BannerPopUpSection() {
 
   useEffect(() => {
     if (popUpBanners && popUpBanners.length > 0) {
-      // Mostrar pop-up após 15 segundos inicialmente
-      const initialTimer = setTimeout(() => {
-        setIsVisible(true);
-      }, 15000);
+      const lastShown = localStorage.getItem("popup_last_shown");
+      const now = Date.now();
 
-      // Configurar timer para mostrar pop-up a cada 3 minutos
-      const intervalTimer = setInterval(() => {
-        setIsVisible(true);
-      }, 300000); // 5 minutos
+      // Verifica se já passou 1h ou nunca foi mostrado
+      if (!lastShown || now - parseInt(lastShown, 10) > 3600000) {
+        const timer = setTimeout(() => {
+          setIsVisible(true);
+          localStorage.setItem("popup_last_shown", now.toString());
+        }, 10000); // aparece 5s depois que entrou na página (ajuste como quiser)
 
-      return () => {
-        clearTimeout(initialTimer);
-        clearInterval(intervalTimer);
-      };
+        return () => clearTimeout(timer);
+      }
     }
   }, [popUpBanners]);
 
