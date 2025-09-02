@@ -223,6 +223,13 @@ export const ModalBanner = ({
                           }}
                           placeholder="Arraste uma imagem ou clique para selecionar"
                           maxSize={2}
+                          bannerType={
+                            form.watch("banner_id")
+                              ? banners.find(
+                                  (b) => b.id === form.watch("banner_id")
+                                )?.name
+                              : undefined
+                          }
                         />
                       </FormControl>
                       <FormMessage />

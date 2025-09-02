@@ -99,7 +99,7 @@ export function SimpleImageCarousel({
       <Card className="relative overflow-hidden p-0">
         <div
           className={`relative ${
-            isHorizontal ? "h-32 md:h-48" : "aspect-[9/16]"
+            isHorizontal ? "aspect-[15/2]" : "aspect-[9/16]"
           }`}
         >
           {/* Current Image */}

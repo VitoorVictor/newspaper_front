@@ -20,6 +20,7 @@ interface FileUploadProps {
   hasPreview?: string[];
   maxSize?: number; // em MB
   multiple?: boolean;
+  bannerType?: string; // Tipo do banner para orientações específicas
 }
 
 export function FileUpload({
@@ -29,6 +30,7 @@ export function FileUpload({
   hasPreview,
   maxSize = 10,
   multiple = false,
+  bannerType,
 }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<FileData[]>(() => {
@@ -42,6 +44,31 @@ export function FileUpload({
     return [];
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getBannerGuidelines = (type?: string) => {
+    switch (type) {
+      case "side":
+        return {
+          title: "Banner Lateral (9:16)",
+          dimensions: ["1080 × 1920 px", "720 × 1280 px", "1440 × 2560 px"],
+          description: "Proporção vertical para banners laterais",
+        };
+      case "pop up":
+        return {
+          title: "Banner Pop-up (1:1)",
+          dimensions: ["1080 × 1080 px", "1500 × 1500 px", "2048 × 2048 px"],
+          description: "Proporção quadrada para pop-ups",
+        };
+      default:
+        return {
+          title: "Banner Padrão (15:2)",
+          dimensions: ["1500 × 200 px", "3000 × 400 px", "4500 × 600 px"],
+          description: "Proporção horizontal para banners padrão",
+        };
+    }
+  };
+
+  const guidelines = getBannerGuidelines(bannerType);
 
   const notifyFileChange = (updatedFiles: FileData[]) => {
     const fileArray = updatedFiles.map((f) => f.file);
@@ -111,6 +138,29 @@ export function FileUpload({
 
   return (
     <div className="space-y-4">
+      {/* Orientações do Banner */}
+      {bannerType && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-900 mb-2">
+            {guidelines.title}
+          </h4>
+          <p className="text-sm text-blue-700 mb-3">{guidelines.description}</p>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-blue-800">
+              Dimensões recomendadas:
+            </p>
+            <ul className="text-sm text-blue-700 space-y-1">
+              {guidelines.dimensions.map((dimension, index) => (
+                <li key={index} className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  {dimension}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
           isDragging
