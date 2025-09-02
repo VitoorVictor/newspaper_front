@@ -6,7 +6,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import HTMLFlipbook from "react-pageflip";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Button } from "../ui/button";
-import { RotateCw, Download } from "lucide-react";
+import { RotateCw, Download, Search, X } from "lucide-react";
 
 // Configura o worker local do pdfjs (sem usar CDN)
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -19,12 +19,10 @@ interface PDFClientProps {
 export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<string | null>(null);
-  const [rotation, setRotation] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [isDocumentLoading, setIsDocumentLoading] = useState<boolean>(true);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +77,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   // Processa o arquivo quando a prop file muda
   useEffect(() => {
     if (file) {
-      setIsDocumentLoading(true);
       if (isUrl(file)) {
         downloadAndConvertToBlob(file);
       } else {
@@ -99,28 +96,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     };
   }, [pdfFile, file, isUrl]);
 
-  const handleRotate = useCallback(() => {
-    setRotation((prev) => (prev + 90) % 360);
-  }, []);
-
-  const handleDownload = useCallback(() => {
-    if (pdfFile) {
-      const link = document.createElement("a");
-      link.href = pdfFile;
-      link.download = "documento.pdf";
-      link.click();
-    }
-  }, [pdfFile]);
-
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
-    setIsDocumentLoading(false);
   }
 
   function onDocumentLoadError(error: Error) {
     console.error("Erro ao carregar PDF:", error);
     setError("Erro ao carregar o PDF. Verifique se o arquivo é válido.");
-    setIsDocumentLoading(false);
   }
 
   // Função para atualizar a página atual
@@ -153,8 +135,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     ));
   }, [numPages, isMobile]);
 
-  // Mostra loading enquanto faz download ou carrega o documento
-  if (loading || isDocumentLoading) {
+  // Mostra loading enquanto faz download
+  if (loading) {
     return (
       <div className={`pdf-viewer-container ${className}`}>
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-gray-50 rounded-xl my-5 p-10">
@@ -203,14 +185,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
         loading="lazy"
       >
         {numPages > 0 && (
-          <div className="flipbook-wrapper max-h-[75vh]">
+          <div className="flipbook-wrapper max-h-[80vh]">
             <HTMLFlipbook
               ref={flipbookRef}
               className="pdf-flipbook"
               style={{
                 width: "100%",
                 height: "auto",
-                transform: `rotate(${rotation}deg)`,
                 transformOrigin: "center center",
               }}
               startPage={0}
@@ -388,6 +369,21 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             padding: 10px;
           }
 
+          .minimal-controls {
+            padding: 8px;
+            gap: 6px;
+          }
+
+          .control-btn {
+            min-width: 36px;
+            height: 36px;
+          }
+
+          .zoom-level {
+            font-size: 12px;
+            padding: 3px 6px;
+          }
+
           .flipbook-wrapper {
             margin: 10px 0;
           }
@@ -405,6 +401,11 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             font-size: 14px;
             padding: 6px 12px;
           }
+
+          .magnifier {
+            width: 150px;
+            height: 150px;
+          }
         }
 
         /* Melhorias de performance */
@@ -414,6 +415,15 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
         .page-wrapper {
           will-change: transform;
+        }
+
+        /* Cursor de lupa quando em modo lupa */
+        .pdf-viewer-container[data-magnifier-mode="true"] {
+          cursor: crosshair;
+        }
+
+        .pdf-viewer-container[data-magnifier-mode="true"] .flipbook-wrapper {
+          cursor: crosshair;
         }
       `}</style>
     </div>
