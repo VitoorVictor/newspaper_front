@@ -6,7 +6,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import HTMLFlipbook from "react-pageflip";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Button } from "../ui/button";
-import { RotateCw, Download, Search, X } from "lucide-react";
+import { RotateCw, Download } from "lucide-react";
 
 // Configura o worker local do pdfjs (sem usar CDN)
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -19,19 +19,14 @@ interface PDFClientProps {
 export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<string | null>(null);
   const [rotation, setRotation] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [isMagnifierMode, setIsMagnifierMode] = useState<boolean>(false);
-  const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
-  const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
-  const [magnifierZoom, setMagnifierZoom] = useState<number>(2.5);
+  const [isDocumentLoading, setIsDocumentLoading] = useState<boolean>(true);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const magnifierRef = useRef<HTMLDivElement>(null);
-  const magnifierContentRef = useRef<HTMLDivElement>(null);
 
   // Detecta se é mobile
   useEffect(() => {
@@ -84,6 +79,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   // Processa o arquivo quando a prop file muda
   useEffect(() => {
     if (file) {
+      setIsDocumentLoading(true);
       if (isUrl(file)) {
         downloadAndConvertToBlob(file);
       } else {
@@ -103,15 +99,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     };
   }, [pdfFile, file, isUrl]);
 
-  // Controles de zoom da lupa
-  const handleZoomIn = useCallback(() => {
-    setMagnifierZoom((prev) => Math.min(prev + 0.5, 5));
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    setMagnifierZoom((prev) => Math.max(prev - 0.5, 1.5));
-  }, []);
-
   const handleRotate = useCallback(() => {
     setRotation((prev) => (prev + 90) % 360);
   }, []);
@@ -125,81 +112,15 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }, [pdfFile]);
 
-  const toggleMagnifierMode = useCallback(() => {
-    setIsMagnifierMode((prev) => !prev);
-    if (isMagnifierMode) {
-      setShowMagnifier(false);
-    }
-  }, [isMagnifierMode]);
-
-  // Sistema de lupa que segue o mouse
-  useEffect(() => {
-    if (!isMagnifierMode || !containerRef.current) return;
-
-    const container = containerRef.current;
-    const magnifier = magnifierRef.current;
-    const magnifierContent = magnifierContentRef.current;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!magnifier || !magnifierContent) return;
-
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      // Atualiza a posição da lupa
-      setMagnifierPosition({ x, y });
-      setShowMagnifier(true);
-
-      // Posiciona a lupa
-      magnifier.style.left = `${x - 100}px`;
-      magnifier.style.top = `${y - 100}px`;
-
-      // Calcula o offset para o zoom da área
-      const zoomX = (x / rect.width) * 100;
-      const zoomY = (y / rect.height) * 100;
-
-      // Aplica o zoom na imagem dentro da lupa
-      magnifierContent.style.transform = `scale(${magnifierZoom}) translate(${
-        -zoomX + 20
-      }%, ${-zoomY + 20}%)`;
-    };
-
-    const handleMouseLeave = () => {
-      setShowMagnifier(false);
-    };
-
-    const handleMouseEnter = () => {
-      if (isMagnifierMode) {
-        setShowMagnifier(true);
-      }
-    };
-
-    container.addEventListener("mousemove", handleMouseMove);
-    container.addEventListener("mouseleave", handleMouseLeave);
-    container.addEventListener("mouseenter", handleMouseEnter);
-
-    return () => {
-      container.removeEventListener("mousemove", handleMouseMove);
-      container.removeEventListener("mouseleave", handleMouseLeave);
-      container.removeEventListener("mouseenter", handleMouseEnter);
-    };
-  }, [isMagnifierMode, magnifierZoom]);
-
-  // Desativa o modo lupa quando não está ativo
-  useEffect(() => {
-    if (!isMagnifierMode) {
-      setShowMagnifier(false);
-    }
-  }, [isMagnifierMode]);
-
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
+    setIsDocumentLoading(false);
   }
 
   function onDocumentLoadError(error: Error) {
     console.error("Erro ao carregar PDF:", error);
     setError("Erro ao carregar o PDF. Verifique se o arquivo é válido.");
+    setIsDocumentLoading(false);
   }
 
   // Função para atualizar a página atual
@@ -232,13 +153,15 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     ));
   }, [numPages, isMobile]);
 
-  // Mostra loading enquanto faz download
-  if (loading) {
+  // Mostra loading enquanto faz download ou carrega o documento
+  if (loading || isDocumentLoading) {
     return (
       <div className={`pdf-viewer-container ${className}`}>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Fazendo download do PDF...</p>
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-gray-50 rounded-xl my-5 p-10">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-5"></div>
+          <p className="text-base text-gray-600 font-medium m-0">
+            {loading ? "Fazendo download do PDF..." : "Carregando PDF..."}
+          </p>
         </div>
       </div>
     );
@@ -272,77 +195,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   }
 
   return (
-    <div
-      className={`pdf-viewer-container ${className}`}
-      ref={containerRef}
-      data-magnifier-mode={isMagnifierMode}
-    >
-      {/* Controles mínimos */}
-      <div className="minimal-controls">
-        <div className="zoom-info">
-          <span className="zoom-level">
-            {isMagnifierMode ? `${Math.round(magnifierZoom * 100)}%` : "100%"}
-          </span>
-        </div>
-
-        <div className="control-buttons">
-          <Button
-            onClick={toggleMagnifierMode}
-            size="sm"
-            variant={isMagnifierMode ? "default" : "outline"}
-            className="control-btn"
-            title={isMagnifierMode ? "Desativar lupa" : "Ativar lupa"}
-          >
-            <Search className="w-4 h-4" />
-          </Button>
-
-          {isMagnifierMode && (
-            <>
-              <Button
-                onClick={handleZoomOut}
-                size="sm"
-                variant="outline"
-                className="control-btn"
-                title="Diminuir zoom"
-                disabled={magnifierZoom <= 1.5}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={handleZoomIn}
-                size="sm"
-                variant="outline"
-                className="control-btn"
-                title="Aumentar zoom"
-                disabled={magnifierZoom >= 5}
-              >
-                +
-              </Button>
-            </>
-          )}
-
-          <Button
-            onClick={handleRotate}
-            size="sm"
-            variant="outline"
-            className="control-btn"
-            title="Rotacionar"
-          >
-            <RotateCw className="w-4 h-4" />
-          </Button>
-
-          <Button
-            onClick={handleDownload}
-            size="sm"
-            variant="outline"
-            className="control-btn"
-            title="Download"
-          >
-            <Download className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-
+    <div className={`pdf-viewer-container ${className}`} ref={containerRef}>
       <Document
         file={pdfFile}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -388,41 +241,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           </div>
         )}
       </Document>
-
-      {/* Lupa */}
-      {isMagnifierMode && showMagnifier && (
-        <div
-          ref={magnifierRef}
-          className="magnifier"
-          style={{
-            left: `${magnifierPosition.x - 100}px`,
-            top: `${magnifierPosition.y - 100}px`,
-          }}
-        >
-          <div ref={magnifierContentRef} className="magnifier-content">
-            <Document file={pdfFile}>
-              {numPages > 0 && (
-                <div className="magnifier-pages">
-                  {Array.from(new Array(numPages), (_, index) => (
-                    <div
-                      key={`magnifier_page_${index + 1}`}
-                      className="magnifier-page"
-                    >
-                      <Page
-                        pageNumber={index + 1}
-                        renderAnnotationLayer={false}
-                        renderTextLayer={false}
-                        width={isMobile ? 300 : 600}
-                        className="magnifier-pdf-page"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Document>
-          </div>
-        </div>
-      )}
 
       {numPages > 0 && (
         <div className="page-navigation">
@@ -481,43 +299,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           position: relative;
         }
 
-        .minimal-controls {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 16px;
-          padding: 12px;
-          background: #f8f9fa;
-          border-radius: 8px;
-          border: 1px solid #e9ecef;
-        }
-
-        .zoom-info {
-          display: flex;
-          align-items: center;
-        }
-
-        .zoom-level {
-          font-size: 14px;
-          font-weight: 600;
-          color: #333;
-          padding: 4px 8px;
-          background: white;
-          border-radius: 4px;
-          border: 1px solid #ddd;
-        }
-
-        .control-buttons {
-          display: flex;
-          gap: 8px;
-        }
-
-        .control-btn {
-          min-width: 40px;
-          height: 40px;
-          padding: 0;
-        }
-
         .flipbook-wrapper {
           display: flex;
           justify-content: center;
@@ -545,77 +326,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           max-width: 100%;
           height: auto;
           transition: transform 0.3s ease;
-        }
-
-        /* Lupa */
-        .magnifier {
-          position: absolute;
-          width: 200px;
-          height: 200px;
-          border: 3px solid #333;
-          border-radius: 50%;
-          overflow: hidden;
-          pointer-events: none;
-          z-index: 1000;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-          background: white;
-        }
-
-        .magnifier-content {
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          border-radius: 50%;
-          transform-origin: center;
-          transition: transform 0.1s ease;
-        }
-
-        .magnifier-pages {
-          width: 100%;
-          height: 100%;
-          position: relative;
-        }
-
-        .magnifier-page {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .magnifier-pdf-page {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-        }
-
-        .loading-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 40px;
-          text-align: center;
-        }
-
-        .loading-spinner {
-          width: 40px;
-          height: 40px;
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #3498db;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          margin-bottom: 16px;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
         }
 
         .error-container {
@@ -678,21 +388,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             padding: 10px;
           }
 
-          .minimal-controls {
-            padding: 8px;
-            gap: 6px;
-          }
-
-          .control-btn {
-            min-width: 36px;
-            height: 36px;
-          }
-
-          .zoom-level {
-            font-size: 12px;
-            padding: 3px 6px;
-          }
-
           .flipbook-wrapper {
             margin: 10px 0;
           }
@@ -710,11 +405,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             font-size: 14px;
             padding: 6px 12px;
           }
-
-          .magnifier {
-            width: 150px;
-            height: 150px;
-          }
         }
 
         /* Melhorias de performance */
@@ -724,15 +414,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
         .page-wrapper {
           will-change: transform;
-        }
-
-        /* Cursor de lupa quando em modo lupa */
-        .pdf-viewer-container[data-magnifier-mode="true"] {
-          cursor: crosshair;
-        }
-
-        .pdf-viewer-container[data-magnifier-mode="true"] .flipbook-wrapper {
-          cursor: crosshair;
         }
       `}</style>
     </div>
