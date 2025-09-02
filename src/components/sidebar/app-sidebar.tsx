@@ -123,7 +123,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
             </SidebarGroup>
           );
         })}
-        {categories && pathname === "/noticias" && (
+        {categories && categories.data.length > 0 && pathname === "/noticias" && (
           <SidebarGroup key="Todas as Editorias" className="mt-2">
             <SidebarGroupLabel className="text-muted-foreground font-bold text-xs uppercase tracking-wider px-3 py-2">
               Todas as Editorias
@@ -150,10 +150,10 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
-        {sectors && pathname === "/guia-industrial" && (
+        {sectors && sectors.data.length > 0 && pathname === "/guia-industrial" && (
           <SidebarGroup key="Todas as Editorias" className="mt-2">
             <SidebarGroupLabel className="text-muted-foreground font-bold text-xs uppercase tracking-wider px-3 py-2">
-              Todas os Setores
+              Todos os Setores
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
