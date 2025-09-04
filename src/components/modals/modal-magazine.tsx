@@ -168,8 +168,8 @@ export const ModalMagazine = ({
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
               {view
-                ? "Visualizando dados da edição"
-                : "Preencha os dados da edição"}
+                ? "Visualizando dados da edição da revista"
+                : "Preencha os dados da edição da revista"}
             </DialogDescription>
           </DialogHeader>
 
@@ -202,9 +202,9 @@ export const ModalMagazine = ({
                 {/* Nome */}
                 <CustomInput
                   name="title"
-                  label="Título do Evento"
-                  placeholder="Digite o título do evento"
-                  description="O título do evento (5-200 caracteres)"
+                  label="Título da Revista"
+                  placeholder="Digite o título da revista"
+                  description="O título da revista (5-200 caracteres)"
                   required
                   disabled={view}
                 />
@@ -213,8 +213,8 @@ export const ModalMagazine = ({
                 <CustomInput
                   name="description"
                   label="Descrição"
-                  placeholder="Digite a descrição do evento"
-                  description="Um resumo ou complemento referente ao evento (Opcional)"
+                  placeholder="Digite a descrição da revista"
+                  description="Um resumo ou complemento referente à revista (Opcional)"
                   disabled={view}
                 />
 

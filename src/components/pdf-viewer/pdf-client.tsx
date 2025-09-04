@@ -5,8 +5,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import HTMLFlipbook from "react-pageflip";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Button } from "../ui/button";
-import { RotateCw, Download, Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Configura o worker local do pdfjs (sem usar CDN)
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -25,6 +24,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
 
   // Detecta se é mobile
   useEffect(() => {
@@ -111,321 +111,362 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     setCurrentPage(newPage);
   }
 
-  // Função para ir para uma página específica
+  // Função para ir para uma página específica (desktop com flipbook)
   function goToPage(pageNumber: number) {
-    if (flipbookRef.current && pageNumber >= 1 && pageNumber <= numPages) {
-      flipbookRef.current.pageFlip().flip(pageNumber - 1);
-      setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= numPages) {
+      if (isMobile) {
+        // Em mobile, apenas atualiza o estado da página atual
+        setCurrentPage(pageNumber);
+      } else if (flipbookRef.current) {
+        // Em desktop, usa o flipbook
+        flipbookRef.current.pageFlip().flip(pageNumber - 1);
+        setCurrentPage(pageNumber);
+      }
     }
   }
 
   // Gera um array com todas as páginas (otimizado com memo)
   const pages = useMemo(() => {
     return Array.from(new Array(numPages), (_, index) => (
-      <div key={`page_${index + 1}`} className="page-wrapper">
+      <div
+        key={`page_${index + 1}`}
+        className="flex justify-center items-center bg-white shadow-lg transform-gpu origin-center"
+        style={{ minHeight: "fit-content" }}
+      >
         <Page
           pageNumber={index + 1}
           renderAnnotationLayer={false}
           renderTextLayer={false}
-          width={isMobile ? 300 : 600}
-          className="pdf-page"
-          loading="lazy"
+          width={isMobile ? 300 : 556}
+          height={undefined}
+          className="max-w-full h-auto transition-transform duration-300 ease-in-out will-change-transform"
+          loading={PDFViewerLoading}
         />
       </div>
     ));
   }, [numPages, isMobile]);
 
-  // Mostra loading enquanto faz download
-  if (loading) {
+  // Componente para visualização mobile (página única)
+  const MobilePageView = () => {
+    const handleSwipeLeft = () => {
+      console.log("Swipe left - próxima página");
+      if (currentPage < numPages) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+
+    const handleSwipeRight = () => {
+      console.log("Swipe right - página anterior");
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
+
     return (
-      <div className={`pdf-viewer-container ${className}`}>
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-gray-50 rounded-xl my-5 p-10">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-5"></div>
-          <p className="text-base text-gray-600 font-medium m-0">
-            {loading ? "Fazendo download do PDF..." : "Carregando PDF..."}
-          </p>
+      <div
+        className="flex flex-col items-center w-full touch-pan-x"
+        onTouchStart={(e) => {
+          e.preventDefault();
+          const startX = e.touches[0].clientX;
+          const startY = e.touches[0].clientY;
+          console.log("Touch start:", { startX, startY });
+
+          const handleTouchEnd = (e: TouchEvent) => {
+            e.preventDefault();
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            console.log("Touch end:", { endX, endY, diffX, diffY });
+
+            // Só processa swipe horizontal se for mais horizontal que vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+              if (diffX > 0) {
+                handleSwipeLeft(); // Swipe para esquerda = próxima página
+              } else {
+                handleSwipeRight(); // Swipe para direita = página anterior
+              }
+            }
+
+            document.removeEventListener("touchend", handleTouchEnd);
+          };
+
+          document.addEventListener("touchend", handleTouchEnd);
+        }}
+      >
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-4 w-full max-w-[320px] ">
+          <Page
+            pageNumber={currentPage}
+            renderAnnotationLayer={false}
+            renderTextLayer={false}
+            width={320}
+            height={undefined}
+            className="w-full h-auto"
+            loading={PDFViewerLoading}
+          />
+        </div>
+        <div className="text-xs text-gray-500 text-center px-4">
+          Deslize para esquerda/direita para navegar
         </div>
       </div>
     );
+  };
+
+  // Mostra loading enquanto faz download
+  if (loading) {
+    return <PDFViewerLoading />;
+  }
+
+  if (error) {
+    return <PDFViewerError />;
+  }
+
+  if (!pdfFile) {
+    return null;
   }
 
   // Mostra erro se houver
   if (error) {
-    return (
-      <div className={`pdf-viewer-container ${className}`}>
-        <div className="error-container">
-          <p className="error-message">{error}</p>
-          <Button
-            onClick={() => {
-              setError(null);
-              if (isUrl(file)) {
-                downloadAndConvertToBlob(file);
-              }
-            }}
-            className="retry-button"
-          >
-            Tentar novamente
-          </Button>
-        </div>
-      </div>
-    );
+    return <PDFViewerError />;
   }
 
-  // Só renderiza se tiver um arquivo válido
   if (!pdfFile) {
     return null;
   }
 
   return (
-    <div className={`pdf-viewer-container ${className}`} ref={containerRef}>
+    <div
+      className={`w-full max-w-6xl mx-auto px-5 py-4 overflow-hidden touch-manipulation relative ${className}`}
+      ref={containerRef}
+    >
       <Document
         file={pdfFile}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={onDocumentLoadError}
-        loading="lazy"
+        loading={PDFViewerLoading}
       >
         {numPages > 0 && (
-          <div className="flipbook-wrapper max-h-[80vh]">
-            <HTMLFlipbook
-              ref={flipbookRef}
-              className="pdf-flipbook"
-              style={{
-                width: "100%",
-                height: "auto",
-                transformOrigin: "center center",
-              }}
-              startPage={0}
-              size="stretch"
-              minWidth={isMobile ? 250 : 300}
-              maxWidth={isMobile ? 400 : 800}
-              minHeight={isMobile ? 300 : 400}
-              maxHeight={isMobile ? 600 : 800}
-              showCover={false}
-              flippingTime={isMobile ? 600 : 800}
-              usePortrait={isMobile}
-              startZIndex={0}
-              autoSize={true}
-              maxShadowOpacity={0.3}
-              showPageCorners={!isMobile}
-              disableFlipByClick={false}
-              width={isMobile ? 300 : 600}
-              height={isMobile ? 400 : 800}
-              drawShadow={!isMobile}
-              mobileScrollSupport={isMobile}
-              clickEventForward={true}
-              useMouseEvents={!isMobile}
-              swipeDistance={isMobile ? 30 : 50}
-              onFlip={onFlip}
-            >
-              {pages}
-            </HTMLFlipbook>
+          <div className="flex justify-center items-center overflow-visible my-5 touch-pinch-zoom">
+            {isMobile ? (
+              <MobilePageView />
+            ) : (
+              <HTMLFlipbook
+                ref={flipbookRef}
+                className="transition-transform duration-300 ease-in-out"
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  transformOrigin: "center center",
+                }}
+                startPage={0}
+                size="stretch"
+                minWidth={300}
+                maxWidth={800}
+                minHeight={400}
+                maxHeight={1200}
+                showCover={false}
+                flippingTime={800}
+                usePortrait={false}
+                startZIndex={0}
+                autoSize={true}
+                maxShadowOpacity={0.3}
+                showPageCorners={true}
+                disableFlipByClick={false}
+                width={600}
+                height={900}
+                drawShadow={true}
+                mobileScrollSupport={false}
+                clickEventForward={true}
+                useMouseEvents={true}
+                swipeDistance={50}
+                onFlip={onFlip}
+              >
+                {pages}
+              </HTMLFlipbook>
+            )}
           </div>
         )}
       </Document>
 
       {numPages > 0 && (
-        <div className="page-navigation">
-          <div className="page-indicator">
+        <div className="flex flex-col items-center gap-4 mt-5">
+          <div className="text-center text-base text-gray-800 font-semibold px-4 py-2 bg-gray-50 rounded-lg border border-gray-200">
             Página {currentPage} de {numPages}
           </div>
 
-          <div className="page-controls">
-            <Button
-              onClick={() => goToPage(1)}
-              disabled={currentPage === 1}
-              className="nav-button"
-              size="sm"
-            >
-              {isMobile ? "1ª" : "Primeira"}
-            </Button>
+          {isMobile ? (
+            // Navegação mobile otimizada
+            <div className="mobile-nav-buttons">
+              <Button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className="flex-1 min-w-[70px] h-12 text-sm font-medium"
+                size="sm"
+              >
+                Primeira
+              </Button>
 
-            <Button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="nav-button"
-              size="sm"
-            >
-              {isMobile ? "←" : "Anterior"}
-            </Button>
+              <Button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex-1 min-w-[70px] h-12 text-sm font-medium"
+                size="sm"
+              >
+                Anterior
+              </Button>
 
-            <Button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === numPages}
-              className="nav-button"
-              size="sm"
-            >
-              {isMobile ? "→" : "Próxima"}
-            </Button>
+              <Button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === numPages}
+                className="flex-1 min-w-[70px] h-12 text-sm font-medium"
+                size="sm"
+              >
+                Próxima
+              </Button>
 
-            <Button
-              onClick={() => goToPage(numPages)}
-              disabled={currentPage === numPages}
-              className="nav-button"
-              size="sm"
-            >
-              {isMobile ? "Últ" : "Última"}
-            </Button>
-          </div>
+              <Button
+                onClick={() => goToPage(numPages)}
+                disabled={currentPage === numPages}
+                className="flex-1 min-w-[70px] h-12 text-sm font-medium"
+                size="sm"
+              >
+                Última
+              </Button>
+            </div>
+          ) : (
+            // Navegação desktop
+            <div className="flex gap-2 flex-wrap justify-center">
+              <Button
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                className="min-w-[60px] h-10"
+                size="sm"
+              >
+                Primeira
+              </Button>
+
+              <Button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="min-w-[60px] h-10"
+                size="sm"
+              >
+                Anterior
+              </Button>
+
+              <Button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === numPages}
+                className="min-w-[60px] h-10"
+                size="sm"
+              >
+                Próxima
+              </Button>
+
+              <Button
+                onClick={() => goToPage(numPages)}
+                disabled={currentPage === numPages}
+                className="min-w-[60px] h-10"
+                size="sm"
+              >
+                Última
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
       <style jsx>{`
-        .pdf-viewer-container {
-          width: 100%;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          overflow: hidden;
-          touch-action: manipulation;
-          position: relative;
-        }
-
-        .flipbook-wrapper {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-          margin: 20px 0;
-          touch-action: pinch-zoom;
-        }
-
-        .pdf-flipbook {
-          overflow: hidden !important;
-          transition: transform 0.3s ease;
-        }
-
-        .page-wrapper {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background: white;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          transform-origin: center;
-        }
-
-        .pdf-page {
-          max-width: 100%;
-          height: auto;
-          transition: transform 0.3s ease;
-        }
-
-        .error-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 40px;
-          text-align: center;
-        }
-
-        .error-message {
-          color: #e74c3c;
-          margin-bottom: 16px;
-          font-size: 16px;
-        }
-
-        .retry-button {
-          margin-top: 16px;
-        }
-
-        .page-navigation {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
-          margin-top: 20px;
-        }
-
-        .page-indicator {
-          text-align: center;
-          font-size: 16px;
-          color: #333;
-          font-weight: 600;
-          padding: 8px 16px;
-          background: #f8f9fa;
-          border-radius: 8px;
-          border: 1px solid #e9ecef;
-        }
-
-        .page-controls {
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-
-        .nav-button {
-          min-width: 60px;
-        }
-
-        /* Remove scrollbars e overflow */
+        /* Remove scrollbars e overflow do flipbook */
         .pdf-flipbook * {
-          overflow: hidden !important;
+          overflow: visible !important;
         }
 
-        /* Responsivo para mobile */
+        /* Garantindo que as páginas não sejam cortadas */
+        .react-pdf__Page {
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+        }
+
+        .react-pdf__Page__canvas {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+
+        /* Estilos específicos para mobile */
         @media (max-width: 768px) {
-          .pdf-viewer-container {
-            padding: 10px;
-          }
-
-          .minimal-controls {
-            padding: 8px;
-            gap: 6px;
-          }
-
-          .control-btn {
-            min-width: 36px;
-            height: 36px;
-          }
-
-          .zoom-level {
-            font-size: 12px;
-            padding: 3px 6px;
-          }
-
-          .flipbook-wrapper {
-            margin: 10px 0;
-          }
-
-          .page-controls {
-            gap: 6px;
-          }
-
           .nav-button {
             min-width: 50px;
             font-size: 12px;
           }
 
-          .page-indicator {
+          /* Melhora a visualização mobile */
+          .mobile-pdf-container {
+            padding: 10px;
+            max-width: 100%;
+          }
+
+          /* Botões de navegação mobile */
+          .mobile-nav-buttons {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 320px;
+          }
+
+          .mobile-nav-buttons button {
+            flex: 1;
+            min-height: 48px;
             font-size: 14px;
-            padding: 6px 12px;
-          }
-
-          .magnifier {
-            width: 150px;
-            height: 150px;
+            font-weight: 500;
           }
         }
 
-        /* Melhorias de performance */
-        .pdf-page {
-          will-change: transform;
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 480px) {
+          .mobile-pdf-container {
+            padding: 5px;
+          }
+
+          .mobile-nav-buttons {
+            gap: 6px;
+            max-width: 280px;
+          }
+
+          .mobile-nav-buttons button {
+            min-height: 44px;
+            font-size: 13px;
+          }
         }
 
-        .page-wrapper {
-          will-change: transform;
-        }
-
-        /* Cursor de lupa quando em modo lupa */
-        .pdf-viewer-container[data-magnifier-mode="true"] {
-          cursor: crosshair;
-        }
-
-        .pdf-viewer-container[data-magnifier-mode="true"] .flipbook-wrapper {
-          cursor: crosshair;
+        /* Melhora a experiência de swipe */
+        .touch-pan-x {
+          touch-action: pan-x;
         }
       `}</style>
+    </div>
+  );
+}
+
+function PDFViewerLoading() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-gray-50 rounded-xl my-5 p-10">
+      <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-5"></div>
+      <p className="text-base text-gray-600 font-medium m-0">
+        Fazendo download do PDF...
+      </p>
+    </div>
+  );
+}
+
+function PDFViewerError() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-gray-50 rounded-xl my-5 p-10">
+      <p className="text-base text-gray-600 font-medium m-0">
+        Erro ao carregar o PDF. Verifique se o arquivo é válido.
+      </p>
     </div>
   );
 }

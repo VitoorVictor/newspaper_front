@@ -193,19 +193,22 @@ export default function Footer() {
           {/* Links legais */}
           <div className="flex items-center gap-6">
             <Link
-              href="/politica-de-privacidade"
+              // href="/politica-de-privacidade"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Política de Privacidade
             </Link>
             <Link
-              href="/termos-de-uso"
+              // href="/termos-de-uso"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Termos de Uso
             </Link>
             <Link
-              href="/cookies"
+              // href="/cookies"
+              href="/"
               className="text-white/80 hover:text-white transition-colors text-sm"
             >
               Cookies

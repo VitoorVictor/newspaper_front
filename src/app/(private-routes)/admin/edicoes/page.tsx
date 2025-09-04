@@ -80,7 +80,7 @@ export default function AdminEdicoesPage() {
           <div className="flex justify-between items-center">
             <CardTitle>Exibindo Edições de Revistas</CardTitle>
             <AddBtn
-              label="Nova Edição"
+              label="Nova Revista"
               onClick={() => setShowModalMagazine(true)}
             />
             {showModalMagazine && (
@@ -93,7 +93,7 @@ export default function AdminEdicoesPage() {
                 view={viewMagazine}
                 title={`${
                   selectedMagazine?.id ? "Atualizar " : "Nova "
-                } Edição`}
+                } Revista`}
                 id={selectedMagazine?.id}
                 slug={selectedMagazine?.slug}
               />
