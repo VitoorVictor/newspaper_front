@@ -24,7 +24,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const flipbookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
 
   // Detecta se é mobile
   useEffect(() => {
@@ -347,7 +346,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
               </Button>
 
               <Button
-                onClick={() => goToPage(currentPage - 1)}
+                onClick={() => goToPage(currentPage - 2)}
                 disabled={currentPage === 1}
                 className="min-w-[60px] h-10"
                 size="sm"
@@ -356,7 +355,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
               </Button>
 
               <Button
-                onClick={() => goToPage(currentPage + 1)}
+                onClick={() => goToPage(currentPage + 2)}
                 disabled={currentPage === numPages}
                 className="min-w-[60px] h-10"
                 size="sm"
