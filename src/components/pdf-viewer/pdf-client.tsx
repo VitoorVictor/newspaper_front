@@ -12,6 +12,9 @@ import {
   ChevronsRight,
   Download,
   ExternalLink,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
 } from "lucide-react";
 
 // Configura o worker local do pdfjs
@@ -30,6 +33,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [pdfFile, setPdfFile] = useState<string | null>(null);
   const [pageWidth, setPageWidth] = useState<number>(480);
   const [pageInput, setPageInput] = useState<string>("");
+  const [zoom, setZoom] = useState<number>(100);
+  const [rotation, setRotation] = useState<number>(0);
 
   // Referência para o áudio
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -40,21 +45,24 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     audioRef.current.volume = 0.4; // volume inicial
   }, []);
 
-  // Ajusta largura do PDF conforme a tela
+  // Ajusta largura do PDF conforme a tela e zoom
   useEffect(() => {
     function handleResize() {
+      let baseWidth = 450; // desktop
       if (window.innerWidth <= 480) {
-        setPageWidth(250); // mobile
+        baseWidth = 250; // mobile
       } else if (window.innerWidth <= 768) {
-        setPageWidth(350); // tablet
-      } else {
-        setPageWidth(450); // desktop
+        baseWidth = 350; // tablet
       }
+
+      // Aplica o zoom na largura
+      const zoomedWidth = (baseWidth * zoom) / 100;
+      setPageWidth(zoomedWidth);
     }
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [zoom]);
 
   // Detecta se é URL ou arquivo local
   const isUrl = useCallback((file: string) => {
@@ -168,6 +176,36 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
+  // Funções de zoom
+  function handleZoomIn() {
+    setZoom((prev) => Math.min(prev + 25, 300)); // máximo 300%
+  }
+
+  function handleZoomOut() {
+    setZoom((prev) => Math.max(prev - 25, 50)); // mínimo 50%
+  }
+
+  function handleZoomReset() {
+    setZoom(100);
+  }
+
+  // Função para rotacionar
+  function handleRotate() {
+    setRotation((prev) => (prev + 90) % 360);
+  }
+
+  // Função para zoom com scroll do mouse
+  function handleWheel(e: React.WheelEvent) {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        handleZoomIn();
+      } else {
+        handleZoomOut();
+      }
+    }
+  }
+
   if (loading) return <PDFViewerLoading />;
   if (error) return <PDFViewerError />;
   if (!pdfFile) return null;
@@ -175,33 +213,82 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   return (
     <div
       className={`w-full max-w-4xl mx-auto px-5 py-4 flex flex-col items-center gap-5 ${className}`}
+      onWheel={handleWheel}
     >
       {/* Botões de ação */}
       {pdfFile && (
-        <div className="flex gap-3 justify-center w-full">
-          <Button
-            onClick={handleDownload}
-            className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-            size="sm"
-          >
-            <Download className="w-4 h-4" />
-            Baixar PDF
-          </Button>
+        <div className="flex flex-col gap-3 w-full">
+          {/* Primeira linha - Download e Abrir */}
 
-          <Button
-            onClick={handleOpenInNewTab}
-            variant="outline"
-            className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-            size="sm"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Abrir PDF
-          </Button>
+          {/* Segunda linha - Controles de Zoom e Rotação */}
+          <div className="flex gap-2 justify-center items-center">
+            <Button
+              onClick={handleZoomOut}
+              disabled={zoom <= 50}
+              size="icon"
+              variant="outline"
+              title="Diminuir zoom"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+
+            <span className="text-sm font-medium min-w-[60px] text-center">
+              {zoom}%
+            </span>
+
+            <Button
+              onClick={handleZoomIn}
+              disabled={zoom >= 300}
+              size="icon"
+              variant="outline"
+              title="Aumentar zoom"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+
+            <Button
+              onClick={handleZoomReset}
+              size="sm"
+              variant="outline"
+              title="Resetar zoom"
+            >
+              Reset
+            </Button>
+
+            <Button
+              onClick={handleRotate}
+              size="icon"
+              variant="outline"
+              title="Rotacionar"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <Button
+              onClick={handleDownload}
+              className="flex items-center gap-2 h-10 px-4 cursor-pointer"
+              size="sm"
+            >
+              <Download className="w-4 h-4" />
+              Baixar PDF
+            </Button>
+
+            <Button
+              onClick={handleOpenInNewTab}
+              variant="outline"
+              className="flex items-center gap-2 h-10 px-4 cursor-pointer"
+              size="sm"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Abrir PDF
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Visualização do PDF */}
-      <div className="overflow-hidden flex justify-center w-full">
+      <div className="overflow-auto flex justify-center w-full max-h-[80vh]">
         <Document
           file={pdfFile}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -216,6 +303,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             height={undefined}
             className="w-full h-auto object-contain"
             loading={PDFViewerLoading}
+            rotate={rotation}
           />
         </Document>
       </div>
