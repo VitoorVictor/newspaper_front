@@ -3,9 +3,16 @@
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Download,
+  ExternalLink,
+} from "lucide-react";
 
 // Configura o worker local do pdfjs
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -23,6 +30,15 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [pdfFile, setPdfFile] = useState<string | null>(null);
   const [pageWidth, setPageWidth] = useState<number>(480);
   const [pageInput, setPageInput] = useState<string>("");
+
+  // Referência para o áudio
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Carrega o som ao montar o componente
+    audioRef.current = new Audio("/page-flip-47177.mp3");
+    audioRef.current.volume = 0.4; // volume inicial
+  }, []);
 
   // Ajusta largura do PDF conforme a tela
   useEffect(() => {
@@ -102,10 +118,19 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     setError("Erro ao carregar o PDF. Verifique se o arquivo é válido.");
   }
 
+  // Função para tocar o som
+  function playPageFlipSound() {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // reseta para evitar sobreposição
+      audioRef.current.play().catch(() => {});
+    }
+  }
+
   // Função para ir para uma página específica
   function goToPage(pageNumber: number) {
     if (pageNumber >= 1 && pageNumber <= numPages) {
       setCurrentPage(pageNumber);
+      playPageFlipSound(); // toca o som sempre que troca de página
     }
   }
 
@@ -143,12 +168,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
-  // Componente de loading
   if (loading) return <PDFViewerLoading />;
-
-  // Componente de erro
   if (error) return <PDFViewerError />;
-
   if (!pdfFile) return null;
 
   return (
@@ -160,7 +181,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
         <div className="flex gap-3 justify-center w-full">
           <Button
             onClick={handleDownload}
-            className="flex items-center gap-2 h-10 px-4"
+            className="flex items-center gap-2 h-10 px-4 cursor-pointer"
             size="sm"
           >
             <Download className="w-4 h-4" />
@@ -170,7 +191,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
           <Button
             onClick={handleOpenInNewTab}
             variant="outline"
-            className="flex items-center gap-2 h-10 px-4"
+            className="flex items-center gap-2 h-10 px-4 cursor-pointer"
             size="sm"
           >
             <ExternalLink className="w-4 h-4" />
@@ -191,8 +212,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             pageNumber={currentPage}
             renderAnnotationLayer={false}
             renderTextLayer={false}
-            width={pageWidth} // <--- Ajusta a largura dinamicamente
-            height={undefined} // <--- Mantém proporção da altura
+            width={pageWidth}
+            height={undefined}
             className="w-full h-auto object-contain"
             loading={PDFViewerLoading}
           />
@@ -202,76 +223,57 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       {/* Barra de Navegação */}
       {numPages > 0 && (
         <div className="flex flex-col items-center gap-3 w-full">
-          {/* Indicador de página atual */}
           <div className="text-center text-sm text-gray-700 font-medium px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
             Página {currentPage} de {numPages}
           </div>
 
-          {/* Controles de navegação */}
           <div className="flex items-center gap-2 flex-wrap justify-center">
             <Button
               onClick={() => goToPage(1)}
               disabled={currentPage === 1}
-              className="min-w-[60px] h-10"
-              size="sm"
+              size="icon"
             >
-              Primeira
+              <ChevronsLeft className="w-4 h-4" />
             </Button>
 
             <Button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="min-w-[60px] h-10"
-              size="sm"
+              size="icon"
             >
-              Anterior
+              <ChevronLeft className="w-4 h-4" />
             </Button>
 
-            {/* Seletor de página no meio */}
-            <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 shadow-sm px-3 py-1">
-              <form
-                onSubmit={handlePageInputSubmit}
-                className="flex items-center gap-1"
-              >
-                <input
-                  type="number"
-                  min="1"
-                  max={numPages}
-                  value={pageInput}
-                  onChange={(e) => setPageInput(e.target.value)}
-                  className="w-12 h-8 text-center text-sm border border-gray-300 rounded px-1 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="1"
-                />
-                <span className="text-xs text-gray-400">/</span>
-                <span className="text-xs text-gray-600 font-medium">
-                  {numPages}
-                </span>
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="h-8 min-w-8 px-2 text-xs"
-                >
-                  Ir
-                </Button>
-              </form>
-            </div>
+            <form
+              onSubmit={handlePageInputSubmit}
+              className="flex items-center gap-1"
+            >
+              <input
+                type="number"
+                min="1"
+                max={numPages}
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
+              />
+              <span className="text-xs text-gray-400">/</span>
+              <span className="text-xs text-gray-600">{numPages}</span>
+            </form>
 
             <Button
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage === numPages}
-              className="min-w-[60px] h-10"
-              size="sm"
+              size="icon"
             >
-              Próxima
+              <ChevronRight className="w-4 h-4" />
             </Button>
 
             <Button
               onClick={() => goToPage(numPages)}
               disabled={currentPage === numPages}
-              className="min-w-[60px] h-10"
-              size="sm"
+              size="icon"
             >
-              Última
+              <ChevronsRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
