@@ -35,6 +35,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [pageInput, setPageInput] = useState<string>("");
   const [zoom, setZoom] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
+  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   // Referência para o áudio
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -45,14 +47,22 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     audioRef.current.volume = 0.4; // volume inicial
   }, []);
 
-  // Ajusta largura do PDF conforme a tela e zoom
+  // Detecta se é tela grande (md+) e ajusta largura do PDF
   useEffect(() => {
     function handleResize() {
-      let baseWidth = 450; // desktop
+      const isLarge = window.innerWidth >= 768; // md breakpoint
+      setIsLargeScreen(isLarge);
+
+      let baseWidth = 700; // desktop (aumentado de 550)
       if (window.innerWidth <= 480) {
-        baseWidth = 250; // mobile
+        baseWidth = 350; // mobile (aumentado de 300)
       } else if (window.innerWidth <= 768) {
-        baseWidth = 350; // tablet
+        baseWidth = 500; // tablet (aumentado de 420)
+      }
+
+      // Em telas grandes, divide a largura pela metade para caber duas páginas
+      if (isLarge) {
+        baseWidth = baseWidth / 2;
       }
 
       // Aplica o zoom na largura
@@ -121,6 +131,10 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     setNumPages(numPages);
   }
 
+  function onPageLoadSuccess() {
+    setIsPageLoading(false);
+  }
+
   function onDocumentLoadError(error: Error) {
     console.error("Erro ao carregar PDF:", error);
     setError("Erro ao carregar o PDF. Verifique se o arquivo é válido.");
@@ -134,11 +148,65 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
+  // Calcula as páginas a serem exibidas (modo revista em telas grandes)
+  const getPagesToShow = useCallback(() => {
+    if (!isLargeScreen) {
+      return [currentPage];
+    }
+
+    // Em telas grandes, mostra duas páginas lado a lado como revista
+    const pages = [];
+
+    // Página da esquerda (página par)
+    const leftPage = currentPage % 2 === 0 ? currentPage : currentPage - 1;
+    if (leftPage >= 1 && leftPage <= numPages) {
+      pages.push(leftPage);
+    }
+
+    // Página da direita (página ímpar)
+    const rightPage = currentPage % 2 === 0 ? currentPage + 1 : currentPage;
+    if (rightPage >= 1 && rightPage <= numPages) {
+      pages.push(rightPage);
+    }
+
+    return pages;
+  }, [currentPage, numPages, isLargeScreen]);
+
   // Função para ir para uma página específica
   function goToPage(pageNumber: number) {
     if (pageNumber >= 1 && pageNumber <= numPages) {
+      setIsPageLoading(true);
       setCurrentPage(pageNumber);
       playPageFlipSound(); // toca o som sempre que troca de página
+
+      // Simula um pequeno delay para evitar o pisca
+      setTimeout(() => {
+        setIsPageLoading(false);
+      }, 100);
+    }
+  }
+
+  // Função para navegar no modo revista (avança 2 páginas)
+  function goToNextPages() {
+    if (isLargeScreen) {
+      const nextPage = currentPage + 2;
+      if (nextPage <= numPages) {
+        goToPage(nextPage);
+      }
+    } else {
+      goToPage(currentPage + 1);
+    }
+  }
+
+  // Função para navegar no modo revista (volta 2 páginas)
+  function goToPreviousPages() {
+    if (isLargeScreen) {
+      const prevPage = currentPage - 2;
+      if (prevPage >= 1) {
+        goToPage(prevPage);
+      }
+    } else {
+      goToPage(currentPage - 1);
     }
   }
 
@@ -212,7 +280,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
   return (
     <div
-      className={`w-full max-w-4xl mx-auto px-5 py-4 flex flex-col items-center gap-5 ${className}`}
+      className={`w-full max-w-5xl mx-auto px-5 py-4 flex flex-col items-center gap-5 ${className}`}
       onWheel={handleWheel}
     >
       {/* Botões de ação */}
@@ -288,23 +356,38 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       )}
 
       {/* Visualização do PDF */}
-      <div className="overflow-auto flex justify-center w-full max-h-[80vh]">
+      <div className="overflow-auto flex justify-center w-full max-h-[85vh] min-h-[500px]">
         <Document
           file={pdfFile}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
           loading={PDFViewerLoading}
         >
-          <Page
-            pageNumber={currentPage}
-            renderAnnotationLayer={false}
-            renderTextLayer={false}
-            width={pageWidth}
-            height={undefined}
-            className="w-full h-auto object-contain"
-            loading={PDFViewerLoading}
-            rotate={rotation}
-          />
+          <div
+            className={`flex ${
+              isLargeScreen ? "gap-2" : ""
+            } justify-center min-h-[500px] items-start`}
+            style={{
+              opacity: isPageLoading ? 0.7 : 1,
+              transition: "opacity 0.1s ease-in-out",
+            }}
+          >
+            {getPagesToShow().map((pageNumber, index) => (
+              <div key={`${pageNumber}-${index}`} className="flex-shrink-0">
+                <Page
+                  pageNumber={pageNumber}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                  width={pageWidth}
+                  height={undefined}
+                  className="w-full h-auto object-contain"
+                  loading={PDFViewerLoading}
+                  rotate={rotation}
+                  onLoadSuccess={onPageLoadSuccess}
+                />
+              </div>
+            ))}
+          </div>
         </Document>
       </div>
 
@@ -312,7 +395,16 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       {numPages > 0 && (
         <div className="flex flex-col items-center gap-3 w-full">
           <div className="text-center text-sm text-gray-700 font-medium px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
-            Página {currentPage} de {numPages}
+            {isLargeScreen ? (
+              <>
+                Páginas {getPagesToShow()[0]}-
+                {getPagesToShow()[getPagesToShow().length - 1]} de {numPages}
+              </>
+            ) : (
+              <>
+                Página {currentPage} de {numPages}
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -325,7 +417,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             </Button>
 
             <Button
-              onClick={() => goToPage(currentPage - 1)}
+              onClick={goToPreviousPages}
               disabled={currentPage === 1}
               size="icon"
             >
@@ -349,15 +441,21 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             </form>
 
             <Button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === numPages}
+              onClick={goToNextPages}
+              disabled={
+                isLargeScreen
+                  ? currentPage + 1 >= numPages
+                  : currentPage === numPages
+              }
               size="icon"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
 
             <Button
-              onClick={() => goToPage(numPages)}
+              onClick={() =>
+                goToPage(isLargeScreen ? Math.max(1, numPages - 1) : numPages)
+              }
               disabled={currentPage === numPages}
               size="icon"
             >
