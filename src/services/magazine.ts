@@ -35,7 +35,7 @@ const magazineService = {
 
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<IMagazine>(`/admin/magazines/${id}`, formData, {
+    return api.post<IMagazine>(`/admin/magazines/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

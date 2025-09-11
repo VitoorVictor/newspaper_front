@@ -31,6 +31,7 @@ import { CustomInput } from "../custom-inputs/input";
 import { ISector } from "@/interfaces/sector";
 import { PhoneInput } from "../custom-inputs/phone-input";
 import { CustomFooterDialog } from "../custom-footer-dialog";
+import { CustomTextarea } from "../custom-inputs/textarea";
 
 const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
@@ -143,7 +144,6 @@ export const ModalIndustrialGuide = ({
         "updated_at",
         new Date(industrialGuide.data.updated_at).toISOString().slice(0, 16)
       );
-      setValue("image_url", industrialGuide.data.image_url);
     }
   }, [industrialGuide, isUpdate, reset]);
 
@@ -151,27 +151,33 @@ export const ModalIndustrialGuide = ({
     if (view) return; // Não permite submissão em modo visualização
 
     setIsSubmitting(true);
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "image_url" && value instanceof File) {
-        formData.append("image_url", value);
-      } else if (key === "sector_ids" && Array.isArray(value)) {
-        value.forEach((id) => formData.append("sector_ids[]", String(id)));
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "image_url" && value instanceof File) {
+          formData.append("image_url", value);
+        } else if (key === "sector_ids" && Array.isArray(value)) {
+          value.forEach((id) => formData.append("sector_ids[]", String(id)));
+        } else if (key === "created_at" || key === "updated_at") {
+          return;
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      });
+      if (isUpdate) {
+        formData.append("_method", "put");
       }
-    });
-    if (isUpdate) {
-      formData.append("_method", "put");
+      const res = isUpdate
+        ? await updateIndustrialGuide.mutateAsync(formData)
+        : await createIndustrialGuide.mutateAsync(formData);
+      if (res) {
+        reset();
+        onOpenChange(false);
+      }
+      setIsSubmitting(false);
+    } catch {
+      setIsSubmitting(false);
     }
-    const res = isUpdate
-      ? await updateIndustrialGuide.mutateAsync(formData)
-      : await createIndustrialGuide.mutateAsync(formData);
-    if (res) {
-      reset();
-      onOpenChange(false);
-    }
-    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
@@ -228,7 +234,7 @@ export const ModalIndustrialGuide = ({
               />
 
               {/* Descrição */}
-              <CustomInput
+              <CustomTextarea
                 name="description"
                 label="Descrição"
                 placeholder="Digite a descrição da indústria"
