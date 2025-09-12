@@ -62,6 +62,11 @@ export default async function GuiaIndustrialPage({
                       address={industry.address}
                       number={industry.number}
                       description={industry.description}
+                      instagram_url={industry.instagram_url}
+                      facebook_url={industry.facebook_url}
+                      linkedin_url={industry.linkedin_url}
+                      website_url={industry.website_url}
+                      whatsapp={industry.whatsapp}
                     />
                   ))}
                 </div>

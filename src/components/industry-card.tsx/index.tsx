@@ -1,13 +1,31 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Copy, Check } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  Copy,
+  Check,
+  Instagram,
+  Facebook,
+  MessageCircle,
+  Linkedin,
+  Globe,
+} from "lucide-react";
 import { ISector } from "@/interfaces/sector";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { formatPhone } from "@/utils/formatPhone";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface IndustryCardProps {
   image: string;
@@ -18,6 +36,11 @@ interface IndustryCardProps {
   number: string;
   slug: string;
   id: number;
+  instagram_url?: string;
+  facebook_url?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  whatsapp?: string;
 }
 
 export function IndustryCard({
@@ -29,6 +52,11 @@ export function IndustryCard({
   number,
   slug,
   id,
+  instagram_url,
+  facebook_url,
+  linkedin_url,
+  website_url,
+  whatsapp,
 }: IndustryCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -45,7 +73,7 @@ export function IndustryCard({
   };
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full flex flex-col overflow-hidden border-0 shadow-md py-0">
+    <Card className="hover:shadow-xl transition-all duration-300 group bg-white h-full flex flex-col overflow-hidden border-0 shadow-md py-0 gap-0">
       {/* Imagem de capa centralizada */}
       <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
         {image ? (
@@ -89,7 +117,7 @@ export function IndustryCard({
         </div>
       </div>
 
-      <CardContent className="p-6 space-y-4 flex-1 flex flex-col">
+      <CardContent className="p-2 space-y-2 flex-1 flex flex-col">
         {/* Título */}
         <div>
           <h3 className="font-bold text-xl text-gray-900 transition-colors line-clamp-2 leading-tight">
@@ -99,21 +127,49 @@ export function IndustryCard({
 
         {/* Descrição */}
         {description && (
-          <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed flex-1">
-            {description}
-          </p>
+          <div className="flex-1">
+            <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+              {description}
+            </p>
+            {description.length > 130 && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="ml-auto mt-2 text-xs text-gray-500 hover:text-gray-700 transition-colors duration-200 flex cursor-pointer items-center gap-1 group">
+                    <span className="border-b border-dotted border-gray-300 group-hover:border-gray-500 transition-colors">
+                      Ver descrição completa
+                    </span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg font-semibold text-gray-900">
+                      {title}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm text-gray-600">
+                      Descrição completa da empresa
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {description}
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         )}
 
         {/* Informações de contato */}
-        <div className="space-y-3 pt-2">
+        <div className="space-y-2">
           {/* Endereço */}
           {address && (
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
               <MapPin className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-gray-700">
-                <div className="font-medium">Endereço</div>
-                <div className="text-gray-600">
-                  {address} - {number}
+              <div className="text-sm text-gray-700 min-w-0 flex-1">
+                <div className="font-medium mb-1">Endereço</div>
+                <div className="text-gray-600 break-words leading-relaxed">
+                  {address}
                 </div>
               </div>
             </div>
@@ -142,6 +198,71 @@ export function IndustryCard({
                   <Copy className="h-4 w-4" />
                 )}
               </Button>
+            </div>
+          )}
+
+          {/* Mídias Sociais */}
+          {(instagram_url ||
+            facebook_url ||
+            linkedin_url ||
+            website_url ||
+            whatsapp) && (
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="text-sm text-gray-600 mb-2 font-medium">
+                Mídias Sociais
+              </div>
+              <div className="flex justify-center gap-2 flex-wrap">
+                {instagram_url && (
+                  <a
+                    href={instagram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-medium rounded-full hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
+                )}
+                {facebook_url && (
+                  <a
+                    href={facebook_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-full hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </a>
+                )}
+                {linkedin_url && (
+                  <a
+                    href={linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 bg-blue-700 text-white text-xs font-medium rounded-full hover:bg-blue-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                )}
+                {website_url && (
+                  <a
+                    href={website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 bg-gray-700 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <Globe className="h-4 w-4" />
+                  </a>
+                )}
+                {whatsapp && (
+                  <a
+                    href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 bg-green-600 text-white text-xs font-medium rounded-full hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
             </div>
           )}
         </div>

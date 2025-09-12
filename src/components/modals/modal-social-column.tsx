@@ -151,35 +151,41 @@ export const ModalSocialColumns = ({
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "main_image" && value instanceof File) {
-        formData.append("images[0]", value);
-        formData.append("is_cover[0]", "1");
-      } else if (key === "images" && Array.isArray(value)) {
-        value.forEach((v, index) => {
-          formData.append(`images[${index + 1}]`, v);
-          formData.append(`images[${index + 1}]`, "0");
-        });
-      } else if (key === "created_at" || key === "updated_at") {
-        return;
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "main_image" && value instanceof File) {
+          formData.append("images[0]", value);
+          formData.append("is_cover[0]", "1");
+        } else if (key === "images" && Array.isArray(value)) {
+          value.forEach((v, index) => {
+            formData.append(`images[${index + 1}]`, v);
+            formData.append(`images[${index + 1}]`, "0");
+          });
+        } else if (key === "created_at" || key === "updated_at") {
+          return;
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      });
+
+      if (isUpdate) {
+        formData.append("_method", "put");
       }
-    });
 
-    if (isUpdate) {
-      formData.append("_method", "put");
+      const res = isUpdate
+        ? await updateSocialColumns.mutateAsync(formData)
+        : await createSocialColumns.mutateAsync(formData);
+      if (res) {
+        reset();
+        onOpenChange(false);
+      }
+    } catch (error) {
+      // O erro já é tratado no hook (onError), não precisamos fazer nada aqui
+      console.error("Erro ao submeter formulário:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = isUpdate
-      ? await updateSocialColumns.mutateAsync(formData)
-      : await createSocialColumns.mutateAsync(formData);
-    if (res) {
-      reset();
-      onOpenChange(false);
-    }
-    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
