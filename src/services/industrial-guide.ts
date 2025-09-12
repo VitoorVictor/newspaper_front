@@ -35,7 +35,7 @@ const industrialGuideService = {
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<IIndustrialGuide>(
+    return api.post<IIndustrialGuide>(
       `/admin/industrial-guide/${id}`,
       formData,
       {

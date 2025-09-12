@@ -155,19 +155,24 @@ export const ModalNews = ({
     if (view) return; // Não permite submissão em modo visualização
 
     setIsSubmitting(true);
+
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "image_url" && value instanceof File) {
         formData.append("image_url", value);
       } else if (key === "category_ids" && Array.isArray(value)) {
         value.forEach((id) => formData.append("category_ids[]", String(id)));
+      } else if (key === "created_at" || key === "updated_at") {
+        return;
       } else if (value !== null && value !== undefined) {
         formData.append(key, String(value));
       }
     });
+
     if (isUpdate) {
       formData.append("_method", "put");
     }
+
     const res = isUpdate
       ? await updateNews.mutateAsync(formData)
       : await createNews.mutateAsync(formData);

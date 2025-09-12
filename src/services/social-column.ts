@@ -35,7 +35,7 @@ const socialColumnService = {
   },
   update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<ISocialColumn>(`/admin/social-columns/${id}`, formData, {
+    return api.post<ISocialColumn>(`/admin/social-columns/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

@@ -150,6 +150,7 @@ export const ModalSocialColumns = ({
     if (view || deleteImg) return; // Não permite submissão em modo visualização ou exclusão
 
     setIsSubmitting(true);
+
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === "main_image" && value instanceof File) {
@@ -160,13 +161,17 @@ export const ModalSocialColumns = ({
           formData.append(`images[${index + 1}]`, v);
           formData.append(`images[${index + 1}]`, "0");
         });
+      } else if (key === "created_at" || key === "updated_at") {
+        return;
       } else if (value !== null && value !== undefined) {
         formData.append(key, String(value));
       }
     });
+
     if (isUpdate) {
       formData.append("_method", "put");
     }
+
     const res = isUpdate
       ? await updateSocialColumns.mutateAsync(formData)
       : await createSocialColumns.mutateAsync(formData);
