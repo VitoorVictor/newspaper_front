@@ -78,26 +78,23 @@ export const ModalBanner = ({
   const onSubmit = async (data: BannerFormData) => {
     setIsSubmitting(true);
 
-    try {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === "image_url" && value instanceof File) {
-          formData.append("image_url", value);
-        } else if (key === "created_at" || key === "updated_at") {
-          return;
-        } else if (value !== null && value !== undefined) {
-          formData.append(key, String(value));
-        }
-      });
-      const res = isUpdate ? null : await createBanner.mutateAsync(formData);
-      if (res) {
-        reset();
-        onOpenChange(false);
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "image_url" && value instanceof File) {
+        formData.append("image_url", value);
+      } else if (key === "created_at" || key === "updated_at") {
+        return;
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
       }
-      setIsSubmitting(false);
-    } catch {
-      setIsSubmitting(false);
+    });
+
+    const res = isUpdate ? null : await createBanner.mutateAsync(formData);
+    if (res) {
+      reset();
+      onOpenChange(false);
     }
+    setIsSubmitting(false);
   };
 
   const renderImageButtons = (
