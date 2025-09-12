@@ -77,20 +77,30 @@ export const ModalBanner = ({
 
   const onSubmit = async (data: BannerFormData) => {
     setIsSubmitting(true);
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "image_url" && value instanceof File) {
-        formData.append("image_url", value);
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
+
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "image_url" && value instanceof File) {
+          formData.append("image_url", value);
+        } else if (key === "created_at" || key === "updated_at") {
+          return;
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      });
+
+      const res = isUpdate ? null : await createBanner.mutateAsync(formData);
+      if (res) {
+        reset();
+        onOpenChange(false);
       }
-    });
-    const res = isUpdate ? null : await createBanner.mutateAsync(formData);
-    if (res) {
-      reset();
-      onOpenChange(false);
+    } catch (error) {
+      // O erro já é tratado no hook (onError), não precisamos fazer nada aqui
+      console.error("Erro ao submeter formulário:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const renderImageButtons = (
