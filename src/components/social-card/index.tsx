@@ -66,7 +66,7 @@ SocialEventCardProps) {
       {/* NOVA parte inferior - mais limpa e elegante */}
       <CardContent className="p-6">
         {/* Título */}
-        <h3 className="font-bold text-xl text-gray-900 mb-4 line-clamp-2 group-hover:text-[#182641] transition-colors">
+        <h3 className="font-bold text-xl text-gray-900 mb-4 line-clamp-2 group-hover:text-[#182641] transition-colors truncate">
           {title}
         </h3>
 

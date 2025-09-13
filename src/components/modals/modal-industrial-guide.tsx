@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -32,6 +31,15 @@ import { ISector } from "@/interfaces/sector";
 import { PhoneInput } from "../custom-inputs/phone-input";
 import { CustomFooterDialog } from "../custom-footer-dialog";
 import { CustomTextarea } from "../custom-inputs/textarea";
+import { CustomInputWithIcon } from "../custom-inputs/input-with-icon";
+import { PhoneInputWithIcon } from "../custom-inputs/phone-input-with-icon";
+import {
+  Instagram,
+  MessageCircle,
+  Linkedin,
+  Facebook,
+  Globe,
+} from "lucide-react";
 
 const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
@@ -86,6 +94,40 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
       )
       .optional()
       .nullable(),
+    instagram_url: z
+      .string()
+      .url("URL do Instagram inválida")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+    whatsapp: z
+      .string()
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+    linkedin_url: z
+      .string()
+      .url("URL do LinkedIn inválida")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+    facebook_url: z
+      .string()
+      .url("URL do Facebook inválida")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
+    website_url: z
+      .string()
+      .url("URL do website inválida")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
     created_at: z.string().optional().nullable(),
     updated_at: z.string().optional().nullable(),
   });
@@ -136,6 +178,11 @@ export const ModalIndustrialGuide = ({
         "sector_ids",
         industrialGuide.data.sectors.map((sector) => sector.id)
       );
+      setValue("instagram_url", industrialGuide.data.instagram_url || "");
+      setValue("whatsapp", industrialGuide.data.whatsapp || "");
+      setValue("linkedin_url", industrialGuide.data.linkedin_url || "");
+      setValue("facebook_url", industrialGuide.data.facebook_url || "");
+      setValue("website_url", industrialGuide.data.website_url || "");
       setValue(
         "created_at",
         new Date(industrialGuide.data.created_at).toISOString().slice(0, 16)
@@ -152,31 +199,37 @@ export const ModalIndustrialGuide = ({
 
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "image_url" && value instanceof File) {
-        formData.append("image_url", value);
-      } else if (key === "sector_ids" && Array.isArray(value)) {
-        value.forEach((id) => formData.append("sector_ids[]", String(id)));
-      } else if (key === "created_at" || key === "updated_at") {
-        return;
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, String(value));
+    try {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "image_url" && value instanceof File) {
+          formData.append("image_url", value);
+        } else if (key === "sector_ids" && Array.isArray(value)) {
+          value.forEach((id) => formData.append("sector_ids[]", String(id)));
+        } else if (key === "created_at" || key === "updated_at") {
+          return;
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      });
+
+      if (isUpdate) {
+        formData.append("_method", "put");
       }
-    });
 
-    if (isUpdate) {
-      formData.append("_method", "put");
+      const res = isUpdate
+        ? await updateIndustrialGuide.mutateAsync(formData)
+        : await createIndustrialGuide.mutateAsync(formData);
+      if (res) {
+        reset();
+        onOpenChange(false);
+      }
+    } catch (error) {
+      // O erro já é tratado no hook (onError), não precisamos fazer nada aqui
+      console.error("Erro ao submeter formulário:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const res = isUpdate
-      ? await updateIndustrialGuide.mutateAsync(formData)
-      : await createIndustrialGuide.mutateAsync(formData);
-    if (res) {
-      reset();
-      onOpenChange(false);
-    }
-    setIsSubmitting(false);
   };
 
   if (isLoading) return null;
@@ -304,7 +357,7 @@ export const ModalIndustrialGuide = ({
                 {/* número */}
                 <PhoneInput
                   name="number"
-                  label="Telefone"
+                  label="Celular / Telefone"
                   placeholder="(00) 00000-0000"
                   conteinerClassName="col-span-2"
                   disabled={view}
@@ -358,6 +411,60 @@ export const ModalIndustrialGuide = ({
                   containerClassName="w-full"
                 />
               )}
+
+              {/* Redes Sociais e Website */}
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900 mb-2 border-b">
+                  Redes Sociais e Website
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CustomInputWithIcon
+                    name="instagram_url"
+                    label="Instagram"
+                    placeholder="https://instagram.com/empresa"
+                    icon={Instagram}
+                    disabled={view}
+                    description="URL completa do perfil no Instagram (Opcional)"
+                  />
+
+                  <PhoneInputWithIcon
+                    name="whatsapp"
+                    label="WhatsApp"
+                    placeholder="(00) 00000-0000"
+                    icon={MessageCircle}
+                    disabled={view}
+                    description="Número de WhatsApp (Opcional)"
+                  />
+
+                  <CustomInputWithIcon
+                    name="linkedin_url"
+                    label="LinkedIn"
+                    placeholder="https://linkedin.com/company/empresa"
+                    icon={Linkedin}
+                    disabled={view}
+                    description="URL da página da empresa no LinkedIn (Opcional)"
+                  />
+
+                  <CustomInputWithIcon
+                    name="facebook_url"
+                    label="Facebook"
+                    placeholder="https://facebook.com/empresa"
+                    icon={Facebook}
+                    disabled={view}
+                    description="URL da página no Facebook (Opcional)"
+                  />
+
+                  <CustomInputWithIcon
+                    name="website_url"
+                    label="Website"
+                    placeholder="https://www.empresa.com.br"
+                    icon={Globe}
+                    disabled={view}
+                    description="Site oficial da empresa (Opcional)"
+                    conteinerClassName="md:col-span-2"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Botões fixos na parte inferior */}

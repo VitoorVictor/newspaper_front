@@ -12,6 +12,11 @@ export interface IIndustrialGuide {
   description: string;
   sector_ids: number[];
   sectors: ISector[];
+  facebook_url?: string;
+  instagram_url?: string;
+  website_url?: string;
+  linkedin_url?: string;
+  whatsapp?: string;
   created_at: string;
   updated_at: string;
 }
