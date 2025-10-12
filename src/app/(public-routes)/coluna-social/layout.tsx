@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Coluna Social",
+  title: "Coluna Empresarial",
   description: "Vejas eventos importantes que participamos na região.",
 };
 

@@ -4,7 +4,7 @@ import { Edit, Eye, Trash2 } from "lucide-react";
 import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 import { formatDateTime } from "@/utils/formatDateTime";
 
-// Colunas para Coluna Social
+// Colunas para Coluna Empresarial
 export const getMagazineColumns = ({
   onView,
   onEdit,

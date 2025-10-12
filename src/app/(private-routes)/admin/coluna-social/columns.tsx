@@ -3,7 +3,7 @@ import { ISocialColumn } from "@/interfaces/social-column";
 import { Edit, Eye, ImageMinus, Trash2 } from "lucide-react";
 import SlugColumnBtn from "@/components/custom-btns/slug-column-btn";
 
-// Colunas para Coluna Social
+// Colunas para Coluna Empresarial
 export const getSocialColumnsColumns = ({
   onView,
   onEdit,

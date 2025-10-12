@@ -13,7 +13,7 @@ export const data = [
         url: "/admin/guia-industrial",
       },
       {
-        title: "Coluna Social",
+        title: "Coluna Empresarial",
         url: "/admin/coluna-social",
       },
       {
@@ -48,7 +48,7 @@ export const data = [
         url: "/guia-industrial",
       },
       {
-        title: "Coluna Social",
+        title: "Coluna Empresarial",
         url: "/coluna-social",
       },
       {

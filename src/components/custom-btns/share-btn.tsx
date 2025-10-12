@@ -23,7 +23,7 @@ export default function ShareBtn({ url }: ShareBtnProps) {
     <Button
       size="icon"
       variant="ghost"
-      className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm z-10 cursor-pointer"
+      className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white/60 hover:bg-white/80 text-primary hover:text-primary backdrop-blur-sm z-10 cursor-pointer"
       onClick={handleShare}
     >
       <Share2 className="h-4 w-4" />

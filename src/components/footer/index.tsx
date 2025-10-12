@@ -135,7 +135,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/guia"
+                  href="/guia-industrial"
                   className="text-white/80 hover:text-white transition-colors text-sm"
                 >
                   Guia Industrial

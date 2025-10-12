@@ -77,7 +77,7 @@ export default function AdminColunaSocialPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <Title
-        title="Administração de Coluna Social"
+        title="Administração de Coluna Empresarial"
         subtitle="Gerencie as colunas sociais do sistema"
       />
 
@@ -101,7 +101,7 @@ export default function AdminColunaSocialPage() {
                 deleteImg={deleteImg}
                 title={`${
                   selectedSocialColumns?.id ? "Atualizar " : "Nova "
-                } Coluna Social`}
+                } Coluna Empresarial`}
                 id={selectedSocialColumns?.id}
                 slug={selectedSocialColumns?.slug}
               />
@@ -112,7 +112,7 @@ export default function AdminColunaSocialPage() {
           {/* Filtros */}
           <div className="mb-6">
             <SearchBar
-              placeholder="Pesquise pelo título da coluna social..."
+              placeholder="Pesquise pelo título da Coluna Empresarial..."
               value={searchSocialColumns}
               onSearch={setSearchSocialColumns}
               onClear={() => setSearchSocialColumns("")}
@@ -145,7 +145,7 @@ export default function AdminColunaSocialPage() {
           setSelectedSocialColumns(null);
         }}
         title="Confirmar exclusão"
-        description={`Tem certeza que deseja excluir a coluna social "${selectedSocialColumns?.title}"?`}
+        description={`Tem certeza que deseja excluir a Coluna Empresarial "${selectedSocialColumns?.title}"?`}
         onConfirm={() => {
           if (selectedSocialColumns) {
             deleteSocialColumnsMutation.mutate(selectedSocialColumns.id);

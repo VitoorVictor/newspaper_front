@@ -74,19 +74,19 @@ const AnimatedIcon = ({
 
   return (
     <div
-      className={`relative h-[500px] w-full rounded-lg overflow-hidden flex items-center justify-center`}
+      className={`relative w-full rounded-lg overflow-hidden flex flex-col items-center justify-center py-8 px-4`}
     >
       {/* Ícone animado */}
-      <div className="relative">
+      <div className="relative mb-6 sm:mb-8">
         <div
-          className={`w-32 h-32 rounded-full ${
+          className={`w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full ${
             icons[currentIcon].bgColor
           } flex items-center justify-center transition-all duration-500 ${
             isAnimating ? "scale-110 rotate-12" : "scale-100 rotate-0"
           }`}
         >
           <CurrentIcon
-            className={`w-16 h-16 ${
+            className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 ${
               icons[currentIcon].color
             } transition-all duration-500 ${
               isAnimating ? "scale-125" : "scale-100"
@@ -95,16 +95,20 @@ const AnimatedIcon = ({
         </div>
 
         {/* Círculos decorativos */}
-        <div className="absolute -top-4 -left-4 w-8 h-8 bg-blue-200 rounded-full animate-pulse"></div>
-        <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-green-200 rounded-full animate-pulse delay-300"></div>
-        <div className="absolute top-1/2 -right-8 w-4 h-4 bg-purple-200 rounded-full animate-pulse delay-500"></div>
-        <div className="absolute top-1/2 -left-8 w-4 h-4 bg-pink-200 rounded-full animate-pulse delay-700"></div>
+        <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-6 h-6 sm:w-8 sm:h-8 bg-blue-200 rounded-full animate-pulse"></div>
+        <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-5 h-5 sm:w-6 sm:h-6 bg-green-200 rounded-full animate-pulse delay-300"></div>
+        <div className="absolute top-1/2 -right-6 sm:-right-8 w-3 h-3 sm:w-4 sm:h-4 bg-purple-200 rounded-full animate-pulse delay-500"></div>
+        <div className="absolute top-1/2 -left-6 sm:-left-8 w-3 h-3 sm:w-4 sm:h-4 bg-pink-200 rounded-full animate-pulse delay-700"></div>
       </div>
 
-      {/* Texto sobreposto */}
-      <div className="absolute bottom-8 left-8 right-8 text-center">
-        <h3 className="text-3xl font-bold text-gray-800 mb-3">{title}</h3>
-        <p className="text-lg text-gray-600 mb-4">{subtitle}</p>
+      {/* Texto */}
+      <div className="text-center px-4 max-w-md">
+        <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">
+          {title}
+        </h3>
+        <p className="text-base sm:text-lg text-gray-600 mb-3 sm:mb-4">
+          {subtitle}
+        </p>
 
         {/* Indicadores de animação */}
         <div className="flex justify-center space-x-2">
@@ -120,8 +124,8 @@ const AnimatedIcon = ({
       </div>
 
       {/* Elementos decorativos flutuantes */}
-      <div className="absolute top-8 right-8 w-16 h-16 border-2 border-blue-200 rounded-full animate-spin-slow"></div>
-      <div className="absolute bottom-16 left-12 w-12 h-12 border-2 border-green-200 rounded-full animate-spin-slow-reverse"></div>
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 border-2 border-blue-200 rounded-full animate-spin-slow"></div>
+      <div className="absolute bottom-8 left-6 sm:bottom-16 sm:left-12 w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-200 rounded-full animate-spin-slow-reverse"></div>
     </div>
   );
 };
@@ -257,7 +261,7 @@ export const ContactForm = ({ children }: { children: React.ReactNode }) => {
                     <Textarea
                       {...field}
                       placeholder="Digite sua mensagem aqui..."
-                      className="min-h-32 resize-none"
+                      className="min-h-2 resize-none"
                       value={field.value ?? ""}
                     />
                   </FormControl>

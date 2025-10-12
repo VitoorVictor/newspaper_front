@@ -30,7 +30,9 @@ export const SocialColumnImagesSection = ({
           />
         </svg>
         <p className="text-lg font-medium">Nenhuma imagem encontrada</p>
-        <p className="text-sm">Esta coluna social ainda não possui imagens.</p>
+        <p className="text-sm">
+          Esta Coluna Empresarial ainda não possui imagens.
+        </p>
       </div>
     );
   }

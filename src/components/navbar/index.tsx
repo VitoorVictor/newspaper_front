@@ -89,7 +89,7 @@ export function Navbar({ email }: { email: string }) {
             <Menu className="h-5 w-5" />
             <span className="sr-only">Trocar Sidebar</span>
           </Button>
-          <Link href="/">
+          {/* <Link href="/">
             <Image
               src="/orange_logo_border.png"
               alt="Logo"
@@ -98,7 +98,7 @@ export function Navbar({ email }: { email: string }) {
               className="h-8 w-auto object-contain"
               priority
             />
-          </Link>
+          </Link> */}
         </div>
 
         {/* Seção central - Menu de navegação */}
@@ -125,7 +125,7 @@ export function Navbar({ email }: { email: string }) {
             href="/coluna-social"
             className="text-white hover:text-white/80 transition-colors font-medium"
           >
-            Coluna Social
+            Coluna Empresarial
           </Link>
           <Link
             href="/edicoes"

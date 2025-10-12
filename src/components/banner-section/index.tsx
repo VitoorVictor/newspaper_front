@@ -30,14 +30,14 @@ function BannerTopSection() {
     <>
       {/* Loading state para banners */}
       {isLoading && (
-        <div className="container mx-auto my-4 md:my-8 p-4">
+        <div className="container mx-auto space-y-2 md:space-y-4">
           <div className="animate-pulse bg-gray-200 h-32 rounded-lg"></div>
         </div>
       )}
 
       {/* Error state para banners */}
       {error && (
-        <div className="container mx-auto my-4 md:my-8 p-4">
+        <div className="container mx-auto space-y-2 md:space-y-4">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             Erro ao carregar banners: {error}
           </div>
@@ -46,7 +46,7 @@ function BannerTopSection() {
 
       {/* Seção de Banner Top */}
       {topBanners && topBanners.length > 0 && (
-        <div className="container mx-auto my-4 md:my-8 p-4 space-y-4 md:space-y-6">
+        <div className="container mx-auto my-2 space-y-2 md:space-y-4">
           <SimpleImageCarousel
             images={topBanners}
             variant="horizontal"

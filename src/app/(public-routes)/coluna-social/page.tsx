@@ -6,6 +6,7 @@ import { CustomPagination } from "@/components/custom-pagination";
 import { PageHeader } from "@/components/page-header";
 import { SocialEventCard } from "@/components/social-card";
 import socialColumnService from "@/services/social-column";
+import Image from "next/image";
 
 interface ColunaSocialPageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -23,9 +24,21 @@ export default async function ColunaSocialPage({
   return (
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
-        <BannerTopSection />
+        <div className="flex gap-4">
+          <div className="relative w-[30%] h-auto min-h-[100px]">
+            <Image
+              src="/orange_logo.png"
+              alt="Logo"
+              fill
+              className="object-contain transition-opacity duration-300"
+            />
+          </div>
+          <div className="w-[70%]">
+            <BannerTopSection />
+          </div>
+        </div>
         <PageHeader
-          title="Coluna Social"
+          title="Coluna Empresarial"
           subtitle="Vejas eventos importantes que participamos na região."
           placeholder="Buscar eventos sociais, culturais e etc..."
           searchMode="query"
