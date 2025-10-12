@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-0">
       {/* Seção de Banner - usando store Zustand */}
-      <div className="container mx-auto flex gap-4">
+      <div className="container mx-auto flex gap-4 bg-gray-10">
         <div className="relative w-[30%] h-auto min-h-[100px]">
           <Image
             src="/orange_logo.png"
