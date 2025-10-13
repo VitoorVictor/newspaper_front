@@ -25,7 +25,7 @@ export default async function ColunaSocialPage({
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
         <div className="flex gap-4">
-          <div className="relative w-[30%] h-auto min-h-[100px]">
+          <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
             <Image
               src="/orange_logo.png"
               alt="Logo"
@@ -33,7 +33,7 @@ export default async function ColunaSocialPage({
               className="object-contain transition-opacity duration-300"
             />
           </div>
-          <div className="w-[70%]">
+          <div className="w-full lg:w-[70%]">
             <BannerTopSection />
           </div>
         </div>

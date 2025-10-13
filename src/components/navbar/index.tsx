@@ -74,21 +74,9 @@ export function Navbar({ email }: { email: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
-      <div className="container flex h-16 items-center justify-between px-4 mx-auto">
-        {/* Seção esquerda - Ícone do menu + Logo */}
-        <div className="flex items-center gap-4">
-          <Button
-            data-sidebar="trigger"
-            data-slot="sidebar-trigger"
-            variant="ghost"
-            size="icon"
-            className="size-7 text-white hover:bg-background cursor-pointer"
-            onClick={toggleSidebar}
-            aria-label="Open menu"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Trocar Sidebar</span>
-          </Button>
+      <div className="container grid grid-cols-3 h-16 items-center px-4 mx-auto">
+        {/* Seção esquerda - Logo (opcional) */}
+        <div className="flex items-center justify-start">
           {/* <Link href="/">
             <Image
               src="/orange_logo_border.png"
@@ -101,42 +89,59 @@ export function Navbar({ email }: { email: string }) {
           </Link> */}
         </div>
 
-        {/* Seção central - Menu de navegação */}
-        <nav className="hidden lg:flex items-center gap-8">
-          <Link
-            href="/"
-            className="text-white hover:text-white/80 transition-colors font-medium"
+        {/* Seção central - Ícone menu (mobile) / Menu de navegação (desktop) */}
+        <nav className="flex items-center justify-center gap-8">
+          {/* Botão menu - visível apenas em telas pequenas */}
+          <Button
+            data-sidebar="trigger"
+            data-slot="sidebar-trigger"
+            variant="ghost"
+            size="icon"
+            className="lg:hidden size-7 text-white hover:bg-background cursor-pointer"
+            onClick={toggleSidebar}
+            aria-label="Open menu"
           >
-            Início
-          </Link>
-          <Link
-            href="/noticias"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Notícias
-          </Link>
-          <Link
-            href="/guia-industrial"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Guia Industrial
-          </Link>
-          <Link
-            href="/coluna-social"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Coluna Empresarial
-          </Link>
-          <Link
-            href="/edicoes"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Edições
-          </Link>
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Trocar Sidebar</span>
+          </Button>
+
+          {/* Links de navegação - visíveis apenas em telas grandes */}
+          <div className="hidden lg:flex items-center gap-8">
+            <Link
+              href="/"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Início
+            </Link>
+            <Link
+              href="/noticias"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Notícias
+            </Link>
+            <Link
+              href="/guia-industrial"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Guia Industrial
+            </Link>
+            <Link
+              href="/coluna-social"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Coluna Empresarial
+            </Link>
+            <Link
+              href="/edicoes"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Edições
+            </Link>
+          </div>
         </nav>
 
         {/* Seção direita - Redes sociais + Avatar (se logado) */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <div className="hidden lg:flex items-center gap-1">
             <SocialIcons />
           </div>

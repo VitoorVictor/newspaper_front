@@ -24,19 +24,19 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
     <div className="space-y-0">
       <div className="bg-gray-100 p-2">
         <div className="container mx-auto space-y-2 md:space-y-4">
-        <div className="flex gap-4">
-          <div className="relative w-[30%] h-auto min-h-[100px]">
-            <Image
-              src="/orange_logo.png"
-              alt="Logo"
-              fill
-              className="object-contain transition-opacity duration-300"
-            />
+          <div className="flex gap-4">
+            <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
+              <Image
+                src="/orange_logo.png"
+                alt="Logo"
+                fill
+                className="object-contain transition-opacity duration-300"
+              />
+            </div>
+            <div className="w-full lg:w-[70%]">
+              <BannerTopSection />
+            </div>
           </div>
-          <div className="w-[70%]">
-            <BannerTopSection />
-          </div>
-        </div>
           <PageHeader
             title="Edições"
             subtitle="Veja as edições da revista Imagem Industrial."
