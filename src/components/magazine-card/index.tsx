@@ -1,11 +1,10 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, BookOpen, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatDateTime } from "@/utils/formatDateTime";
+import { BookOpen, Calendar, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 interface MagazineCardProps {
   id: number;
@@ -24,10 +23,9 @@ export function MagazineCard({
   created_at,
   image,
 }: MagazineCardProps) {
-  const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/edicoes/${slug}`);
+    window.open(`/edicoes/${slug}`, "_blank");
   };
 
   return (

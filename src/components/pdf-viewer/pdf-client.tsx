@@ -1,9 +1,5 @@
 "use client";
 
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
-import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
@@ -12,10 +8,14 @@ import {
   ChevronsRight,
   Download,
   ExternalLink,
+  RotateCcw,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // Configura o worker local do pdfjs
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -36,10 +36,12 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [zoom, setZoom] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
-  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   // Referência para o áudio
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Referência para o container do PDF
+  const pdfContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     // Carrega o som ao montar o componente
@@ -53,11 +55,17 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       const isLarge = window.innerWidth >= 768; // md breakpoint
       setIsLargeScreen(isLarge);
 
-      let baseWidth = 700; // desktop (aumentado de 550)
-      if (window.innerWidth <= 480) {
-        baseWidth = 350; // mobile (aumentado de 300)
-      } else if (window.innerWidth <= 768) {
-        baseWidth = 500; // tablet (aumentado de 420)
+      // Calcula largura base baseada na largura da tela
+      const screenWidth = window.innerWidth;
+      let baseWidth = screenWidth * 0.6; // 60% da largura da tela
+
+      // Limites mínimos e máximos por dispositivo
+      if (screenWidth <= 480) {
+        baseWidth = Math.max(300, screenWidth * 0.7); // mobile: 70% da tela, mínimo 300px
+      } else if (screenWidth <= 768) {
+        baseWidth = Math.max(400, screenWidth * 0.65); // tablet: 65% da tela, mínimo 400px
+      } else {
+        baseWidth = Math.max(500, screenWidth * 0.6); // desktop: 60% da tela, mínimo 500px
       }
 
       // Em telas grandes, divide a largura pela metade para caber duas páginas
@@ -131,10 +139,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     setNumPages(numPages);
   }
 
-  function onPageLoadSuccess() {
-    setIsPageLoading(false);
-  }
-
   function onDocumentLoadError(error: Error) {
     console.error("Erro ao carregar PDF:", error);
     setError("Erro ao carregar o PDF. Verifique se o arquivo é válido.");
@@ -172,17 +176,16 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     return pages;
   }, [currentPage, numPages, isLargeScreen]);
 
+  // Gera array com todas as páginas para pré-renderização
+  const allPages = useMemo(() => {
+    return Array.from({ length: numPages }, (_, i) => i + 1);
+  }, [numPages]);
+
   // Função para ir para uma página específica
   function goToPage(pageNumber: number) {
     if (pageNumber >= 1 && pageNumber <= numPages) {
-      setIsPageLoading(true);
       setCurrentPage(pageNumber);
       playPageFlipSound(); // toca o som sempre que troca de página
-
-      // Simula um pequeno delay para evitar o pisca
-      setTimeout(() => {
-        setIsPageLoading(false);
-      }, 100);
     }
   }
 
@@ -217,6 +220,28 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     if (pageNumber >= 1 && pageNumber <= numPages) {
       goToPage(pageNumber);
       setPageInput("");
+    }
+  }
+
+  // Função para lidar com clique nas páginas
+  function handlePageClick(pageNumber: number, index: number) {
+    if (isLargeScreen) {
+      // Em telas grandes, clica na página da esquerda vai para anterior, direita para próxima
+      if (index === 0 && currentPage > 1) {
+        // Página da esquerda - vai para anterior (exceto se for a primeira página)
+        goToPreviousPages();
+      } else {
+        // Página da direita ou primeira página - vai para próxima
+        if (currentPage < numPages) {
+          goToNextPages();
+        }
+      }
+    } else {
+      // Em telas pequenas, sempre avança para a próxima página
+      if (currentPage < numPages) {
+        const nextPage = currentPage + 1;
+        goToPage(nextPage);
+      }
     }
   }
 
@@ -280,7 +305,7 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
   return (
     <div
-      className={`w-full max-w-5xl mx-auto px-5 py-4 flex flex-col items-center gap-5 ${className}`}
+      className={`w-full mx-auto px-2 py-4 flex flex-col items-center gap-5 overflow-x-hidden ${className}`}
       onWheel={handleWheel}
     >
       {/* Botões de ação */}
@@ -356,37 +381,47 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       )}
 
       {/* Visualização do PDF */}
-      <div className="overflow-auto flex justify-center w-full max-h-[85vh] min-h-[500px]">
+      <div
+        ref={pdfContainerRef}
+        className="overflow-y-auto overflow-x-hidden w-full"
+      >
         <Document
           file={pdfFile}
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={onDocumentLoadError}
           loading={PDFViewerLoading}
         >
-          <div
-            className={`flex ${
-              isLargeScreen ? "gap-2" : ""
-            } justify-center min-h-[500px] items-start`}
-            style={{
-              opacity: isPageLoading ? 0.7 : 1,
-              transition: "opacity 0.1s ease-in-out",
-            }}
-          >
-            {getPagesToShow().map((pageNumber, index) => (
-              <div key={`${pageNumber}-${index}`} className="flex-shrink-0">
-                <Page
-                  pageNumber={pageNumber}
-                  renderAnnotationLayer={false}
-                  renderTextLayer={false}
-                  width={pageWidth}
-                  height={undefined}
-                  className="w-full h-auto object-contain"
-                  loading={PDFViewerLoading}
-                  rotate={rotation}
-                  onLoadSuccess={onPageLoadSuccess}
-                />
-              </div>
-            ))}
+          {/* Todas as páginas renderizadas, mas apenas as atuais visíveis */}
+          <div className="flex justify-center">
+            {allPages.map((pageNumber) => {
+              const pagesToShow = getPagesToShow();
+              const isVisible = pagesToShow.includes(pageNumber);
+              const indexInVisible = pagesToShow.indexOf(pageNumber);
+
+              return (
+                <div
+                  key={pageNumber}
+                  className={`flex-shrink-0 cursor-pointer ${
+                    isVisible ? "" : "hidden"
+                  }`}
+                  onClick={() =>
+                    isVisible
+                      ? handlePageClick(pageNumber, indexInVisible)
+                      : null
+                  }
+                >
+                  <Page
+                    pageNumber={pageNumber}
+                    renderAnnotationLayer={false}
+                    renderTextLayer={false}
+                    width={pageWidth}
+                    height={undefined}
+                    className="w-full h-auto object-contain"
+                    rotate={rotation}
+                  />
+                </div>
+              );
+            })}
           </div>
         </Document>
       </div>
