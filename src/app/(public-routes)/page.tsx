@@ -1,21 +1,21 @@
 import { BannerTopSection } from "@/components/banner-section";
 import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import { IndustryCard } from "@/components/industry-card.tsx";
 import { MagazineCard } from "@/components/magazine-card";
 import { NewsMain, NewsSecondary } from "@/components/news";
+import { SectorCard } from "@/components/sector-card";
 import { SocialEventCard } from "@/components/social-card";
 import homeService from "@/services/home";
 import Image from "next/image";
 
 export default async function HomePage() {
   const { data } = await homeService.get();
-
+  console.log(data);
   const {
     principais_noticias,
     social_columns,
     magazines,
-    industrial_guides,
+    sectors,
     banners_home,
   } = data;
 
@@ -93,29 +93,28 @@ export default async function HomePage() {
           )}
 
         {/* Seção do Guia Industrial */}
-        {industrial_guides && industrial_guides.length > 0 && (
+        {sectors && sectors.length > 0 && (
           <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Guia Industrial
+                Setores Industriais
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Vejas as principais industrias e empresas da região
+                Conheça os principais setores industriais da região
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-4 gap-6">
-              {industrial_guides.map((industry: any) => (
-                <IndustryCard
-                  key={industry.id}
-                  id={industry.id}
-                  sectors={industry.sectors}
-                  title={industry.name}
-                  slug={industry.slug}
-                  image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${industry.image_url}`}
-                  address={industry.address}
-                  number={industry.number}
-                  description={industry.description}
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {sectors.map((sector: any) => (
+                <SectorCard
+                  key={sector.id}
+                  id={sector.id}
+                  name={sector.name}
+                  image={
+                    sector.image_url
+                      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${sector.image_url}`
+                      : undefined
+                  }
                 />
               ))}
             </div>
