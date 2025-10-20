@@ -1,10 +1,7 @@
 "use client";
 
-import { Menu, Instagram, Twitter, Facebook, LogOut, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Facebook, Instagram, Menu, Twitter, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { LogoutBtn } from "../custom-btns/logout-btn";
 import { useSidebar } from "../ui/sidebar";
 
@@ -74,9 +74,9 @@ export function Navbar({ email }: { email: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
-      <div className="container grid grid-cols-3 h-16 items-center px-4 mx-auto">
+      <div className="container grid grid-cols-5 lg:grid-cols-7 h-16 items-center px-4 mx-auto">
         {/* Seção esquerda - Logo (opcional) */}
-        <div className="flex items-center justify-start">
+        <div className="hidden lg:flex items-center justify-start">
           {/* <Link href="/">
             <Image
               src="/orange_logo_border.png"
@@ -90,7 +90,7 @@ export function Navbar({ email }: { email: string }) {
         </div>
 
         {/* Seção central - Ícone menu (mobile) / Menu de navegação (desktop) */}
-        <nav className="flex items-center justify-center gap-8">
+        <nav className="flex items-center lg:justify-center gap-8 col-span-1 lg:col-span-5">
           {/* Botão menu - visível apenas em telas pequenas */}
           <Button
             data-sidebar="trigger"
@@ -139,6 +139,19 @@ export function Navbar({ email }: { email: string }) {
             </Link>
           </div>
         </nav>
+
+        <div className="lg:hidden col-span-3 flex justify-center items-center">
+          <Link href="/">
+            <Image
+              src="/orange_logo_border.png"
+              alt="Logo"
+              width={2237}
+              height={366}
+              className="h-8 w-auto object-contain"
+              priority
+            />
+          </Link>
+        </div>
 
         {/* Seção direita - Redes sociais + Avatar (se logado) */}
         <div className="flex items-center justify-end gap-2">

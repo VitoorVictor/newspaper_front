@@ -1,10 +1,10 @@
+import { BannerTopSection } from "@/components/banner-section";
 import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
 import { IndustryCard } from "@/components/industry-card.tsx";
 import { MagazineCard } from "@/components/magazine-card";
 import { NewsMain, NewsSecondary } from "@/components/news";
 import { SocialEventCard } from "@/components/social-card";
-import { BannerTopSection } from "@/components/banner-section";
 import homeService from "@/services/home";
 import Image from "next/image";
 
@@ -20,26 +20,26 @@ export default async function HomePage() {
   } = data;
 
   return (
-    <div className="space-y-0">
-      {/* Seção de Banner - usando store Zustand */}
-      <div className="container mx-auto flex items-center gap-4 p-2 bg-gray-100">
-        <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
-          <Image
-            src="/orange_logo.png"
-            alt="Logo"
-            fill
-            className="object-contain transition-opacity duration-300"
-          />
+    <div className="bg-gray-100">
+      <div className="container mx-auto space-y-8 p-2">
+        {/* Seção de Banner */}
+        <div className="flex items-center gap-4">
+          <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
+            <Image
+              src="/orange_logo.png"
+              alt="Logo"
+              fill
+              className="object-contain transition-opacity duration-300"
+            />
+          </div>
+          <div className="w-full lg:w-[70%]">
+            <BannerTopSection />
+          </div>
         </div>
-        <div className="w-full lg:w-[70%]">
-          <BannerTopSection />
-        </div>
-      </div>
 
-      {/* Notícias Principais */}
-      {principais_noticias && principais_noticias.length > 0 && (
-        <div className="bg-gray-100 p-2">
-          <div className="container mx-auto space-y-2 md:space-y-4">
+        {/* Notícias Principais */}
+        {principais_noticias && principais_noticias.length > 0 && (
+          <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-3 gap-4 lg:max-h-[500px]">
               {principais_noticias.map((news: any, index: number) => {
                 if (index === 0)
@@ -79,24 +79,22 @@ export default async function HomePage() {
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Seção do Guia Industrial - com cor de fundo que cobre toda a largura */}
-      {industrial_guides && industrial_guides.length > 0 && (
-        <div className="bg-gray-100 p-2">
-          {banners_home &&
-            banners_home["home_1"] &&
-            banners_home["home_1"].length > 0 && (
-              <div className="container mx-auto my-2 p-2 space-y-2 md:space-y-4">
-                <SimpleImageCarousel
-                  images={banners_home["home_1"]}
-                  variant="horizontal"
-                  autoPlay={true}
-                />
-              </div>
-            )}
-          <div className="container mx-auto space-y-2 md:space-y-4">
+        {/* Banner Home 1 */}
+        {banners_home &&
+          banners_home["home_1"] &&
+          banners_home["home_1"].length > 0 && (
+            <SimpleImageCarousel
+              images={banners_home["home_1"]}
+              variant="horizontal"
+              autoPlay={true}
+            />
+          )}
+
+        {/* Seção do Guia Industrial */}
+        {industrial_guides && industrial_guides.length > 0 && (
+          <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Guia Industrial
@@ -121,6 +119,7 @@ export default async function HomePage() {
                 />
               ))}
             </div>
+
             <div className="flex justify-center">
               <SeeMoreBtn
                 path="/guias-industriais"
@@ -130,24 +129,22 @@ export default async function HomePage() {
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Seção da Coluna Empresarial */}
-      {social_columns && social_columns.length > 0 && (
-        <div className="bg-gray-100 p-2">
-          {banners_home &&
-            banners_home["home_2"] &&
-            banners_home["home_2"].length > 0 && (
-              <div className="container mx-auto my-2 p-2 space-y-2 md:space-y-4">
-                <SimpleImageCarousel
-                  images={banners_home["home_2"]}
-                  variant="horizontal"
-                  autoPlay={true}
-                />
-              </div>
-            )}
-          <div className="container mx-auto space-y-2 md:space-y-4">
+        {/* Banner Home 2 */}
+        {banners_home &&
+          banners_home["home_2"] &&
+          banners_home["home_2"].length > 0 && (
+            <SimpleImageCarousel
+              images={banners_home["home_2"]}
+              variant="horizontal"
+              autoPlay={true}
+            />
+          )}
+
+        {/* Seção da Coluna Empresarial */}
+        {social_columns && social_columns.length > 0 && (
+          <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Coluna Empresarial
@@ -168,6 +165,7 @@ export default async function HomePage() {
                 />
               ))}
             </div>
+
             <div className="flex justify-center">
               <SeeMoreBtn
                 path="/coluna-social"
@@ -177,24 +175,22 @@ export default async function HomePage() {
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Seção de Edições */}
-      {magazines && magazines.length > 0 && (
-        <div className="bg-gray-100 p-2">
-          {banners_home &&
-            banners_home["home_3"] &&
-            banners_home["home_3"].length > 0 && (
-              <div className="container mx-auto my-2 p-2 space-y-2 md:space-y-4">
-                <SimpleImageCarousel
-                  images={banners_home["home_3"]}
-                  variant="horizontal"
-                  autoPlay={true}
-                />
-              </div>
-            )}
-          <div className="container mx-auto space-y-2 md:space-y-4">
+        {/* Banner Home 3 */}
+        {banners_home &&
+          banners_home["home_3"] &&
+          banners_home["home_3"].length > 0 && (
+            <SimpleImageCarousel
+              images={banners_home["home_3"]}
+              variant="horizontal"
+              autoPlay={true}
+            />
+          )}
+
+        {/* Seção de Edições */}
+        {magazines && magazines.length > 0 && (
+          <div className="space-y-4">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Edições</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -215,6 +211,7 @@ export default async function HomePage() {
                 />
               ))}
             </div>
+
             <div className="flex justify-center">
               <SeeMoreBtn
                 path="/edicoes"
@@ -224,8 +221,8 @@ export default async function HomePage() {
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
