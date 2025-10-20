@@ -75,38 +75,23 @@ export function Navbar({ email }: { email: string }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
       <div className="container grid grid-cols-5 lg:grid-cols-7 h-16 items-center px-4 mx-auto">
-        {/* Seção esquerda - Logo (opcional) */}
-        <div className="hidden lg:flex items-center justify-start">
-          {/* <Link href="/">
-            <Image
-              src="/orange_logo_border.png"
-              alt="Logo"
-              width={2237}
-              height={366}
-              className="h-8 w-auto object-contain"
-              priority
-            />
-          </Link> */}
-        </div>
-
-        {/* Seção central - Ícone menu (mobile) / Menu de navegação (desktop) */}
-        <nav className="flex items-center lg:justify-center gap-8 col-span-1 lg:col-span-5">
-          {/* Botão menu - visível apenas em telas pequenas */}
+        <div className="flex items-center justify-start">
           <Button
             data-sidebar="trigger"
             data-slot="sidebar-trigger"
             variant="ghost"
             size="icon"
-            className="lg:hidden size-7 text-white hover:bg-background cursor-pointer"
+            className="size-7 text-white hover:bg-background cursor-pointer"
             onClick={toggleSidebar}
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Trocar Sidebar</span>
           </Button>
+        </div>
 
-          {/* Links de navegação - visíveis apenas em telas grandes */}
-          <div className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center lg:justify-center gap-8 col-span-1 lg:col-span-5">
+          <div className="flex items-center gap-8">
             <Link
               href="/"
               className="text-white hover:text-white/80 transition-colors font-medium"
@@ -153,7 +138,6 @@ export function Navbar({ email }: { email: string }) {
           </Link>
         </div>
 
-        {/* Seção direita - Redes sociais + Avatar (se logado) */}
         <div className="flex items-center justify-end gap-2">
           <div className="hidden lg:flex items-center gap-1">
             <SocialIcons />
