@@ -10,7 +10,7 @@ import Image from "next/image";
 
 export default async function HomePage() {
   const { data } = await homeService.get();
-  console.log(data);
+
   const {
     principais_noticias,
     social_columns,

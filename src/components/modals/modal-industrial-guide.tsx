@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -5,10 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -23,23 +20,27 @@ import {
   useIndustrialGuideBySlug,
   useUpdateIndustrialGuide,
 } from "@/hooks/tanstackQuery/useIndustrialGuide";
-import { FileUpload } from "../file-upload";
-import { useEffect, useState } from "react";
-import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
-import { CustomInput } from "../custom-inputs/input";
 import { ISector } from "@/interfaces/sector";
-import { PhoneInput } from "../custom-inputs/phone-input";
-import { CustomFooterDialog } from "../custom-footer-dialog";
-import { CustomTextarea } from "../custom-inputs/textarea";
-import { CustomInputWithIcon } from "../custom-inputs/input-with-icon";
-import { PhoneInputWithIcon } from "../custom-inputs/phone-input-with-icon";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Instagram,
-  MessageCircle,
-  Linkedin,
   Facebook,
   Globe,
+  Instagram,
+  Linkedin,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { CustomFooterDialog } from "../custom-footer-dialog";
+import { CustomInput } from "../custom-inputs/input";
+import { CustomInputWithIcon } from "../custom-inputs/input-with-icon";
+import { PhoneInput } from "../custom-inputs/phone-input";
+import { PhoneInputWithIcon } from "../custom-inputs/phone-input-with-icon";
+import { CustomTextarea } from "../custom-inputs/textarea";
+import { CustomMultiSelect } from "../custom-selects/custom-multi-select";
+import { FileUpload } from "../file-upload";
 
 const getIndustrialGuideSchema = (isUpdate: boolean) =>
   z.object({
@@ -128,6 +129,13 @@ const getIndustrialGuideSchema = (isUpdate: boolean) =>
       .transform((val) => (val === "" ? null : val))
       .optional()
       .nullable(),
+    email: z
+      .string()
+      .email("Email inválido")
+      .or(z.literal(""))
+      .transform((val) => (val === "" ? null : val))
+      .optional()
+      .nullable(),
     created_at: z.string().optional().nullable(),
     updated_at: z.string().optional().nullable(),
   });
@@ -183,6 +191,7 @@ export const ModalIndustrialGuide = ({
       setValue("linkedin_url", industrialGuide.data.linkedin_url || "");
       setValue("facebook_url", industrialGuide.data.facebook_url || "");
       setValue("website_url", industrialGuide.data.website_url || "");
+      setValue("email", industrialGuide.data.email || "");
       setValue(
         "created_at",
         new Date(industrialGuide.data.created_at).toISOString().slice(0, 16)
@@ -455,13 +464,21 @@ export const ModalIndustrialGuide = ({
                   />
 
                   <CustomInputWithIcon
+                    name="email"
+                    label="Email"
+                    placeholder="contato@empresa.com"
+                    icon={Mail}
+                    disabled={view}
+                    description="Email de contato (Opcional)"
+                  />
+
+                  <CustomInputWithIcon
                     name="website_url"
                     label="Website"
                     placeholder="https://www.empresa.com.br"
                     icon={Globe}
                     disabled={view}
                     description="Site oficial da empresa (Opcional)"
-                    conteinerClassName="md:col-span-2"
                   />
                 </div>
               </div>

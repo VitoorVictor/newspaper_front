@@ -1,12 +1,10 @@
-import newsService from "@/services/news";
-import { ItemsSearch } from "@/components/items-seach";
-import categoryService from "@/services/category";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { NewsSecondaryEditorial } from "@/components/news";
 import {
   BannerSideSection,
   BannerTopSection,
 } from "@/components/banner-section";
+import { NewsSecondaryEditorial } from "@/components/news";
+import newsService from "@/services/news";
+import { formatDateTime } from "@/utils/formatDateTime";
 import Image from "next/image";
 
 interface NoticiasByCategoryPageProps {
@@ -19,16 +17,8 @@ export default async function NoticiasByCategoryPage({
   const { slug } = await params;
 
   const { data } = await newsService.getBySlug(slug);
-  const { data: dataCategories } = await categoryService.getAll();
   return (
     <div className="space-y-0">
-      {dataCategories && (
-        <ItemsSearch
-          data={dataCategories}
-          searchMode="redirect"
-          redirectBasePath="/noticias"
-        />
-      )}
       <div className="bg-gray-100 p-2">
         <div className="container mx-auto space-y-2 md:space-y-4">
           <div className="flex gap-4">
