@@ -63,7 +63,7 @@ export const useUpdateSector = (id: number) => {
   if (!id) null;
 
   return useMutation({
-    mutationFn: (data: Partial<ISector>) => sectorService.update(id, data),
+    mutationFn: (formData: FormData) => sectorService.update(id, formData),
     onSuccess: () => {
       toast.success("Setor atualizado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["sector"] });

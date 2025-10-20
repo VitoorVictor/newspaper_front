@@ -1,8 +1,23 @@
 "use client";
 
-import { IIndustrialGuide } from "@/interfaces/industrial-guide";
-import { ISector } from "@/interfaces/sector";
-import { getIndustrialGuideColumns, getSectorsColumns } from "./columns";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import AddBtn from "@/components/custom-btns/add-btn";
+import { CustomPagination } from "@/components/custom-pagination";
+import { GenericTable } from "@/components/generic-table";
+import { ModalIndustrialGuide } from "@/components/modals/modal-industrial-guide";
+import { ModalSector } from "@/components/modals/modal-sector";
+import { Title } from "@/components/page-header/title";
+import { SearchBar } from "@/components/search-bar";
+import { TableSkeleton } from "@/components/table-skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useDeleteIndustrialGuide,
   useIndustrialGuide,
@@ -12,27 +27,12 @@ import {
   useSectors,
   useSectorsPanel,
 } from "@/hooks/tanstackQuery/useSector";
-import { Title } from "@/components/page-header/title";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AddBtn from "@/components/custom-btns/add-btn";
-import { SearchBar } from "@/components/search-bar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { IIndustrialGuide } from "@/interfaces/industrial-guide";
+import { ISector } from "@/interfaces/sector";
 import { Filter } from "lucide-react";
-import { TableSkeleton } from "@/components/table-skeleton";
-import { GenericTable } from "@/components/generic-table";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { ModalSector } from "@/components/modals/modal-sector";
-import { useState } from "react";
-import { ModalIndustrialGuide } from "@/components/modals/modal-industrial-guide";
-import { CustomPagination } from "@/components/custom-pagination";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { getIndustrialGuideColumns, getSectorsColumns } from "./columns";
 
 export default function AdminGuiaIndustrialPage() {
   //page search params
@@ -48,6 +48,7 @@ export default function AdminGuiaIndustrialPage() {
     useState(false);
   const [showModalSector, setShowModalSector] = useState(false);
   const [viewIndustrialGuide, setViewIndustrialGuide] = useState(false);
+  const [viewSector, setViewSector] = useState(false);
   const [selectedIndustrialGuide, setSelectedIndustrialGuide] =
     useState<IIndustrialGuide | null>(null);
   const [selectedSector, setSelectedSector] = useState<ISector | null>(null);
@@ -85,6 +86,11 @@ export default function AdminGuiaIndustrialPage() {
     setShowModalIndustrialGuide(true);
     setViewIndustrialGuide(true);
   };
+  const handleViewSector = (item: ISector) => {
+    setSelectedSector(item);
+    setShowModalSector(true);
+    setViewSector(true);
+  };
   const handleEditIndustrialGuide = (item: IIndustrialGuide) => {
     setSelectedIndustrialGuide(item);
     setShowModalIndustrialGuide(true);
@@ -113,6 +119,7 @@ export default function AdminGuiaIndustrialPage() {
   const sectorsColumns = getSectorsColumns({
     onEdit: handleEditSector,
     onDelete: handleDeleteSector,
+    onView: handleViewSector,
   });
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -231,11 +238,13 @@ export default function AdminGuiaIndustrialPage() {
                     onOpenChange={(open) => {
                       setShowModalSector(open);
                       setSelectedSector(null);
+                      setViewSector(open);
                     }}
                     title={`${
                       selectedSector?.id ? "Atualizar " : "Novo "
                     } Setor`}
                     id={selectedSector?.id}
+                    view={viewSector}
                   />
                 )}
               </div>

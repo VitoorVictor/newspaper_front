@@ -1,10 +1,10 @@
 // src/columns/index.ts
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, Trash2 } from "lucide-react";
 import { IIndustrialGuide } from "@/interfaces/industrial-guide";
 import { ISector } from "@/interfaces/sector";
 import { formatPhone } from "@/utils/formatPhone";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
 // Colunas para Guia Industrial
 export const getIndustrialGuideColumns = ({
@@ -103,9 +103,11 @@ export const getIndustrialGuideColumns = ({
 
 // Colunas para Setores
 export const getSectorsColumns = ({
+  onView,
   onEdit,
   onDelete,
 }: {
+  onView: (item: ISector) => void;
   onEdit: (item: ISector) => void;
   onDelete: (item: ISector) => void;
 }) => [
@@ -120,6 +122,14 @@ export const getSectorsColumns = ({
     className: "text-right",
     render: (item: ISector) => (
       <div className="flex justify-end gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => onView(item)}
+        >
+          <Eye className="w-4 h-4" />
+        </Button>
         <Button
           variant="outline"
           size="sm"
