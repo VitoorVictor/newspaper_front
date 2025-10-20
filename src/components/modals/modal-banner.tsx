@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,14 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,15 +20,18 @@ import {
   useCreateBanner,
   useDeleteBanner,
 } from "@/hooks/tanstackQuery/useBanner";
-import { useState } from "react";
-import { CustomSelect } from "../custom-selects/custom-select";
-import { IBanner, IBannerImage } from "@/interfaces/banner";
-import { FileUpload } from "../file-upload";
-import { CustomCarousel } from "../custom-carousel";
+import { IBanner } from "@/interfaces/banner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { ConfirmDialog } from "../confirm-dialog";
+import { CustomCarousel } from "../custom-carousel";
 import { CustomFooterDialog } from "../custom-footer-dialog";
 import { CustomInput } from "../custom-inputs/input";
+import { CustomSelect } from "../custom-selects/custom-select";
+import { FileUpload } from "../file-upload";
 
 const bannerSchema = z.object({
   image_url: z.custom<File>((file) => file instanceof File && file.size > 0, {
@@ -194,65 +193,67 @@ export const ModalBanner = ({
             <Form {...form}>
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="h-full flex flex-col space-y-6"
+                className="h-full flex flex-col"
               >
-                {/* nome */}
-                <CustomSelect
-                  name="banner_id"
-                  label="Modelo de Banner"
-                  placeholder="Selecione o modelo do banner"
-                  data={banners.map((banner) => {
-                    return {
-                      ...banner,
-                      name:
-                        banner.name === "top"
-                          ? "Topo"
-                          : banner.name === "side"
-                          ? "Lateral"
-                          : banner.name.charAt(0).toUpperCase() +
-                            banner.name.slice(1),
-                    };
-                  })}
-                  fieldValue="id"
-                  fieldLabel="name"
-                  required
-                />
+                <div className="flex-1 max-h-[70vh] overflow-y-auto p-2 space-y-6">
+                  {/* nome */}
+                  <CustomSelect
+                    name="banner_id"
+                    label="Modelo de Banner"
+                    placeholder="Selecione o modelo do banner"
+                    data={banners.map((banner) => {
+                      return {
+                        ...banner,
+                        name:
+                          banner.name === "top"
+                            ? "Topo"
+                            : banner.name === "side"
+                            ? "Lateral"
+                            : banner.name.charAt(0).toUpperCase() +
+                              banner.name.slice(1),
+                      };
+                    })}
+                    fieldValue="id"
+                    fieldLabel="name"
+                    required
+                  />
 
-                {/* URL da Imagem */}
-                <FormField
-                  control={control}
-                  name="image_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Imagem *</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          accept="image/*"
-                          onFileSelect={(file) => {
-                            field.onChange(file);
-                          }}
-                          placeholder="Arraste uma imagem ou clique para selecionar"
-                          maxSize={2}
-                          bannerType={
-                            form.watch("banner_id")
-                              ? banners.find(
-                                  (b) => b.id === form.watch("banner_id")
-                                )?.name
-                              : undefined
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* URL do Link */}
-                <CustomInput
-                  name="link"
-                  label="URL do banner"
-                  placeholder="https://exemplo.com"
-                  description="Utilizado para redirecionar ao clicar no banner (Opcional)"
-                />
+                  {/* URL da Imagem */}
+                  <FormField
+                    control={control}
+                    name="image_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Imagem *</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            accept="image/*"
+                            onFileSelect={(file) => {
+                              field.onChange(file);
+                            }}
+                            placeholder="Arraste uma imagem ou clique para selecionar"
+                            maxSize={2}
+                            bannerType={
+                              form.watch("banner_id")
+                                ? banners.find(
+                                    (b) => b.id === form.watch("banner_id")
+                                  )?.name
+                                : undefined
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* URL do Link */}
+                  <CustomInput
+                    name="link"
+                    label="URL do banner"
+                    placeholder="https://exemplo.com"
+                    description="Utilizado para redirecionar ao clicar no banner (Opcional)"
+                  />
+                </div>
 
                 {/* Botões fixos na parte inferior */}
                 <CustomFooterDialog
