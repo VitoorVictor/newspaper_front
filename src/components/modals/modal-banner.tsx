@@ -129,7 +129,7 @@ export const ModalBanner = ({
   return (
     <>
       <Dialog open={true} onOpenChange={() => onOpenChange(false)}>
-        <DialogContent className="min-w-3xl">
+        <DialogContent className="md:min-w-3xl">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>
