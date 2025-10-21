@@ -35,9 +35,9 @@ export default async function NoticiasByCategoryPage({
             </div>
           </div>
           {/* Layout Principal com Conteúdo da Notícia e Banner Lateral */}
-          <div className="grid lg:grid-cols-4 gap-6">
+          <div className="grid lg:grid-cols-5 gap-6">
             {/* Conteúdo da Notícia - 3 colunas */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-4">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 {/* Imagem de capa */}
                 {data.image_url && (
@@ -152,7 +152,9 @@ export default async function NoticiasByCategoryPage({
 
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
-              <BannerSideSection />
+              <div className="sticky top-18">
+                <BannerSideSection />
+              </div>
             </div>
           </div>
           {data.related_news && data.related_news.length > 0 && (

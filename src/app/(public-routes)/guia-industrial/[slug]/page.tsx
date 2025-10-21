@@ -45,9 +45,9 @@ export default async function GuiaIndustrialBySlugPage({
             </div>
           </div>
           {/* Layout Principal com Conteúdo da Notícia e Banner Lateral */}
-          <div className="grid lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
             {/* Conteúdo do Guia Industrial - 3 colunas */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-4">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
                   {/* Logo e informações da empresa */}
@@ -265,7 +265,9 @@ export default async function GuiaIndustrialBySlugPage({
 
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
-              <BannerSideSection />
+              <div className="sticky top-18">
+                <BannerSideSection />
+              </div>
             </div>
           </div>
         </div>

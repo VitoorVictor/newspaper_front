@@ -1,17 +1,17 @@
-import newsService from "@/services/news";
-import { PageHeader } from "@/components/page-header";
+import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
+import { CustomPagination } from "@/components/custom-pagination";
+import { ItemsSearch } from "@/components/items-seach";
 import {
   NewsMain,
   NewsSecondary,
   NewsSecondaryEditorial,
 } from "@/components/news";
-import { ItemsSearch } from "@/components/items-seach";
+import { PageHeader } from "@/components/page-header";
 import categoryService from "@/services/category";
-import { CustomPagination } from "@/components/custom-pagination";
-import {
-  BannerSideSection,
-  BannerTopSection,
-} from "@/components/banner-section";
+import newsService from "@/services/news";
 import Image from "next/image";
 
 interface NoticiasByCategoryPageProps {
@@ -109,9 +109,9 @@ export default async function NoticiasByCategoryPage({
           </div>
 
           {data.data.length > 4 && (
-            <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
               {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
-              <div className="lg:col-span-3 space-y-6 md:space-y-8">
+              <div className="lg:col-span-4 space-y-6 md:space-y-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {data.data.slice(4).map((news) => (
                     <NewsSecondaryEditorial
@@ -128,7 +128,9 @@ export default async function NoticiasByCategoryPage({
 
               {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-18">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
           )}

@@ -1,18 +1,18 @@
 import {
+  BannerSideSection,
+  BannerTopSection,
+} from "@/components/banner-section";
+import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
+import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
+import { ItemsSearch } from "@/components/items-seach";
+import {
   NewsMain,
   NewsSecondary,
   NewsSecondaryEditorial,
 } from "@/components/news";
-import { ItemsSearch } from "@/components/items-seach";
 import { PageHeader } from "@/components/page-header";
 import categoryService from "@/services/category";
 import newsService from "@/services/news";
-import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
-import {
-  BannerSideSection,
-  BannerTopSection,
-} from "@/components/banner-section";
 import Image from "next/image";
 
 export default async function NoticiasPage() {
@@ -94,9 +94,9 @@ export default async function NoticiasPage() {
           </div>
 
           {hasNewsByCategory && (
-            <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
               {/* Conteúdo principal - Full width em mobile, 3 colunas em desktop */}
-              <div className="lg:col-span-3 space-y-8 md:space-y-10">
+              <div className="lg:col-span-4 space-y-8 md:space-y-10">
                 {editorias.map((section, idx) => {
                   if (section.news.length === 0) return null;
                   return (
@@ -138,7 +138,9 @@ export default async function NoticiasPage() {
 
               {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-32">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
           )}

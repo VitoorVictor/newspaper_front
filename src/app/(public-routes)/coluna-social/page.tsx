@@ -46,9 +46,9 @@ export default async function ColunaSocialPage({
         />
         {data.data.length > 0 && (
           <>
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6">
               {/* 3 colunas de cards */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {data.data.map((socialColumn) => (
                     <SocialEventCard
@@ -67,7 +67,9 @@ export default async function ColunaSocialPage({
 
               {/* Banner lateral */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-18">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
             <CustomPagination

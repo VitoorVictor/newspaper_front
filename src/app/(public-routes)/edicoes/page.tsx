@@ -66,7 +66,9 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
 
                 {/* Banner lateral */}
                 <div className="hidden lg:block col-span-1 order-last">
-                  <BannerSideSection />
+                  <div className="sticky top-18">
+                    <BannerSideSection />
+                  </div>
                 </div>
               </div>
               <CustomPagination

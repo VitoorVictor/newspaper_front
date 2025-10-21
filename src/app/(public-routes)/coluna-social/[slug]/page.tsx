@@ -1,11 +1,11 @@
-import { Title } from "@/components/page-header/title";
-import socialColumnService from "@/services/social-column";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
 import {
   BannerSideSection,
   BannerTopSection,
 } from "@/components/banner-section";
+import { Title } from "@/components/page-header/title";
+import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
+import socialColumnService from "@/services/social-column";
+import { formatDateTime } from "@/utils/formatDateTime";
 import Image from "next/image";
 
 interface ColunaSocialBySlugPageProps {
@@ -105,9 +105,9 @@ export default async function ColunaSocialBySlugPage({
             </div>
           </div>
           {data && (
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6">
               {/* 3 colunas de cards */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                   <SocialColumnImageGallery images={data.images || []} />
                 </div>
@@ -115,7 +115,9 @@ export default async function ColunaSocialBySlugPage({
 
               {/* Banner lateral */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-18">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
           )}
