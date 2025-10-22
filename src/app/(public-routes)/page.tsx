@@ -128,7 +128,7 @@ export default async function HomePage() {
 
                 <div className="flex justify-center">
                   <SeeMoreBtn
-                    path="/guias-industriais"
+                    path="/guia-industrial"
                     label="Ver guia completo"
                     className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
                     variant="outline"
