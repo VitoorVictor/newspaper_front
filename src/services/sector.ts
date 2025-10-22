@@ -1,7 +1,7 @@
-import { ISector } from "./../interfaces/sector";
-import { getCookie } from "cookies-next";
-import { createApi } from "./api";
 import axios from "axios";
+import { getCookie } from "cookies-next";
+import { ISector } from "./../interfaces/sector";
+import { createApi } from "./api";
 
 function getApiClient() {
   const token = getCookie("access_token");
@@ -20,13 +20,21 @@ const sectorService = {
     const api = getApiClient();
     return api.get<PaginatedResponse<ISector>>("/admin/sectors");
   },
-  create: (data: { name: string }) => {
+  create: (formData: FormData) => {
     const api = getApiClient();
-    return api.post<ISector>("/admin/sectors", data);
+    return api.post<ISector>("/admin/sectors", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
-  update: (id: number, data: Partial<{ name: string }>) => {
+  update: (id: number, formData: FormData) => {
     const api = getApiClient();
-    return api.put<ISector>(`/admin/sectors/${id}`, data);
+    return api.post<ISector>(`/admin/sectors/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
   delete: (id: number) => {
     const api = getApiClient();

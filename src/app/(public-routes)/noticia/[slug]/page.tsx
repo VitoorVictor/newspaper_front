@@ -1,12 +1,10 @@
-import newsService from "@/services/news";
-import { ItemsSearch } from "@/components/items-seach";
-import categoryService from "@/services/category";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { NewsSecondaryEditorial } from "@/components/news";
 import {
   BannerSideSection,
   BannerTopSection,
 } from "@/components/banner-section";
+import { NewsSecondaryEditorial } from "@/components/news";
+import newsService from "@/services/news";
+import { formatDateTime } from "@/utils/formatDateTime";
 import Image from "next/image";
 
 interface NoticiasByCategoryPageProps {
@@ -19,35 +17,27 @@ export default async function NoticiasByCategoryPage({
   const { slug } = await params;
 
   const { data } = await newsService.getBySlug(slug);
-  const { data: dataCategories } = await categoryService.getAll();
   return (
     <div className="space-y-0">
-      {dataCategories && (
-        <ItemsSearch
-          data={dataCategories}
-          searchMode="redirect"
-          redirectBasePath="/noticias"
-        />
-      )}
       <div className="bg-gray-100 p-2">
         <div className="container mx-auto space-y-2 md:space-y-4">
-        <div className="flex gap-4">
-          <div className="relative w-[30%] h-auto min-h-[100px]">
-            <Image
-              src="/orange_logo.png"
-              alt="Logo"
-              fill
-              className="object-contain transition-opacity duration-300"
-            />
+          <div className="flex gap-4">
+            <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
+              <Image
+                src="/orange_logo.png"
+                alt="Logo"
+                fill
+                className="object-contain transition-opacity duration-300"
+              />
+            </div>
+            <div className="w-full lg:w-[70%]">
+              <BannerTopSection />
+            </div>
           </div>
-          <div className="w-[70%]">
-            <BannerTopSection />
-          </div>
-        </div>
           {/* Layout Principal com Conteúdo da Notícia e Banner Lateral */}
-          <div className="grid lg:grid-cols-4 gap-6">
+          <div className="grid lg:grid-cols-5 gap-6">
             {/* Conteúdo da Notícia - 3 colunas */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-4">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 {/* Imagem de capa */}
                 {data.image_url && (
@@ -162,7 +152,9 @@ export default async function NoticiasByCategoryPage({
 
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
-              <BannerSideSection />
+              <div className="sticky top-18">
+                <BannerSideSection />
+              </div>
             </div>
           </div>
           {data.related_news && data.related_news.length > 0 && (

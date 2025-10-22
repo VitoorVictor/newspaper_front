@@ -17,6 +17,7 @@ export interface IIndustrialGuide {
   website_url?: string;
   linkedin_url?: string;
   whatsapp?: string;
+  email?: string;
   created_at: string;
   updated_at: string;
 }

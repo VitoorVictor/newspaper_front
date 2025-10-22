@@ -25,7 +25,7 @@ export default async function ColunaSocialPage({
     <div>
       <div className="container mx-auto my-8 px-4 space-y-6">
         <div className="flex gap-4">
-          <div className="relative w-[30%] h-auto min-h-[100px]">
+          <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
             <Image
               src="/orange_logo.png"
               alt="Logo"
@@ -33,7 +33,7 @@ export default async function ColunaSocialPage({
               className="object-contain transition-opacity duration-300"
             />
           </div>
-          <div className="w-[70%]">
+          <div className="w-full lg:w-[70%]">
             <BannerTopSection />
           </div>
         </div>
@@ -46,9 +46,9 @@ export default async function ColunaSocialPage({
         />
         {data.data.length > 0 && (
           <>
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6">
               {/* 3 colunas de cards */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {data.data.map((socialColumn) => (
                     <SocialEventCard
@@ -67,7 +67,9 @@ export default async function ColunaSocialPage({
 
               {/* Banner lateral */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-18">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
             <CustomPagination

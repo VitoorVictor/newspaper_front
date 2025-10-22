@@ -1,11 +1,11 @@
-import { Title } from "@/components/page-header/title";
-import socialColumnService from "@/services/social-column";
-import { formatDateTime } from "@/utils/formatDateTime";
-import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
 import {
   BannerSideSection,
   BannerTopSection,
 } from "@/components/banner-section";
+import { Title } from "@/components/page-header/title";
+import { SocialColumnImageGallery } from "@/components/social-column-image-gallery";
+import socialColumnService from "@/services/social-column";
+import { formatDateTime } from "@/utils/formatDateTime";
 import Image from "next/image";
 
 interface ColunaSocialBySlugPageProps {
@@ -21,19 +21,19 @@ export default async function ColunaSocialBySlugPage({
     <div className="space-y-0">
       <div className="bg-gray-100 p-2">
         <div className="container mx-auto space-y-2 md:space-y-4">
-        <div className="flex gap-4">
-          <div className="relative w-[30%] h-auto min-h-[100px]">
-            <Image
-              src="/orange_logo.png"
-              alt="Logo"
-              fill
-              className="object-contain transition-opacity duration-300"
-            />
+          <div className="flex gap-4">
+            <div className="relative w-[30%] h-auto min-h-[100px] hidden lg:block">
+              <Image
+                src="/orange_logo.png"
+                alt="Logo"
+                fill
+                className="object-contain transition-opacity duration-300"
+              />
+            </div>
+            <div className="w-full lg:w-[70%]">
+              <BannerTopSection />
+            </div>
           </div>
-          <div className="w-[70%]">
-            <BannerTopSection />
-          </div>
-        </div>
           <div className="border-b border-gray-200 pb-6">
             <div className="container mx-auto px-4">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -105,9 +105,9 @@ export default async function ColunaSocialBySlugPage({
             </div>
           </div>
           {data && (
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6">
               {/* 3 colunas de cards */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                   <SocialColumnImageGallery images={data.images || []} />
                 </div>
@@ -115,7 +115,9 @@ export default async function ColunaSocialBySlugPage({
 
               {/* Banner lateral */}
               <div className="hidden lg:block col-span-1 order-last">
-                <BannerSideSection />
+                <div className="sticky top-18">
+                  <BannerSideSection />
+                </div>
               </div>
             </div>
           )}

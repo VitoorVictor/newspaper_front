@@ -1,10 +1,7 @@
 "use client";
 
-import { Menu, Instagram, Twitter, Facebook, LogOut, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Facebook, Instagram, Menu, Twitter, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { LogoutBtn } from "../custom-btns/logout-btn";
 import { useSidebar } from "../ui/sidebar";
 
@@ -74,9 +74,8 @@ export function Navbar({ email }: { email: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary">
-      <div className="container flex h-16 items-center justify-between px-4 mx-auto">
-        {/* Seção esquerda - Ícone do menu + Logo */}
-        <div className="flex items-center gap-4">
+      <div className="container grid grid-cols-5 lg:grid-cols-7 h-16 items-center px-4 mx-auto">
+        <div className="flex items-center justify-start">
           <Button
             data-sidebar="trigger"
             data-slot="sidebar-trigger"
@@ -89,7 +88,45 @@ export function Navbar({ email }: { email: string }) {
             <Menu className="h-5 w-5" />
             <span className="sr-only">Trocar Sidebar</span>
           </Button>
-          {/* <Link href="/">
+        </div>
+
+        <nav className="hidden lg:flex items-center lg:justify-center gap-8 col-span-1 lg:col-span-5">
+          <div className="flex items-center gap-8">
+            <Link
+              href="/"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Início
+            </Link>
+            <Link
+              href="/noticias"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Notícias
+            </Link>
+            <Link
+              href="/guia-industrial"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Guia Industrial
+            </Link>
+            <Link
+              href="/coluna-social"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Coluna Empresarial
+            </Link>
+            <Link
+              href="/edicoes"
+              className="text-white hover:text-white/80 transition-colors font-medium"
+            >
+              Edições
+            </Link>
+          </div>
+        </nav>
+
+        <div className="lg:hidden col-span-3 flex justify-center items-center">
+          <Link href="/">
             <Image
               src="/orange_logo_border.png"
               alt="Logo"
@@ -98,45 +135,10 @@ export function Navbar({ email }: { email: string }) {
               className="h-8 w-auto object-contain"
               priority
             />
-          </Link> */}
+          </Link>
         </div>
 
-        {/* Seção central - Menu de navegação */}
-        <nav className="hidden lg:flex items-center gap-8">
-          <Link
-            href="/"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Início
-          </Link>
-          <Link
-            href="/noticias"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Notícias
-          </Link>
-          <Link
-            href="/guia-industrial"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Guia Industrial
-          </Link>
-          <Link
-            href="/coluna-social"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Coluna Empresarial
-          </Link>
-          <Link
-            href="/edicoes"
-            className="text-white hover:text-white/80 transition-colors font-medium"
-          >
-            Edições
-          </Link>
-        </nav>
-
-        {/* Seção direita - Redes sociais + Avatar (se logado) */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <div className="hidden lg:flex items-center gap-1">
             <SocialIcons />
           </div>
