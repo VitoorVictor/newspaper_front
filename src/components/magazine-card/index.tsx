@@ -23,17 +23,16 @@ export function MagazineCard({
   created_at,
   image,
 }: MagazineCardProps) {
-
   const handleClick = () => {
     window.open(`/edicoes/${slug}`, "_blank");
   };
 
   return (
     <Card
-      className="group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 bg-card border border-border/50 backdrop-blur-sm"
+      className="group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 bg-card border border-border/50 backdrop-blur-sm p-0"
       onClick={handleClick}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/30 to-muted/60">
+      <div className="relative w-full min-h-[400px] max-h-[500px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-muted/30 to-muted/60">
         <Image
           src={
             image ||
@@ -41,7 +40,7 @@ export function MagazineCard({
           }
           alt={title}
           fill
-          className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+          className="object-contain p-4 transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 

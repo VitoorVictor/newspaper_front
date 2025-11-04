@@ -31,7 +31,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<string | null>(null);
-  const [pageWidth, setPageWidth] = useState<number>(480);
+  const [pageWidth, setPageWidth] = useState<number | undefined>(480);
+  const [pageHeight, setPageHeight] = useState<number | undefined>(undefined);
   const [pageInput, setPageInput] = useState<string>("");
   const [zoom, setZoom] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
@@ -49,33 +50,36 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     audioRef.current.volume = 0.4; // volume inicial
   }, []);
 
-  // Detecta se é tela grande (md+) e ajusta largura do PDF
+  // Detecta se é tela grande (md+) e ajusta dimensões do PDF
   useEffect(() => {
     function handleResize() {
       const isLarge = window.innerWidth >= 768; // md breakpoint
       setIsLargeScreen(isLarge);
 
-      // Calcula largura base baseada na largura da tela
-      const screenWidth = window.innerWidth;
-      let baseWidth = screenWidth * 0.6; // 60% da largura da tela
-
-      // Limites mínimos e máximos por dispositivo
-      if (screenWidth <= 480) {
-        baseWidth = Math.max(300, screenWidth * 0.7); // mobile: 70% da tela, mínimo 300px
-      } else if (screenWidth <= 768) {
-        baseWidth = Math.max(400, screenWidth * 0.65); // tablet: 65% da tela, mínimo 400px
-      } else {
-        baseWidth = Math.max(500, screenWidth * 0.6); // desktop: 60% da tela, mínimo 500px
-      }
-
-      // Em telas grandes, divide a largura pela metade para caber duas páginas
       if (isLarge) {
-        baseWidth = baseWidth / 2;
-      }
+        // Em telas md+: usa 95% da altura e calcula largura automaticamente
+        const screenHeight = window.innerHeight;
+        const availableHeight = screenHeight * 0.95; // 95% da altura
+        const zoomedHeight = (availableHeight * zoom) / 100;
+        setPageHeight(zoomedHeight);
+        setPageWidth(undefined); // Width será calculado automaticamente pelo react-pdf
+      } else {
+        // Em telas pequenas: mantém comportamento original baseado em largura
+        const screenWidth = window.innerWidth;
+        let baseWidth = screenWidth * 0.6; // 60% da largura da tela
 
-      // Aplica o zoom na largura
-      const zoomedWidth = (baseWidth * zoom) / 100;
-      setPageWidth(zoomedWidth);
+        // Limites mínimos e máximos por dispositivo
+        if (screenWidth <= 480) {
+          baseWidth = Math.max(300, screenWidth * 0.7); // mobile: 70% da tela, mínimo 300px
+        } else if (screenWidth <= 768) {
+          baseWidth = Math.max(400, screenWidth * 0.65); // tablet: 65% da tela, mínimo 400px
+        }
+
+        // Aplica o zoom na largura
+        const zoomedWidth = (baseWidth * zoom) / 100;
+        setPageWidth(zoomedWidth);
+        setPageHeight(undefined);
+      }
     }
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -305,176 +309,97 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
   return (
     <div
-      className={`w-full mx-auto px-2 py-4 flex flex-col items-center gap-5 overflow-x-hidden ${className}`}
+      className={`w-full mx-auto ${
+        isLargeScreen
+          ? "h-[95vh] relative"
+          : "px-2 py-4 flex flex-col items-center gap-5"
+      } overflow-x-hidden ${className}`}
       onWheel={handleWheel}
     >
-      {/* Botões de ação */}
-      {pdfFile && (
-        <div className="flex flex-col gap-3 w-full">
-          {/* Primeira linha - Download e Abrir */}
+      {/* Layout para telas md+ */}
+      {isLargeScreen && pdfFile ? (
+        <>
+          {/* Botões de ação superiores */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-3">
+            <div className="flex gap-2 justify-center items-center bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+              <Button
+                onClick={handleZoomOut}
+                disabled={zoom <= 50}
+                size="icon"
+                variant="outline"
+                title="Diminuir zoom"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </Button>
 
-          {/* Segunda linha - Controles de Zoom e Rotação */}
-          <div className="flex gap-2 justify-center items-center">
-            <Button
-              onClick={handleZoomOut}
-              disabled={zoom <= 50}
-              size="icon"
-              variant="outline"
-              title="Diminuir zoom"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </Button>
+              <span className="text-sm font-medium min-w-[60px] text-center">
+                {zoom}%
+              </span>
 
-            <span className="text-sm font-medium min-w-[60px] text-center">
-              {zoom}%
-            </span>
+              <Button
+                onClick={handleZoomIn}
+                disabled={zoom >= 300}
+                size="icon"
+                variant="outline"
+                title="Aumentar zoom"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </Button>
 
-            <Button
-              onClick={handleZoomIn}
-              disabled={zoom >= 300}
-              size="icon"
-              variant="outline"
-              title="Aumentar zoom"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </Button>
+              <Button
+                onClick={handleZoomReset}
+                size="sm"
+                variant="outline"
+                title="Resetar zoom"
+              >
+                Reset
+              </Button>
 
-            <Button
-              onClick={handleZoomReset}
-              size="sm"
-              variant="outline"
-              title="Resetar zoom"
-            >
-              Reset
-            </Button>
+              <Button
+                onClick={handleRotate}
+                size="icon"
+                variant="outline"
+                title="Rotacionar"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
 
-            <Button
-              onClick={handleRotate}
-              size="icon"
-              variant="outline"
-              title="Rotacionar"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex gap-3 justify-center">
-            <Button
-              onClick={handleDownload}
-              className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-              size="sm"
-            >
-              <Download className="w-4 h-4" />
-              Baixar PDF
-            </Button>
+              <Button
+                onClick={handleDownload}
+                className="flex items-center gap-2"
+                size="sm"
+                variant="outline"
+              >
+                <Download className="w-4 h-4" />
+              </Button>
 
-            <Button
-              onClick={handleOpenInNewTab}
-              variant="outline"
-              className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-              size="sm"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Abrir PDF
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Visualização do PDF */}
-      <div
-        ref={pdfContainerRef}
-        className="overflow-y-auto overflow-x-hidden w-full"
-      >
-        <Document
-          file={pdfFile}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={onDocumentLoadError}
-          loading={PDFViewerLoading}
-        >
-          {/* Todas as páginas renderizadas, mas apenas as atuais visíveis */}
-          <div className="flex justify-center">
-            {allPages.map((pageNumber) => {
-              const pagesToShow = getPagesToShow();
-              const isVisible = pagesToShow.includes(pageNumber);
-              const indexInVisible = pagesToShow.indexOf(pageNumber);
-
-              return (
-                <div
-                  key={pageNumber}
-                  className={`flex-shrink-0 cursor-pointer ${
-                    isVisible ? "" : "hidden"
-                  }`}
-                  onClick={() =>
-                    isVisible
-                      ? handlePageClick(pageNumber, indexInVisible)
-                      : null
-                  }
-                >
-                  <Page
-                    pageNumber={pageNumber}
-                    renderAnnotationLayer={false}
-                    renderTextLayer={false}
-                    width={pageWidth}
-                    height={undefined}
-                    className="w-full h-auto object-contain"
-                    rotate={rotation}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </Document>
-      </div>
-
-      {/* Barra de Navegação */}
-      {numPages > 0 && (
-        <div className="flex flex-col items-center gap-3 w-full">
-          <div className="text-center text-sm text-gray-700 font-medium px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
-            {isLargeScreen ? (
-              <>
-                Páginas {getPagesToShow()[0]}-
-                {getPagesToShow()[getPagesToShow().length - 1]} de {numPages}
-              </>
-            ) : (
-              <>
-                Página {currentPage} de {numPages}
-              </>
-            )}
+              <Button
+                onClick={handleOpenInNewTab}
+                variant="outline"
+                size="icon"
+                title="Abrir PDF"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            <Button
-              onClick={() => goToPage(1)}
-              disabled={currentPage === 1}
-              size="icon"
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </Button>
-
+          {/* Botão de navegação esquerda */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
             <Button
               onClick={goToPreviousPages}
               disabled={currentPage === 1}
               size="icon"
+              variant="outline"
+              className="h-12 w-12 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white"
+              title="Página anterior"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-6 h-6" />
             </Button>
+          </div>
 
-            <form
-              onSubmit={handlePageInputSubmit}
-              className="flex items-center gap-1"
-            >
-              <input
-                type="number"
-                min="1"
-                max={numPages}
-                value={pageInput}
-                onChange={(e) => setPageInput(e.target.value)}
-                className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
-              />
-              <span className="text-xs text-gray-400">/</span>
-              <span className="text-xs text-gray-600">{numPages}</span>
-            </form>
-
+          {/* Botão de navegação direita */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
             <Button
               onClick={goToNextPages}
               disabled={
@@ -483,21 +408,296 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
                   : currentPage === numPages
               }
               size="icon"
+              variant="outline"
+              className="h-12 w-12 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white"
+              title="Próxima página"
             >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-
-            <Button
-              onClick={() =>
-                goToPage(isLargeScreen ? Math.max(1, numPages - 1) : numPages)
-              }
-              disabled={currentPage === numPages}
-              size="icon"
-            >
-              <ChevronsRight className="w-4 h-4" />
+              <ChevronRight className="w-6 h-6" />
             </Button>
           </div>
-        </div>
+
+          {/* Visualização do PDF */}
+          <div
+            ref={pdfContainerRef}
+            className="h-full overflow-y-auto overflow-x-hidden flex items-center justify-center"
+          >
+            <Document
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              loading={PDFViewerLoading}
+            >
+              <div className="flex justify-center items-center gap-2">
+                {allPages.map((pageNumber) => {
+                  const pagesToShow = getPagesToShow();
+                  const isVisible = pagesToShow.includes(pageNumber);
+                  const indexInVisible = pagesToShow.indexOf(pageNumber);
+
+                  return (
+                    <div
+                      key={pageNumber}
+                      className={`flex-shrink-0 cursor-pointer ${
+                        isVisible ? "" : "hidden"
+                      }`}
+                      onClick={() =>
+                        isVisible
+                          ? handlePageClick(pageNumber, indexInVisible)
+                          : null
+                      }
+                    >
+                      <Page
+                        pageNumber={pageNumber}
+                        renderAnnotationLayer={false}
+                        renderTextLayer={false}
+                        width={pageWidth}
+                        height={pageHeight}
+                        className="w-full h-auto object-contain"
+                        rotate={rotation}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </Document>
+          </div>
+
+          {/* Barra de navegação inferior */}
+          {numPages > 0 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+              <div className="flex flex-col items-center gap-3 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+                <div className="text-center text-sm text-gray-700 font-medium px-3 py-1">
+                  {isLargeScreen ? (
+                    <>
+                      Páginas {getPagesToShow()[0]}-
+                      {getPagesToShow()[getPagesToShow().length - 1]} de{" "}
+                      {numPages}
+                    </>
+                  ) : (
+                    <>
+                      Página {currentPage} de {numPages}
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => goToPage(1)}
+                    disabled={currentPage === 1}
+                    size="icon"
+                    variant="outline"
+                  >
+                    <ChevronsLeft className="w-4 h-4" />
+                  </Button>
+
+                  <form
+                    onSubmit={handlePageInputSubmit}
+                    className="flex items-center gap-1"
+                  >
+                    <input
+                      type="number"
+                      min="1"
+                      max={numPages}
+                      value={pageInput}
+                      onChange={(e) => setPageInput(e.target.value)}
+                      className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
+                    />
+                    <span className="text-xs text-gray-400">/</span>
+                    <span className="text-xs text-gray-600">{numPages}</span>
+                  </form>
+
+                  <Button
+                    onClick={() =>
+                      goToPage(
+                        isLargeScreen ? Math.max(1, numPages - 1) : numPages
+                      )
+                    }
+                    disabled={currentPage === numPages}
+                    size="icon"
+                    variant="outline"
+                  >
+                    <ChevronsRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Layout para telas pequenas (mantém comportamento original) */
+        <>
+          {/* Botões de ação */}
+          {pdfFile && (
+            <div className="flex flex-col gap-3 w-full">
+              <div className="flex gap-2 justify-center items-center">
+                <Button
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 50}
+                  size="icon"
+                  variant="outline"
+                  title="Diminuir zoom"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+
+                <span className="text-sm font-medium min-w-[60px] text-center">
+                  {zoom}%
+                </span>
+
+                <Button
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 300}
+                  size="icon"
+                  variant="outline"
+                  title="Aumentar zoom"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  onClick={handleZoomReset}
+                  size="sm"
+                  variant="outline"
+                  title="Resetar zoom"
+                >
+                  Reset
+                </Button>
+
+                <Button
+                  onClick={handleRotate}
+                  size="icon"
+                  variant="outline"
+                  title="Rotacionar"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex gap-3 justify-center">
+                <Button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 h-10 px-4 cursor-pointer"
+                  size="sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Baixar PDF
+                </Button>
+
+                <Button
+                  onClick={handleOpenInNewTab}
+                  variant="outline"
+                  className="flex items-center gap-2 h-10 px-4 cursor-pointer"
+                  size="sm"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Abrir PDF
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Visualização do PDF */}
+          <div
+            ref={pdfContainerRef}
+            className="overflow-y-auto overflow-x-hidden w-full"
+          >
+            <Document
+              file={pdfFile}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              loading={PDFViewerLoading}
+            >
+              <div className="flex justify-center">
+                {allPages.map((pageNumber) => {
+                  const pagesToShow = getPagesToShow();
+                  const isVisible = pagesToShow.includes(pageNumber);
+                  const indexInVisible = pagesToShow.indexOf(pageNumber);
+
+                  return (
+                    <div
+                      key={pageNumber}
+                      className={`flex-shrink-0 cursor-pointer ${
+                        isVisible ? "" : "hidden"
+                      }`}
+                      onClick={() =>
+                        isVisible
+                          ? handlePageClick(pageNumber, indexInVisible)
+                          : null
+                      }
+                    >
+                      <Page
+                        pageNumber={pageNumber}
+                        renderAnnotationLayer={false}
+                        renderTextLayer={false}
+                        width={pageWidth}
+                        height={pageHeight}
+                        className="w-full h-auto object-contain"
+                        rotate={rotation}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </Document>
+          </div>
+
+          {/* Barra de Navegação */}
+          {numPages > 0 && (
+            <div className="flex flex-col items-center gap-3 w-full">
+              <div className="text-center text-sm text-gray-700 font-medium px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
+                Página {currentPage} de {numPages}
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap justify-center">
+                <Button
+                  onClick={() => goToPage(1)}
+                  disabled={currentPage === 1}
+                  size="icon"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  onClick={goToPreviousPages}
+                  disabled={currentPage === 1}
+                  size="icon"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+
+                <form
+                  onSubmit={handlePageInputSubmit}
+                  className="flex items-center gap-1"
+                >
+                  <input
+                    type="number"
+                    min="1"
+                    max={numPages}
+                    value={pageInput}
+                    onChange={(e) => setPageInput(e.target.value)}
+                    className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
+                  />
+                  <span className="text-xs text-gray-400">/</span>
+                  <span className="text-xs text-gray-600">{numPages}</span>
+                </form>
+
+                <Button
+                  onClick={goToNextPages}
+                  disabled={currentPage === numPages}
+                  size="icon"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  onClick={() => goToPage(numPages)}
+                  disabled={currentPage === numPages}
+                  size="icon"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

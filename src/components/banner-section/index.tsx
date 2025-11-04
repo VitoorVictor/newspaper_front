@@ -1,8 +1,7 @@
 "use client";
 
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import { useBannerStore } from "@/stores";
-import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -10,8 +9,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card } from "@/components/ui/card";
+import { useBannerStore } from "@/stores";
 import { XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // Componente para banner top
 function BannerTopSection() {
@@ -89,7 +89,7 @@ function BannerSideSection() {
 
       {/* Seção de Banner Lateral */}
       {sideBanners && sideBanners.length > 0 && (
-        <div className="sticky top-40">
+        <div className="w-full h-full">
           <SimpleImageCarousel
             images={sideBanners}
             variant="vertical"
@@ -221,4 +221,4 @@ function BannerPopUpSection() {
 }
 
 // Exportações dos componentes
-export { BannerTopSection, BannerSideSection, BannerPopUpSection };
+export { BannerPopUpSection, BannerSideSection, BannerTopSection };
