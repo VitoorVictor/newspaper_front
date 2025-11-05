@@ -98,48 +98,50 @@ export default async function HomePage() {
 
         {/* Seção do Guia Industrial */}
         {sectors && sectors.length > 0 && (
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Conteúdo principal - 4 colunas */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  Setores Industriais
-                </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Conheça os principais setores industriais da região
-                </p>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Setores Industriais
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Conheça os principais setores industriais da região
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+              {/* Conteúdo principal - 4 colunas */}
+              <div className="lg:col-span-4 space-y-4">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {sectors.map((sector: any) => (
+                    <SectorCard
+                      key={sector.id}
+                      id={sector.id}
+                      name={sector.name}
+                      image={
+                        sector.image_url
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${sector.image_url}`
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {sectors.map((sector: any) => (
-                  <SectorCard
-                    key={sector.id}
-                    id={sector.id}
-                    name={sector.name}
-                    image={
-                      sector.image_url
-                        ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${sector.image_url}`
-                        : undefined
-                    }
-                  />
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <SeeMoreBtn
-                  path="/guia-industrial"
-                  label="Ver guia completo"
-                  className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-                  variant="outline"
-                />
+              {/* Banner lateral Industrial - 1 coluna */}
+              <div className="hidden lg:block col-span-1 h-full">
+                <div className="h-full flex">
+                  <BannerIndustrialSection />
+                </div>
               </div>
             </div>
 
-            {/* Banner lateral Industrial - 1 coluna */}
-            <div className="hidden lg:block col-span-1">
-              <div className="h-full">
-                <BannerIndustrialSection />
-              </div>
+            <div className="flex justify-center">
+              <SeeMoreBtn
+                path="/guia-industrial"
+                label="Ver guia completo"
+                className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                variant="outline"
+              />
             </div>
           </div>
         )}
@@ -157,45 +159,48 @@ export default async function HomePage() {
 
         {/* Seção da Coluna Empresarial */}
         {social_columns && social_columns.length > 0 && (
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Conteúdo principal - 4 colunas */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  Coluna Empresarial
-                </h2>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Coluna Empresarial
+              </h2>
+            </div>
+
+            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+              {/* Conteúdo principal - 4 colunas */}
+              <div className="lg:col-span-4">
+                <div className="grid lg:grid-cols-3 gap-6">
+                  {social_columns.map((socialColumn: any) => (
+                    <SocialEventCard
+                      key={socialColumn.id}
+                      title={socialColumn.title}
+                      slug={socialColumn.slug}
+                      photoCount={socialColumn.images.length}
+                      eventLogo={
+                        socialColumn.images.find(
+                          (sci: any) => sci.is_cover === 1
+                        )?.image_url || ""
+                      }
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-6">
-                {social_columns.map((socialColumn: any) => (
-                  <SocialEventCard
-                    key={socialColumn.id}
-                    title={socialColumn.title}
-                    slug={socialColumn.slug}
-                    photoCount={socialColumn.images.length}
-                    eventLogo={
-                      socialColumn.images.find((sci: any) => sci.is_cover === 1)
-                        ?.image_url || ""
-                    }
-                  />
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <SeeMoreBtn
-                  path="/coluna-social"
-                  label="Ver todos os eventos"
-                  className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-                  variant="outline"
-                />
+              {/* Banner lateral Empresarial - 1 coluna */}
+              <div className="hidden lg:block col-span-1 h-full">
+                <div className="h-full flex">
+                  <BannerEmpresarialSection />
+                </div>
               </div>
             </div>
 
-            {/* Banner lateral Empresarial - 1 coluna */}
-            <div className="hidden lg:block col-span-1">
-              <div className="h-full">
-                <BannerEmpresarialSection />
-              </div>
+            <div className="flex justify-center">
+              <SeeMoreBtn
+                path="/coluna-social"
+                label="Ver todos os eventos"
+                className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                variant="outline"
+              />
             </div>
           </div>
         )}
@@ -213,47 +218,47 @@ export default async function HomePage() {
 
         {/* Seção de Edições */}
         {magazines && magazines.length > 0 && (
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Conteúdo principal - 4 colunas */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  Edições
-                </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Acompanhe as edições da revista Imagem Industrial
-                </p>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Edições</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Acompanhe as edições da revista Imagem Industrial
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+              {/* Conteúdo principal - 4 colunas */}
+              <div className="lg:col-span-4">
+                <div className="grid lg:grid-cols-4 gap-6">
+                  {magazines.map((magazine: any) => (
+                    <MagazineCard
+                      key={magazine.id}
+                      id={magazine.id}
+                      title={magazine.title}
+                      slug={magazine.slug}
+                      image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.image_url}`}
+                      description={magazine.description}
+                      created_at={magazine.created_at}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="grid lg:grid-cols-4 gap-6">
-                {magazines.map((magazine: any) => (
-                  <MagazineCard
-                    key={magazine.id}
-                    id={magazine.id}
-                    title={magazine.title}
-                    slug={magazine.slug}
-                    image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${magazine.image_url}`}
-                    description={magazine.description}
-                    created_at={magazine.created_at}
-                  />
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <SeeMoreBtn
-                  path="/edicoes"
-                  label="Ver todas as edições"
-                  className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-                  variant="outline"
-                />
+              {/* Banner lateral Comercial - 1 coluna */}
+              <div className="hidden lg:block col-span-1 h-full">
+                <div className="h-full flex">
+                  <BannerComercialSection />
+                </div>
               </div>
             </div>
 
-            {/* Banner lateral Comercial - 1 coluna */}
-            <div className="hidden lg:block col-span-1">
-              <div className="h-full">
-                <BannerComercialSection />
-              </div>
+            <div className="flex justify-center">
+              <SeeMoreBtn
+                path="/edicoes"
+                label="Ver todas as edições"
+                className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                variant="outline"
+              />
             </div>
           </div>
         )}
