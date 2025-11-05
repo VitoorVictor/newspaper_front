@@ -13,7 +13,7 @@ interface SectorCardProps {
 export function SectorCard({ id, name, image }: SectorCardProps) {
   const router = useRouter();
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer space-y-0" onClick={() => router.push(`/guia-industrial?setor=${name}`)}>
+    <Card className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer gap-1" onClick={() => router.push(`/guia-industrial?setor=${name}`)}>
       {/* Imagem de capa */}
       <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
         {image ? (

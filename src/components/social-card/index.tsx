@@ -33,7 +33,7 @@ SocialEventCardProps) {
   const router = useRouter();
   return (
     <Card
-      className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden py-0 space-y-0"
+      className="hover:shadow-xl transition-all duration-300 group cursor-pointer bg-white h-full overflow-hidden py-0 gap-1"
       onClick={() => router.push(`/coluna-social/${slug}`)}
     >
       {/* Header com logo do evento - MANTÉM IGUAL */}
