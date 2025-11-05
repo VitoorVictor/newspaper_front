@@ -104,13 +104,13 @@ export default async function HomePage() {
                 Setores Industriais
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Conheça os principais setores industriais da região
+                Conheça os principais setores industriais do Brasil e região
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-5 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6 items-start">
               {/* Conteúdo principal - 4 colunas */}
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 w-full">
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {sectors.map((sector: any) => (
                     <SectorCard
@@ -128,12 +128,9 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Industrial - 1 coluna */}
-              <div className="hidden lg:block col-span-1">
-                <div
-                  className="sticky top-4 h-full"
-                  style={{ alignSelf: "start" }}
-                >
-                  <div className="h-full min-h-[600px] flex flex-col">
+              <div className="hidden lg:block col-span-1 w-full">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="min-h-[600px] flex flex-col">
                     <BannerIndustrialSection />
                   </div>
                 </div>
@@ -173,7 +170,7 @@ export default async function HomePage() {
 
             <div className="grid lg:grid-cols-5 gap-6 items-start">
               {/* Conteúdo principal - 4 colunas */}
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 w-full">
                 <div className="grid lg:grid-cols-3 gap-6">
                   {social_columns.map((socialColumn: any) => (
                     <SocialEventCard
@@ -192,12 +189,9 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Empresarial - 1 coluna */}
-              <div className="hidden lg:block col-span-1">
-                <div
-                  className="sticky top-4 h-full"
-                  style={{ alignSelf: "start" }}
-                >
-                  <div className="h-full min-h-[500px] flex flex-col">
+              <div className="hidden lg:block col-span-1 w-full">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="min-h-[500px] flex flex-col">
                     <BannerEmpresarialSection />
                   </div>
                 </div>
@@ -238,7 +232,7 @@ export default async function HomePage() {
 
             <div className="grid lg:grid-cols-5 gap-6 items-start">
               {/* Conteúdo principal - 4 colunas */}
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 w-full">
                 <div className="grid lg:grid-cols-4 gap-6">
                   {magazines.map((magazine: any) => (
                     <MagazineCard
@@ -255,12 +249,9 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Comercial - 1 coluna */}
-              <div className="hidden lg:block col-span-1">
-                <div
-                  className="sticky top-4 h-full"
-                  style={{ alignSelf: "start" }}
-                >
-                  <div className="h-full min-h-[500px] flex flex-col">
+              <div className="hidden lg:block col-span-1 w-full">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="min-h-[500px] flex flex-col">
                     <BannerComercialSection />
                   </div>
                 </div>
