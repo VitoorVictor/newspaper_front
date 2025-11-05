@@ -90,12 +90,15 @@ function BannerIndustrialSection() {
 
       {/* Seção de Banner Lateral Industrial */}
       {industrialBanners && industrialBanners.length > 0 && (
-        <div className="w-full h-full">
-          <SimpleImageCarousel
-            images={industrialBanners}
-            variant="vertical"
-            autoPlay={true}
-          />
+        <div className="w-full h-full flex">
+          <div className="w-full h-full">
+            <SimpleImageCarousel
+              images={industrialBanners}
+              variant="vertical"
+              autoPlay={true}
+              className="h-full"
+            />
+          </div>
         </div>
       )}
     </>
@@ -134,12 +137,15 @@ function BannerEmpresarialSection() {
 
       {/* Seção de Banner Lateral Empresarial */}
       {empresarialBanners && empresarialBanners.length > 0 && (
-        <div className="w-full h-full">
-          <SimpleImageCarousel
-            images={empresarialBanners}
-            variant="vertical"
-            autoPlay={true}
-          />
+        <div className="w-full h-full flex">
+          <div className="w-full h-full">
+            <SimpleImageCarousel
+              images={empresarialBanners}
+              variant="vertical"
+              autoPlay={true}
+              className="h-full"
+            />
+          </div>
         </div>
       )}
     </>
@@ -177,12 +183,15 @@ function BannerComercialSection() {
 
       {/* Seção de Banner Lateral Comercial */}
       {comercialBanners && comercialBanners.length > 0 && (
-        <div className="w-full h-full">
-          <SimpleImageCarousel
-            images={comercialBanners}
-            variant="vertical"
-            autoPlay={true}
-          />
+        <div className="w-full h-full flex">
+          <div className="w-full h-full">
+            <SimpleImageCarousel
+              images={comercialBanners}
+              variant="vertical"
+              autoPlay={true}
+              className="h-full"
+            />
+          </div>
         </div>
       )}
     </>

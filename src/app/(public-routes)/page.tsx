@@ -129,8 +129,11 @@ export default async function HomePage() {
 
               {/* Banner lateral Industrial - 1 coluna */}
               <div className="hidden lg:block col-span-1">
-                <div className="sticky top-4" style={{ alignSelf: "start" }}>
-                  <div className="h-full min-h-[600px]">
+                <div
+                  className="sticky top-4 h-full"
+                  style={{ alignSelf: "start" }}
+                >
+                  <div className="h-full min-h-[600px] flex flex-col">
                     <BannerIndustrialSection />
                   </div>
                 </div>
@@ -190,8 +193,11 @@ export default async function HomePage() {
 
               {/* Banner lateral Empresarial - 1 coluna */}
               <div className="hidden lg:block col-span-1">
-                <div className="sticky top-4" style={{ alignSelf: "start" }}>
-                  <div className="h-full min-h-[500px]">
+                <div
+                  className="sticky top-4 h-full"
+                  style={{ alignSelf: "start" }}
+                >
+                  <div className="h-full min-h-[500px] flex flex-col">
                     <BannerEmpresarialSection />
                   </div>
                 </div>
@@ -250,8 +256,11 @@ export default async function HomePage() {
 
               {/* Banner lateral Comercial - 1 coluna */}
               <div className="hidden lg:block col-span-1">
-                <div className="sticky top-4" style={{ alignSelf: "start" }}>
-                  <div className="h-full min-h-[500px]">
+                <div
+                  className="sticky top-4 h-full"
+                  style={{ alignSelf: "start" }}
+                >
+                  <div className="h-full min-h-[500px] flex flex-col">
                     <BannerComercialSection />
                   </div>
                 </div>
