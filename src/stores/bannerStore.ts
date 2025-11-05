@@ -1,11 +1,13 @@
-import { create } from "zustand";
-import { IBanner, IBannerTopSidePopUp } from "@/interfaces/banner";
+import { IBanner } from "@/interfaces/banner";
 import bannerService from "@/services/banner";
+import { create } from "zustand";
 
 interface BannerStore {
   // Estado separado para cada tipo de banner
   topBanners: { url: string; link: string }[];
-  sideBanners: { url: string; link: string }[];
+  industrialBanners: { url: string; link: string }[];
+  empresarialBanners: { url: string; link: string }[];
+  comercialBanners: { url: string; link: string }[];
   popUpBanners: { url: string; link: string }[];
   allBanners: IBanner[];
 
@@ -25,7 +27,9 @@ const CACHE_DURATION = 5 * 60 * 1000;
 export const useBannerStore = create<BannerStore>((set: any, get: any) => ({
   // Estado inicial
   topBanners: [],
-  sideBanners: [],
+  industrialBanners: [],
+  empresarialBanners: [],
+  comercialBanners: [],
   popUpBanners: [],
   allBanners: [],
   isLoading: false,
@@ -34,12 +38,21 @@ export const useBannerStore = create<BannerStore>((set: any, get: any) => ({
 
   // Buscar banners top e side
   fetchBanners: async () => {
-    const { lastFetch, topBanners, sideBanners, popUpBanners } = get();
+    const {
+      lastFetch,
+      topBanners,
+      industrialBanners,
+      empresarialBanners,
+      comercialBanners,
+      popUpBanners,
+    } = get();
 
     // Verificar se já temos dados em cache e se ainda são válidos
     if (
       (topBanners.length > 0 ||
-        sideBanners.length > 0 ||
+        industrialBanners.length > 0 ||
+        empresarialBanners.length > 0 ||
+        comercialBanners.length > 0 ||
         popUpBanners.length > 0) &&
       lastFetch &&
       Date.now() - lastFetch < CACHE_DURATION
@@ -51,9 +64,12 @@ export const useBannerStore = create<BannerStore>((set: any, get: any) => ({
 
     try {
       const response = await bannerService.getAllTopSide();
+      console.log(response.data);
       set({
         topBanners: response.data.top || [],
-        sideBanners: response.data.side || [],
+        industrialBanners: response.data["lateral industrial"] || [],
+        empresarialBanners: response.data["lateral empresarial"] || [],
+        comercialBanners: response.data["lateral comercial"] || [],
         popUpBanners: response.data["pop up"] || [],
         isLoading: false,
         lastFetch: Date.now(),

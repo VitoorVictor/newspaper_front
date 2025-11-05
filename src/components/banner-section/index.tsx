@@ -1,8 +1,7 @@
 "use client";
 
 import { SimpleImageCarousel } from "@/components/custom-carousel-banner";
-import { useBannerStore } from "@/stores";
-import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -10,8 +9,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card } from "@/components/ui/card";
+import { useBannerStore } from "@/stores";
 import { XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // Componente para banner top
 function BannerTopSection() {
@@ -58,16 +58,17 @@ function BannerTopSection() {
   );
 }
 
-// Componente para banner lateral
-function BannerSideSection() {
-  const { sideBanners, fetchBanners, isLoading, error } = useBannerStore();
+// Componente para banner lateral industrial
+function BannerIndustrialSection() {
+  const { industrialBanners, fetchBanners, isLoading, error } =
+    useBannerStore();
 
   useEffect(() => {
     fetchBanners();
   }, [fetchBanners]);
 
   // Se não há dados e não está carregando, retorna null
-  if (!isLoading && (!sideBanners || sideBanners.length === 0)) {
+  if (!isLoading && (!industrialBanners || industrialBanners.length === 0)) {
     return null;
   }
 
@@ -87,11 +88,98 @@ function BannerSideSection() {
         </div>
       )}
 
-      {/* Seção de Banner Lateral */}
-      {sideBanners && sideBanners.length > 0 && (
-        <div className="sticky top-40">
+      {/* Seção de Banner Lateral Industrial */}
+      {industrialBanners && industrialBanners.length > 0 && (
+        <div className="w-full h-full">
           <SimpleImageCarousel
-            images={sideBanners}
+            images={industrialBanners}
+            variant="vertical"
+            autoPlay={true}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
+// Componente para banner lateral empresarial
+function BannerEmpresarialSection() {
+  const { empresarialBanners, fetchBanners, isLoading, error } =
+    useBannerStore();
+
+  useEffect(() => {
+    fetchBanners();
+  }, [fetchBanners]);
+
+  // Se não há dados e não está carregando, retorna null
+  if (!isLoading && (!empresarialBanners || empresarialBanners.length === 0)) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Loading state para banners */}
+      {isLoading && (
+        <div className="w-full">
+          <div className="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+        </div>
+      )}
+
+      {/* Error state para banners */}
+      {error && (
+        <div className="w-full p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          Erro ao carregar banner lateral: {error}
+        </div>
+      )}
+
+      {/* Seção de Banner Lateral Empresarial */}
+      {empresarialBanners && empresarialBanners.length > 0 && (
+        <div className="w-full h-full">
+          <SimpleImageCarousel
+            images={empresarialBanners}
+            variant="vertical"
+            autoPlay={true}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
+// Componente para banner lateral comercial
+function BannerComercialSection() {
+  const { comercialBanners, fetchBanners, isLoading, error } = useBannerStore();
+
+  useEffect(() => {
+    fetchBanners();
+  }, [fetchBanners]);
+
+  // Se não há dados e não está carregando, retorna null
+  if (!isLoading && (!comercialBanners || comercialBanners.length === 0)) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Loading state para banners */}
+      {isLoading && (
+        <div className="w-full">
+          <div className="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+        </div>
+      )}
+
+      {/* Error state para banners */}
+      {error && (
+        <div className="w-full p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          Erro ao carregar banner lateral: {error}
+        </div>
+      )}
+
+      {/* Seção de Banner Lateral Comercial */}
+      {comercialBanners && comercialBanners.length > 0 && (
+        <div className="w-full h-full">
+          <SimpleImageCarousel
+            images={comercialBanners}
             variant="vertical"
             autoPlay={true}
           />
@@ -221,4 +309,10 @@ function BannerPopUpSection() {
 }
 
 // Exportações dos componentes
-export { BannerTopSection, BannerSideSection, BannerPopUpSection };
+export {
+  BannerComercialSection,
+  BannerEmpresarialSection,
+  BannerIndustrialSection,
+  BannerPopUpSection,
+  BannerTopSection,
+};

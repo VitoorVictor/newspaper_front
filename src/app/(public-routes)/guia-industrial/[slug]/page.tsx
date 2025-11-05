@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import industrialGuideService from "@/services/industrial-guide";
@@ -49,12 +49,12 @@ export default async function GuiaIndustrialBySlugPage({
             {/* Conteúdo do Guia Industrial - 3 colunas */}
             <div className="lg:col-span-4">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+                <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4">
                   {/* Logo e informações da empresa */}
-                  <div className="flex items-start gap-3 sm:gap-4 lg:gap-6">
+                  <div className="flex items-start gap-4 sm:gap-6 lg:gap-8">
                     {/* Logo da empresa fixo à esquerda */}
                     <div className="flex-shrink-0">
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                      <div className="relative w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden">
                         {data.image_url ? (
                           <Image
                             src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
@@ -63,7 +63,7 @@ export default async function GuiaIndustrialBySlugPage({
                             className="object-contain rounded-lg"
                           />
                         ) : (
-                          <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-400">
+                          <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-gray-400">
                             {data.name.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -94,8 +94,8 @@ export default async function GuiaIndustrialBySlugPage({
 
                   {/* Descrição da empresa */}
                   {data.description && (
-                    <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-                      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
+                    <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
                         Sobre a Empresa
                       </h2>
                       <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
@@ -105,14 +105,14 @@ export default async function GuiaIndustrialBySlugPage({
                   )}
 
                   {/* Informações de contato */}
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-2 sm:space-y-3">
                     {/* Endereço */}
                     {data.address && (
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
                         <div className="flex items-start gap-2 sm:gap-3">
                           <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mt-0.5 sm:mt-1 flex-shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2">
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">
                               Endereço
                             </h3>
                             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed break-words">
@@ -125,11 +125,11 @@ export default async function GuiaIndustrialBySlugPage({
 
                     {/* Telefone */}
                     {data.number && (
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
                         <div className="flex items-start gap-2 sm:gap-3">
                           <Phone className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 mt-0.5 sm:mt-1 flex-shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2">
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">
                               Telefone
                             </h3>
                             <p className="text-xs sm:text-sm text-gray-700 font-medium">
@@ -142,11 +142,11 @@ export default async function GuiaIndustrialBySlugPage({
 
                     {/* Website */}
                     {data.website_url && (
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
                         <div className="flex items-start gap-2 sm:gap-3">
                           <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 mt-0.5 sm:mt-1 flex-shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2">
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">
                               Website
                             </h3>
                             <a
@@ -164,11 +164,11 @@ export default async function GuiaIndustrialBySlugPage({
 
                     {/* Email */}
                     {data.email && (
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                      <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4">
                         <div className="flex items-start gap-2 sm:gap-3">
                           <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 mt-0.5 sm:mt-1 flex-shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 sm:mb-2">
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">
                               Email
                             </h3>
                             <a
@@ -188,8 +188,8 @@ export default async function GuiaIndustrialBySlugPage({
                     data.facebook_url ||
                     data.linkedin_url ||
                     data.whatsapp) && (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 sm:p-6">
-                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 text-center">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 sm:p-5">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3 text-center">
                         Redes Sociais
                       </h3>
                       <div className="flex justify-center gap-2 sm:gap-3 lg:gap-4 flex-wrap">
@@ -253,7 +253,7 @@ export default async function GuiaIndustrialBySlugPage({
                   )}
 
                   {/* Informações de cadastro */}
-                  <div className="border-t pt-4 sm:pt-6 text-center text-xs sm:text-sm text-gray-500">
+                  <div className="border-t pt-3 sm:pt-4 text-center text-xs sm:text-sm text-gray-500">
                     <p className="break-words">
                       Cadastrado em: {formatDateTime(data.created_at, false)} •
                       Atualizado em: {formatDateTime(data.updated_at, false)}
@@ -266,7 +266,7 @@ export default async function GuiaIndustrialBySlugPage({
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
               <div className="sticky top-18">
-                <BannerSideSection />
+                <BannerIndustrialSection />
               </div>
             </div>
           </div>

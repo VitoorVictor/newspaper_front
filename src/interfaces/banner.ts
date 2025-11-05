@@ -17,6 +17,8 @@ export interface IBannerImage {
 }
 export interface IBannerTopSidePopUp {
   top: { url: string; link: string }[];
-  side: { url: string; link: string }[];
+  "lateral industrial": { url: string; link: string }[];
+  "lateral empresarial": { url: string; link: string }[];
+  "lateral comercial": { url: string; link: string }[];
   "pop up": { url: string; link: string }[];
 }

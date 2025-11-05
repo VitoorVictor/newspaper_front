@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
@@ -67,7 +67,7 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
                 {/* Banner lateral */}
                 <div className="hidden lg:block col-span-1 order-last">
                   <div className="sticky top-18">
-                    <BannerSideSection />
+                    <BannerIndustrialSection />
                   </div>
                 </div>
               </div>
