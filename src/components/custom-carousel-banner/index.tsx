@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 interface BannerItem {
   url: string;
@@ -95,25 +95,17 @@ export function SimpleImageCarousel({
   const hasLink = bannerItems && getCurrentLink();
 
   const shouldFillHeight = className.includes("h-full");
-
+  
   return (
-    <div
-      className={`relative group ${className} ${
-        shouldFillHeight ? "h-full" : ""
-      }`}
-    >
-      <Card
-        className={`relative overflow-hidden p-0 ${
-          shouldFillHeight ? "h-full" : ""
-        }`}
-      >
+    <div className={`relative group ${className} ${shouldFillHeight ? "h-full" : ""}`}>
+      <Card className={`relative overflow-hidden p-0 ${shouldFillHeight ? "h-full" : ""}`}>
         <div
           className={`relative ${
-            isHorizontal
-              ? "aspect-[15/2]"
-              : shouldFillHeight
-              ? "h-full"
-              : "aspect-[9/16]"
+            isHorizontal 
+              ? "aspect-[15/2]" 
+              : shouldFillHeight 
+                ? "h-full" 
+                : "aspect-[8/16]"
           }`}
         >
           {/* Current Image */}
