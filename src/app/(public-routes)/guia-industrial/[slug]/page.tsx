@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import industrialGuideService from "@/services/industrial-guide";
@@ -51,10 +51,10 @@ export default async function GuiaIndustrialBySlugPage({
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4">
                   {/* Logo e informações da empresa */}
-                  <div className="flex items-start gap-3 sm:gap-4 lg:gap-6">
+                  <div className="flex items-start gap-4 sm:gap-6 lg:gap-8">
                     {/* Logo da empresa fixo à esquerda */}
                     <div className="flex-shrink-0">
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center">
+                      <div className="relative w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden">
                         {data.image_url ? (
                           <Image
                             src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
@@ -63,7 +63,7 @@ export default async function GuiaIndustrialBySlugPage({
                             className="object-contain rounded-lg"
                           />
                         ) : (
-                          <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-400">
+                          <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-gray-400">
                             {data.name.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -266,7 +266,7 @@ export default async function GuiaIndustrialBySlugPage({
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
               <div className="sticky top-18">
-                <BannerSideSection />
+                <BannerIndustrialSection />
               </div>
             </div>
           </div>

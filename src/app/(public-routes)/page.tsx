@@ -1,5 +1,7 @@
 import {
-  BannerSideSection,
+  BannerComercialSection,
+  BannerEmpresarialSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
@@ -42,54 +44,44 @@ export default async function HomePage() {
 
         {/* Notícias Principais */}
         {principais_noticias && principais_noticias.length > 0 && (
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Conteúdo principal - 4 colunas */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-3 gap-4 lg:max-h-[500px]">
-                {principais_noticias.map((news: any, index: number) => {
-                  if (index === 0)
-                    return (
-                      <NewsMain
-                        key={news.id}
-                        title={news.title}
-                        description={news.sub_title}
-                        badge={news.badge}
-                        time={news.created_at}
-                        image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                        className="sm:col-span-2 lg:col-span-7 lg:row-span-3"
-                        slug={news.slug}
-                      />
-                    );
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 lg:grid-rows-3 gap-4 lg:max-h-[500px]">
+              {principais_noticias.map((news: any, index: number) => {
+                if (index === 0)
                   return (
-                    <NewsSecondary
+                    <NewsMain
                       key={news.id}
                       title={news.title}
                       description={news.sub_title}
                       badge={news.badge}
                       time={news.created_at}
                       image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
-                      className="sm:col-span-1 lg:col-span-5"
+                      className="sm:col-span-2 lg:col-span-7 lg:row-span-3"
                       slug={news.slug}
                     />
                   );
-                })}
-              </div>
-
-              <div className="flex justify-center">
-                <SeeMoreBtn
-                  path="/noticias"
-                  label="Ver todas as notícias"
-                  className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
-                  variant="outline"
-                />
-              </div>
+                return (
+                  <NewsSecondary
+                    key={news.id}
+                    title={news.title}
+                    description={news.sub_title}
+                    badge={news.badge}
+                    time={news.created_at}
+                    image={`${process.env.NEXT_PUBLIC_IMAGE_URL}${news.image_url}`}
+                    className="sm:col-span-1 lg:col-span-5"
+                    slug={news.slug}
+                  />
+                );
+              })}
             </div>
 
-            {/* Banner lateral - 1 coluna */}
-            <div className="hidden lg:block col-span-1">
-              <div className="h-full">
-                <BannerSideSection />
-              </div>
+            <div className="flex justify-center">
+              <SeeMoreBtn
+                path="/noticias"
+                label="Ver todas as notícias"
+                className="h-10 border border-primary/20 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50"
+                variant="outline"
+              />
             </div>
           </div>
         )}
@@ -143,10 +135,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Banner lateral - 1 coluna */}
+            {/* Banner lateral Industrial - 1 coluna */}
             <div className="hidden lg:block col-span-1">
               <div className="h-full">
-                <BannerSideSection />
+                <BannerIndustrialSection />
               </div>
             </div>
           </div>
@@ -199,10 +191,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Banner lateral - 1 coluna */}
+            {/* Banner lateral Empresarial - 1 coluna */}
             <div className="hidden lg:block col-span-1">
               <div className="h-full">
-                <BannerSideSection />
+                <BannerEmpresarialSection />
               </div>
             </div>
           </div>
@@ -257,10 +249,10 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Banner lateral - 1 coluna */}
+            {/* Banner lateral Comercial - 1 coluna */}
             <div className="hidden lg:block col-span-1">
               <div className="h-full">
-                <BannerSideSection />
+                <BannerComercialSection />
               </div>
             </div>
           </div>

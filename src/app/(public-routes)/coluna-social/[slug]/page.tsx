@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import { Title } from "@/components/page-header/title";
@@ -116,7 +116,7 @@ export default async function ColunaSocialBySlugPage({
               {/* Banner lateral */}
               <div className="hidden lg:block col-span-1 order-last">
                 <div className="sticky top-18">
-                  <BannerSideSection />
+                  <BannerIndustrialSection />
                 </div>
               </div>
             </div>

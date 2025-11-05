@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
@@ -129,7 +129,7 @@ export default async function NoticiasByCategoryPage({
               {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
               <div className="hidden lg:block col-span-1 order-last">
                 <div className="sticky top-18">
-                  <BannerSideSection />
+                  <BannerIndustrialSection />
                 </div>
               </div>
             </div>

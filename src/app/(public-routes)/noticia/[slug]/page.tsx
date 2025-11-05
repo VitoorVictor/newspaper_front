@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import { NewsSecondaryEditorial } from "@/components/news";
@@ -153,7 +153,7 @@ export default async function NoticiasByCategoryPage({
             {/* Banner lateral - 1 coluna */}
             <div className="hidden lg:block col-span-1 order-last">
               <div className="sticky top-18">
-                <BannerSideSection />
+                <BannerIndustrialSection />
               </div>
             </div>
           </div>

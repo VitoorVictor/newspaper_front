@@ -1,17 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Download,
-  ExternalLink,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -23,9 +13,22 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface PDFClientProps {
   file: string;
   className?: string;
+  onControlsReady?: (controls: {
+    handleZoomIn: () => void;
+    handleZoomOut: () => void;
+    handleZoomReset: () => void;
+    handleRotate: () => void;
+    handleDownload: () => void;
+    handleOpenInNewTab: () => void;
+    zoom: number;
+  }) => void;
 }
 
-export default function PDFClient({ file, className = "" }: PDFClientProps) {
+export default function PDFClient({
+  file,
+  className = "",
+  onControlsReady,
+}: PDFClientProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,7 +36,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   const [pdfFile, setPdfFile] = useState<string | null>(null);
   const [pageWidth, setPageWidth] = useState<number | undefined>(480);
   const [pageHeight, setPageHeight] = useState<number | undefined>(undefined);
-  const [pageInput, setPageInput] = useState<string>("");
   const [zoom, setZoom] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
@@ -43,6 +45,12 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
 
   // Referência para o container do PDF
   const pdfContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Referência para onControlsReady para evitar loops infinitos
+  const onControlsReadyRef = useRef(onControlsReady);
+  useEffect(() => {
+    onControlsReadyRef.current = onControlsReady;
+  }, [onControlsReady]);
 
   useEffect(() => {
     // Carrega o som ao montar o componente
@@ -217,16 +225,6 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
-  // Função para navegar via input
-  function handlePageInputSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const pageNumber = parseInt(pageInput);
-    if (pageNumber >= 1 && pageNumber <= numPages) {
-      goToPage(pageNumber);
-      setPageInput("");
-    }
-  }
-
   // Função para lidar com clique nas páginas
   function handlePageClick(pageNumber: number, index: number) {
     if (isLargeScreen) {
@@ -249,13 +247,8 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
-  // Atualiza o input quando a página muda
-  useEffect(() => {
-    setPageInput(currentPage.toString());
-  }, [currentPage]);
-
   // Função para baixar o PDF
-  function handleDownload() {
+  const handleDownload = useCallback(() => {
     if (pdfFile) {
       const link = document.createElement("a");
       link.href = pdfFile;
@@ -264,32 +257,32 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
       link.click();
       document.body.removeChild(link);
     }
-  }
+  }, [pdfFile, currentPage]);
 
   // Função para abrir PDF em nova aba
-  function handleOpenInNewTab() {
+  const handleOpenInNewTab = useCallback(() => {
     if (pdfFile) {
       window.open(pdfFile, "_blank");
     }
-  }
+  }, [pdfFile]);
 
   // Funções de zoom
-  function handleZoomIn() {
+  const handleZoomIn = useCallback(() => {
     setZoom((prev) => Math.min(prev + 25, 300)); // máximo 300%
-  }
+  }, []);
 
-  function handleZoomOut() {
+  const handleZoomOut = useCallback(() => {
     setZoom((prev) => Math.max(prev - 25, 50)); // mínimo 50%
-  }
+  }, []);
 
-  function handleZoomReset() {
+  const handleZoomReset = useCallback(() => {
     setZoom(100);
-  }
+  }, []);
 
   // Função para rotacionar
-  function handleRotate() {
+  const handleRotate = useCallback(() => {
     setRotation((prev) => (prev + 90) % 360);
-  }
+  }, []);
 
   // Função para zoom com scroll do mouse
   function handleWheel(e: React.WheelEvent) {
@@ -303,6 +296,54 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
     }
   }
 
+  // Expõe as funções de controle quando disponível
+  // Usa um ref para rastrear se já foi inicializado
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (onControlsReadyRef.current && pdfFile && !loading) {
+      onControlsReadyRef.current({
+        handleZoomIn,
+        handleZoomOut,
+        handleZoomReset,
+        handleRotate,
+        handleDownload,
+        handleOpenInNewTab,
+        zoom,
+      });
+      initializedRef.current = true;
+    }
+  }, [
+    pdfFile,
+    loading,
+    handleZoomIn,
+    handleZoomOut,
+    handleZoomReset,
+    handleRotate,
+    handleDownload,
+    handleOpenInNewTab,
+  ]);
+
+  // Atualiza apenas o zoom quando já foi inicializado
+  useEffect(() => {
+    if (
+      onControlsReadyRef.current &&
+      initializedRef.current &&
+      pdfFile &&
+      !loading
+    ) {
+      onControlsReadyRef.current({
+        handleZoomIn,
+        handleZoomOut,
+        handleZoomReset,
+        handleRotate,
+        handleDownload,
+        handleOpenInNewTab,
+        zoom,
+      });
+    }
+  }, [zoom]);
+
   if (loading) return <PDFViewerLoading />;
   if (error) return <PDFViewerError />;
   if (!pdfFile) return null;
@@ -310,80 +351,13 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
   return (
     <div
       className={`w-full mx-auto ${
-        isLargeScreen
-          ? "h-[95vh] relative"
-          : "px-2 py-4 flex flex-col items-center gap-5"
+        isLargeScreen ? "h-[95vh] relative" : "min-h-screen flex flex-col"
       } overflow-x-hidden ${className}`}
       onWheel={handleWheel}
     >
       {/* Layout para telas md+ */}
       {isLargeScreen && pdfFile ? (
         <>
-          {/* Botões de ação superiores */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col gap-3">
-            <div className="flex gap-2 justify-center items-center bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
-              <Button
-                onClick={handleZoomOut}
-                disabled={zoom <= 50}
-                size="icon"
-                variant="outline"
-                title="Diminuir zoom"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-
-              <span className="text-sm font-medium min-w-[60px] text-center">
-                {zoom}%
-              </span>
-
-              <Button
-                onClick={handleZoomIn}
-                disabled={zoom >= 300}
-                size="icon"
-                variant="outline"
-                title="Aumentar zoom"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-
-              <Button
-                onClick={handleZoomReset}
-                size="sm"
-                variant="outline"
-                title="Resetar zoom"
-              >
-                Reset
-              </Button>
-
-              <Button
-                onClick={handleRotate}
-                size="icon"
-                variant="outline"
-                title="Rotacionar"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </Button>
-
-              <Button
-                onClick={handleDownload}
-                className="flex items-center gap-2"
-                size="sm"
-                variant="outline"
-              >
-                <Download className="w-4 h-4" />
-              </Button>
-
-              <Button
-                onClick={handleOpenInNewTab}
-                variant="outline"
-                size="icon"
-                title="Abrir PDF"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
           {/* Botão de navegação esquerda */}
           <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
             <Button
@@ -460,144 +434,14 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
               </div>
             </Document>
           </div>
-
-          {/* Barra de navegação inferior */}
-          {numPages > 0 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-              <div className="flex flex-col items-center gap-3 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-                <div className="text-center text-sm text-gray-700 font-medium px-3 py-1">
-                  {isLargeScreen ? (
-                    <>
-                      Páginas {getPagesToShow()[0]}-
-                      {getPagesToShow()[getPagesToShow().length - 1]} de{" "}
-                      {numPages}
-                    </>
-                  ) : (
-                    <>
-                      Página {currentPage} de {numPages}
-                    </>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => goToPage(1)}
-                    disabled={currentPage === 1}
-                    size="icon"
-                    variant="outline"
-                  >
-                    <ChevronsLeft className="w-4 h-4" />
-                  </Button>
-
-                  <form
-                    onSubmit={handlePageInputSubmit}
-                    className="flex items-center gap-1"
-                  >
-                    <input
-                      type="number"
-                      min="1"
-                      max={numPages}
-                      value={pageInput}
-                      onChange={(e) => setPageInput(e.target.value)}
-                      className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
-                    />
-                    <span className="text-xs text-gray-400">/</span>
-                    <span className="text-xs text-gray-600">{numPages}</span>
-                  </form>
-
-                  <Button
-                    onClick={() =>
-                      goToPage(
-                        isLargeScreen ? Math.max(1, numPages - 1) : numPages
-                      )
-                    }
-                    disabled={currentPage === numPages}
-                    size="icon"
-                    variant="outline"
-                  >
-                    <ChevronsRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
         </>
       ) : (
-        /* Layout para telas pequenas (mantém comportamento original) */
+        /* Layout para telas pequenas */
         <>
-          {/* Botões de ação */}
-          {pdfFile && (
-            <div className="flex flex-col gap-3 w-full">
-              <div className="flex gap-2 justify-center items-center">
-                <Button
-                  onClick={handleZoomOut}
-                  disabled={zoom <= 50}
-                  size="icon"
-                  variant="outline"
-                  title="Diminuir zoom"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-
-                <span className="text-sm font-medium min-w-[60px] text-center">
-                  {zoom}%
-                </span>
-
-                <Button
-                  onClick={handleZoomIn}
-                  disabled={zoom >= 300}
-                  size="icon"
-                  variant="outline"
-                  title="Aumentar zoom"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-
-                <Button
-                  onClick={handleZoomReset}
-                  size="sm"
-                  variant="outline"
-                  title="Resetar zoom"
-                >
-                  Reset
-                </Button>
-
-                <Button
-                  onClick={handleRotate}
-                  size="icon"
-                  variant="outline"
-                  title="Rotacionar"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="flex gap-3 justify-center">
-                <Button
-                  onClick={handleDownload}
-                  className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-                  size="sm"
-                >
-                  <Download className="w-4 h-4" />
-                  Baixar PDF
-                </Button>
-
-                <Button
-                  onClick={handleOpenInNewTab}
-                  variant="outline"
-                  className="flex items-center gap-2 h-10 px-4 cursor-pointer"
-                  size="sm"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  Abrir PDF
-                </Button>
-              </div>
-            </div>
-          )}
-
           {/* Visualização do PDF */}
           <div
             ref={pdfContainerRef}
-            className="overflow-y-auto overflow-x-hidden w-full"
+            className="overflow-y-auto overflow-x-hidden w-full flex-1"
           >
             <Document
               file={pdfFile}
@@ -639,64 +483,34 @@ export default function PDFClient({ file, className = "" }: PDFClientProps) {
             </Document>
           </div>
 
-          {/* Barra de Navegação */}
-          {numPages > 0 && (
-            <div className="flex flex-col items-center gap-3 w-full">
-              <div className="text-center text-sm text-gray-700 font-medium px-3 py-1 bg-gray-50 rounded-md border border-gray-200">
-                Página {currentPage} de {numPages}
-              </div>
+          {/* Botões de navegação na parte inferior para mobile */}
+          <div className="w-full flex justify-center items-center gap-4 py-4 bg-white/90 backdrop-blur-sm border-t border-gray-200">
+            <Button
+              onClick={goToPreviousPages}
+              disabled={currentPage === 1}
+              size="icon"
+              variant="outline"
+              className="h-12 w-12"
+              title="Página anterior"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </Button>
 
-              <div className="flex items-center gap-2 flex-wrap justify-center">
-                <Button
-                  onClick={() => goToPage(1)}
-                  disabled={currentPage === 1}
-                  size="icon"
-                >
-                  <ChevronsLeft className="w-4 h-4" />
-                </Button>
+            <span className="text-sm font-medium text-gray-700 min-w-[80px] text-center">
+              {currentPage} / {numPages}
+            </span>
 
-                <Button
-                  onClick={goToPreviousPages}
-                  disabled={currentPage === 1}
-                  size="icon"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-
-                <form
-                  onSubmit={handlePageInputSubmit}
-                  className="flex items-center gap-1"
-                >
-                  <input
-                    type="number"
-                    min="1"
-                    max={numPages}
-                    value={pageInput}
-                    onChange={(e) => setPageInput(e.target.value)}
-                    className="w-12 h-8 text-center text-sm border border-gray-300 rounded"
-                  />
-                  <span className="text-xs text-gray-400">/</span>
-                  <span className="text-xs text-gray-600">{numPages}</span>
-                </form>
-
-                <Button
-                  onClick={goToNextPages}
-                  disabled={currentPage === numPages}
-                  size="icon"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-
-                <Button
-                  onClick={() => goToPage(numPages)}
-                  disabled={currentPage === numPages}
-                  size="icon"
-                >
-                  <ChevronsRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          )}
+            <Button
+              onClick={goToNextPages}
+              disabled={currentPage === numPages}
+              size="icon"
+              variant="outline"
+              className="h-12 w-12"
+              title="Próxima página"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </Button>
+          </div>
         </>
       )}
     </div>

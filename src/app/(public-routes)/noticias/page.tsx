@@ -1,5 +1,5 @@
 import {
-  BannerSideSection,
+  BannerIndustrialSection,
   BannerTopSection,
 } from "@/components/banner-section";
 import SeeMoreBtn from "@/components/custom-btns/see-more-btn";
@@ -139,7 +139,7 @@ export default async function NoticiasPage() {
               {/* Banner lateral - Full width em mobile, 1 coluna em desktop */}
               <div className="hidden lg:block col-span-1 order-last">
                 <div className="sticky top-32">
-                  <BannerSideSection />
+                  <BannerIndustrialSection />
                 </div>
               </div>
             </div>
