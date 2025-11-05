@@ -18,7 +18,7 @@ export function SectorCard({ id, name, image }: SectorCardProps) {
       onClick={() => router.push(`/guia-industrial?setor=${name}`)}
     >
       {/* Imagem de capa */}
-      <div className="relative w-full h-32 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+      <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
         {image ? (
           <Image
             src={image}
