@@ -42,7 +42,7 @@ export function SectorCard({ id, name, image }: SectorCardProps) {
 
       <CardContent className="p-4 flex-1 flex flex-col justify-center">
         {/* Nome do setor */}
-        <h3 className="font-bold text-sm xl:text-base 2xl:text-lg text-gray-900 text-center transition-colors line-clamp-2 leading-tight">
+        <h3 className="font-bold text-sm 2xl:text-lg text-gray-900 text-center transition-colors line-clamp-2 leading-tight">
           {name}
         </h3>
       </CardContent>
