@@ -105,7 +105,7 @@ export function SimpleImageCarousel({
               ? "aspect-[15/2]" 
               : shouldFillHeight 
                 ? "h-full" 
-                : "aspect-[8/16]"
+                : "aspect-[9/16]"
           }`}
         >
           {/* Current Image */}
