@@ -13,23 +13,16 @@ interface SectorCardProps {
 export function SectorCard({ id, name, image }: SectorCardProps) {
   const router = useRouter();
   return (
-    <Card
-      className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer gap-1"
-      onClick={() => router.push(`/guia-industrial?setor=${name}`)}
-    >
+    <Card className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer" onClick={() => router.push(`/guia-industrial?setor=${name}`)}>
       {/* Imagem de capa */}
-      <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden flex items-center justify-center">
+      <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
         {image ? (
-          <>
-            <Image
-              src={image}
-              alt={name}
-              fill
-              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
-            />
-            {/* Overlay gradiente sutil */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-          </>
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-20 h-20 bg-white/80 rounded-full flex items-center justify-center">
@@ -39,9 +32,12 @@ export function SectorCard({ id, name, image }: SectorCardProps) {
             </div>
           </div>
         )}
+
+        {/* Overlay gradiente sutil */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
       </div>
 
-      <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-center">
+      <CardContent className="p-4 flex-1 flex flex-col justify-center">
         {/* Nome do setor */}
         <h3 className="font-bold text-lg text-gray-900 text-center transition-colors line-clamp-2 leading-tight">
           {name}
