@@ -29,7 +29,7 @@ export function MagazineCard({
 
   return (
     <Card
-      className="group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 bg-card border border-border/50 backdrop-blur-sm p-0"
+      className="group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 bg-card border border-border/50 backdrop-blur-sm p-0 gap-1"
       onClick={handleClick}
     >
       <div className="relative w-full overflow-hidden bg-gradient-to-br from-muted/30 to-muted/60">
@@ -67,7 +67,7 @@ export function MagazineCard({
         </div>
       </div>
 
-      <CardContent className="p-4 space-y-3 bg-gradient-to-b from-card to-card/80">
+      <CardContent className="p-4 pt-0 space-y-3 bg-gradient-to-b from-card to-card/80">
         {description && (
           <div>
             <p className="text-muted-foreground leading-relaxed line-clamp-2 text-sm">
