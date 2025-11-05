@@ -32,7 +32,7 @@ export function IndustryCard({
 
   return (
     <Card
-      className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer"
+      className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 shadow-md cursor-pointer gap-1"
       onClick={() => router.push(`/guia-industrial/${slug}`)}
     >
       {/* Imagem de capa */}
