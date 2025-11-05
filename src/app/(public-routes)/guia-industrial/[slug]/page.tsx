@@ -51,23 +51,9 @@ export default async function GuiaIndustrialBySlugPage({
             <div className="lg:col-span-4 w-full">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4">
-                  {/* Imagem de capa da empresa (se houver) */}
-                  {data.image_url && (
-                    <div className="relative w-full h-48 lg:h-64 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg overflow-hidden mb-4">
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
-                        alt={data.name}
-                        fill
-                        className="object-cover"
-                      />
-                      {/* Overlay gradiente sutil */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                    </div>
-                  )}
-
-                  {/* Logo e informações da empresa */}
+                  {/* Logo, Título e Imagem da empresa */}
                   <div className="flex items-start gap-4 sm:gap-6">
-                    {/* Logo da empresa (quando não tem imagem de capa) */}
+                    {/* Logo da empresa (quando não tem imagem) */}
                     {!data.image_url && (
                       <div className="flex-shrink-0">
                         <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden">
@@ -98,6 +84,20 @@ export default async function GuiaIndustrialBySlugPage({
                         </div>
                       )}
                     </div>
+
+                    {/* Imagem da empresa (se houver) - Alinhada à direita */}
+                    {data.image_url && (
+                      <div className="flex-shrink-0 ml-4">
+                        <div className="h-52 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg overflow-hidden flex items-center justify-end px-2">
+                          <img
+                            src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
+                            alt={data.name}
+                            className="object-contain h-full max-h-52 w-auto"
+                            style={{ maxWidth: "100%" }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Descrição da empresa */}
