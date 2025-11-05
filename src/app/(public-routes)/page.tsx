@@ -108,9 +108,9 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+            <div className="grid lg:grid-cols-5 gap-6">
               {/* Conteúdo principal - 4 colunas */}
-              <div className="lg:col-span-4 space-y-4">
+              <div className="lg:col-span-4">
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {sectors.map((sector: any) => (
                     <SectorCard
@@ -128,9 +128,11 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Industrial - 1 coluna */}
-              <div className="hidden lg:block col-span-1 h-full">
-                <div className="h-full flex">
-                  <BannerIndustrialSection />
+              <div className="hidden lg:block col-span-1">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="h-full min-h-[600px]">
+                    <BannerIndustrialSection />
+                  </div>
                 </div>
               </div>
             </div>
@@ -166,7 +168,7 @@ export default async function HomePage() {
               </h2>
             </div>
 
-            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+            <div className="grid lg:grid-cols-5 gap-6 items-start">
               {/* Conteúdo principal - 4 colunas */}
               <div className="lg:col-span-4">
                 <div className="grid lg:grid-cols-3 gap-6">
@@ -187,9 +189,11 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Empresarial - 1 coluna */}
-              <div className="hidden lg:block col-span-1 h-full">
-                <div className="h-full flex">
-                  <BannerEmpresarialSection />
+              <div className="hidden lg:block col-span-1">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="h-full min-h-[500px]">
+                    <BannerEmpresarialSection />
+                  </div>
                 </div>
               </div>
             </div>
@@ -226,7 +230,7 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+            <div className="grid lg:grid-cols-5 gap-6 items-start">
               {/* Conteúdo principal - 4 colunas */}
               <div className="lg:col-span-4">
                 <div className="grid lg:grid-cols-4 gap-6">
@@ -245,9 +249,11 @@ export default async function HomePage() {
               </div>
 
               {/* Banner lateral Comercial - 1 coluna */}
-              <div className="hidden lg:block col-span-1 h-full">
-                <div className="h-full flex">
-                  <BannerComercialSection />
+              <div className="hidden lg:block col-span-1">
+                <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                  <div className="h-full min-h-[500px]">
+                    <BannerComercialSection />
+                  </div>
                 </div>
               </div>
             </div>
