@@ -27,6 +27,7 @@ export default async function GuiaIndustrialBySlugPage({
   const { slug } = await params;
 
   const { data } = await industrialGuideService.getBySlug(slug);
+  console.log(data);
   return (
     <div className="space-y-0">
       <div className="bg-gray-100 p-1 sm:p-2">
@@ -45,30 +46,37 @@ export default async function GuiaIndustrialBySlugPage({
             </div>
           </div>
           {/* Layout Principal com Conteúdo da Notícia e Banner Lateral */}
-          <div className="grid lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 items-start">
             {/* Conteúdo do Guia Industrial - 3 colunas */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 w-full">
               <article className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4">
+                  {/* Imagem de capa da empresa (se houver) */}
+                  {data.image_url && (
+                    <div className="relative w-full h-48 lg:h-64 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg overflow-hidden mb-4">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
+                        alt={data.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {/* Overlay gradiente sutil */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                    </div>
+                  )}
+
                   {/* Logo e informações da empresa */}
-                  <div className="flex items-start gap-4 sm:gap-6 lg:gap-8">
-                    {/* Logo da empresa fixo à esquerda */}
-                    <div className="flex-shrink-0">
-                      <div className="relative w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden">
-                        {data.image_url ? (
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${data.image_url}`}
-                            alt={data.name}
-                            fill
-                            className="object-contain rounded-lg"
-                          />
-                        ) : (
-                          <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-gray-400">
+                  <div className="flex items-start gap-4 sm:gap-6">
+                    {/* Logo da empresa (quando não tem imagem de capa) */}
+                    {!data.image_url && (
+                      <div className="flex-shrink-0">
+                        <div className="relative w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gray-50 rounded-lg border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+                          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-400">
                             {data.name.charAt(0).toUpperCase()}
                           </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Título e setores */}
                     <div className="flex-1 min-w-0">
@@ -264,9 +272,11 @@ export default async function GuiaIndustrialBySlugPage({
             </div>
 
             {/* Banner lateral - 1 coluna */}
-            <div className="hidden lg:block col-span-1 order-last">
-              <div className="sticky top-18">
-                <BannerIndustrialSection />
+            <div className="hidden lg:block col-span-1 w-full">
+              <div className="sticky top-4" style={{ alignSelf: "start" }}>
+                <div className="w-full min-h-[500px] flex flex-col">
+                  <BannerIndustrialSection />
+                </div>
               </div>
             </div>
           </div>

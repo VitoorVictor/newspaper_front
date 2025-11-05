@@ -3,7 +3,7 @@ import {
   BannerTopSection,
 } from "@/components/banner-section";
 import { CustomPagination } from "@/components/custom-pagination";
-import { IndustryCard } from "@/components/industry-card.tsx";
+import { IndustryCard } from "@/components/industry-card";
 import { ItemsSearch } from "@/components/items-seach";
 import { PageHeader } from "@/components/page-header";
 import industrialGuideService from "@/services/industrial-guide";
