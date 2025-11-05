@@ -52,7 +52,7 @@ export default async function GuiaIndustrialPage({
           </div>
           <PageHeader
             title="Guia Industrial"
-            subtitle="Vejas as industrias de Umuarama e região."
+            subtitle="Descubra as principais indústrias que se destacam no ramo de tintas."
             placeholder="Buscar industrias, setores, nome..."
             quickSearch={dataSectors.slice(0, 5).map((sector) => sector.name)}
             searchMode="query"
