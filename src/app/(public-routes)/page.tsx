@@ -192,7 +192,7 @@ export default async function HomePage() {
               <div className="hidden lg:block col-span-1 w-full">
                 <div className="sticky top-4" style={{ alignSelf: "start" }}>
                   <div className="min-h-0 flex flex-col">
-                    <BannerIndustrialSection />
+                    <BannerEmpresarialSection />
                   </div>
                 </div>
               </div>
@@ -252,7 +252,7 @@ export default async function HomePage() {
               <div className="hidden lg:block col-span-1 w-full">
                 <div className="sticky top-4" style={{ alignSelf: "start" }}>
                   <div className="min-h-0 flex flex-col">
-                    <BannerIndustrialSection />
+                    <BannerComercialSection />
                   </div>
                 </div>
               </div>
