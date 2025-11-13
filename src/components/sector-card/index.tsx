@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SectorCardProps {
   id: number;
@@ -12,10 +12,20 @@ interface SectorCardProps {
 
 export function SectorCard({ id, name, image }: SectorCardProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleClick = () => {
+    if (!name.trim()) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("setor", name);
+    router.push(`/guia-industrial?${params.toString()}`);
+  };
+
   return (
     <Card
       className="hover:shadow-xl transition-all duration-300 group bg-white w-full h-full flex flex-col overflow-hidden border-0 p-0 gap-0 shadow-md cursor-pointer"
-      onClick={() => router.push(`/guia-industrial?setor=${name}`)}
+      onClick={handleClick}
     >
       {/* Imagem de capa */}
       <div className="relative w-full h-44 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
